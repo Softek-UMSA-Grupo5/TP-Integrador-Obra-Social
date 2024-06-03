@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 @Path("/recetas")
 @Blocking
 @AllArgsConstructor
-public class RecetaController {
+public class RecetaMedicaController {
 
 	@Inject
 	RecetaMedicaService RecetaMedicaService;
@@ -53,9 +53,9 @@ public class RecetaController {
 	}
 
 	@DELETE
-	@Path("/{id}")
-	public void delete(@Parameter(required = true, description = "RecetaMedica name") @PathParam("nombre") Long id) {
-		this.RecetaMedicaService.deleteRecetaMedica(id);
+	@Path("/{codigo}")
+	public void delete(@Parameter(required = true, description = "RecetaMedica name") @PathParam("nombre") String codigo) {
+		this.RecetaMedicaService.deleteRecetaMedica(codigo);
 	}
 	
 }

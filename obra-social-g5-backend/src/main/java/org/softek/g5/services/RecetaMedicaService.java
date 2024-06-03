@@ -1,6 +1,7 @@
 package org.softek.g5.services;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,9 +52,13 @@ public class RecetaMedicaService {
         // Agregar validaciones si es necesario
         Collection<RecetaMedicaResponseDto> response = new ArrayList<>();
         for (RecetaMedicaRequestDto dto : dtos) {
-            RecetaMedica RecetaMedica = recetaMedicaFactory.createEntityFromDto(dto);
-            this.recetaMedicaRepository.persist(RecetaMedica);
-            response.add(recetaMedicaFactory.createResponseFromEntity(RecetaMedica));
+            RecetaMedica recetaMedica = recetaMedicaFactory.createEntityFromDto(dto);
+            Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(recetaMedica.getCodigo());
+			if(optionalRecetaMedica.isPresent()) {
+				throw new RuntimeException("Esta receta ya existe en el turno");
+			}
+            this.recetaMedicaRepository.persist(recetaMedica);
+            response.add(recetaMedicaFactory.createResponseFromEntity(recetaMedica));
         }
         
         return response;
@@ -71,6 +76,7 @@ public class RecetaMedicaService {
                 
                 // Reasignar manualmente el ID y la receta médica para evitar cambios no deseados
                 RecetaMedica.setId(optionalRecetaMedica.get().getId());
+                RecetaMedica.setUltimaModificacion(LocalDate.now());
 
                 // No es necesario llamar a persist, ya que Panache sincroniza automáticamente
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -84,8 +90,8 @@ public class RecetaMedicaService {
     }
     
     @Transactional
-    public void deleteRecetaMedica(Long id) {
-        int updatedRows = this.recetaMedicaRepository.update("estaEliminado = true WHERE id = ?1", id);
+    public void deleteRecetaMedica(String codigo) {
+        int updatedRows = this.recetaMedicaRepository.update("estaEliminado = true WHERE codigo = ?1", codigo);
         if (updatedRows == 0) {
             throw new RecetaMedicaNotFoundException("RecetaMedica no encontrado");
         }

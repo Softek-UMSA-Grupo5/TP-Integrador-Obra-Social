@@ -10,8 +10,10 @@ public class MedicamentoFactory {
 
 	public Medicamento createEntityFromDto(MedicamentoRequestDto dto) {
 		return Medicamento.builder()
-				.medicacion(dto.getMedicacion())
-				.posología(dto.getPosología())
+				.codigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica())
+				.nombre(dto.getNombre())
+				.concentracion(dto.getConcentracion())
+				.formaFarmaceutica(dto.getFormaFarmaceutica())
 				.frecuencia(dto.getFrecuencia())
 				.duracion(dto.getDuracion())
 				.instrucciones(dto.getInstrucciones())
@@ -21,8 +23,10 @@ public class MedicamentoFactory {
 	
 	public MedicamentoResponseDto createResponseFromEntity(Medicamento medicamento) {
 		return MedicamentoResponseDto.builder()
-				.medicacion(medicamento.getMedicacion())
-				.posología(medicamento.getPosología())
+				.codigo(medicamento.getCodigo())
+				.nombre(medicamento.getNombre())
+				.concentracion(medicamento.getConcentracion())
+				.formaFarmaceutica(medicamento.getFormaFarmaceutica())
 				.frecuencia(medicamento.getFrecuencia())
 				.duracion(medicamento.getDuracion())
 				.instrucciones(medicamento.getInstrucciones())

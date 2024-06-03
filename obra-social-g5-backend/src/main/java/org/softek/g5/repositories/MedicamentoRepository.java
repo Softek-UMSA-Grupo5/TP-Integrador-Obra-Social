@@ -11,7 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class MedicamentoRepository implements PanacheRepositoryBase<Medicamento, Long>{
 
 	public Optional<Medicamento> findByName(String name) {
-		return find("medicacion", name).firstResultOptional();
+		return find("nombre", name).firstResultOptional();
 	}
+	
+	public Optional<Medicamento> findByCodigo(String codigo) {
+		return find("codigo", codigo).firstResultOptional();
+	} 
 	
 }

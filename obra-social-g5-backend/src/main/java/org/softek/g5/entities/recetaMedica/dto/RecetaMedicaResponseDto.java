@@ -3,7 +3,7 @@ package org.softek.g5.entities.recetaMedica.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.softek.g5.entities.medicamento.Medicamento;
+import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +18,11 @@ import lombok.Setter;
 @Builder
 public class RecetaMedicaResponseDto {
 
+	private String codigo;
 	private LocalDate fechaEmision;
     private LocalDate ultimaModificacion;
     private int cantDiasVigencia;
     private Boolean estaEliminado;
-    private List<Medicamento> medicamentos;
+    private List<MedicamentoResponseDto> medicamentos;
 	
 }

@@ -3,7 +3,7 @@ package org.softek.g5.entities.recetaMedica.dto;
 
 import java.util.List;
 
-import org.softek.g5.entities.medicamento.Medicamento;
+import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +19,6 @@ import lombok.Setter;
 public class RecetaMedicaRequestDto {
 
 	private int cantDiasVigencia;
-	private List<Medicamento> medicamentos;
+	private List<MedicamentoRequestDto> medicamentos;
 	
 }

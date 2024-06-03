@@ -13,8 +13,9 @@ import lombok.Setter;
 @Builder
 public class MedicamentoRequestDto {
 
-	private String medicacion;
-    private String posología;
+	private String nombre;
+    private String concentracion;
+    private String formaFarmaceutica;
     private String frecuencia;
     private String duracion;
     private String instrucciones;

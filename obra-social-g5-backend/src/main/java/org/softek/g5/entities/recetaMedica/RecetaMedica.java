@@ -33,6 +33,7 @@ public class RecetaMedica extends PanacheEntityBase{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	private String codigo;
     private LocalDate fechaEmision;
     private LocalDate ultimaModificacion;
     private int cantDiasVigencia;
