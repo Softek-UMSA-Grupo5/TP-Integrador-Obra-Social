@@ -1,11 +1,11 @@
 package org.softek.g5.repositories;
 
-import org.softek.g5.entities.receta.Receta;
+import org.softek.g5.entities.recetaMedica.RecetaMedica;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class RecetaRepository implements PanacheRepositoryBase<Receta, Long>{
+public class RecetaMedicaRepository implements PanacheRepositoryBase<RecetaMedica, Long>{
 	
 }
