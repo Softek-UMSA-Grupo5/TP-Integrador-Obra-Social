@@ -1,0 +1,60 @@
+package org.softek.g5.controllers;
+
+import java.util.List;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
+import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
+import org.softek.g5.services.ConsultorioService;
+
+import io.smallrye.common.annotation.Blocking;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
+
+@Path("/consultorios")
+@Blocking
+@ApplicationScoped
+@AllArgsConstructor
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "ConsultorioController", description = "Endpoint para el servicio Consultorio")
+public class ConsultorioController {
+	
+	private final ConsultorioService consultorioService;
+	
+	@GET
+    @Operation(summary = "Obtener todos los consultorios", description = "Se obtendrá una lista de todos los consultorios disponibles")
+	public List<ConsultorioResponseDto>hetAllConsultorios() {
+		return consultorioService.getAllConsultorios();
+	}
+	
+    @POST
+    @Transactional
+    @Operation(summary = "Crear consultorio", description = "Se creará un nuevo consultorio")
+    public Response createConsultorio(@Valid ConsultorioRequestDto dto) {
+        ConsultorioResponseDto createdDto = consultorioService.createConsultorio(dto);
+        return Response.status(Response.Status.CREATED).entity(createdDto).build();
+    }
+	
+    @PUT
+    @Path("/{codigo}")
+    @Transactional
+    @Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
+    public Response updateConsultorio(@PathParam("codigo") String codigo, @Valid ConsultorioRequestDto dto) {
+        consultorioService.updateConsultorio(codigo, dto);
+        return Response.noContent().build();
+    }
+	
+}
