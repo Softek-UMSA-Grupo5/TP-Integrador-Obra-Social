@@ -21,5 +21,6 @@ public class MedicamentoResponseDto {
     private String duracion;
     private String instrucciones;
     private Boolean estaEliminado;
+    private Long receta;
 	
 }

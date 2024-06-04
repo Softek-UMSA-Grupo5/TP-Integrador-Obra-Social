@@ -31,6 +31,7 @@ public class MedicamentoFactory {
 				.duracion(medicamento.getDuracion())
 				.instrucciones(medicamento.getInstrucciones())
 				.estaEliminado(medicamento.getEstaEliminado())
+				.receta(medicamento.getRecetaMedica().getId())
 				.build();
 	}
 	

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.softek.g5.entities.medicamento.Medicamento;
+import org.softek.g5.entities.medicamento.MedicamentoFactory;
+import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
@@ -30,6 +33,12 @@ public class RecetaMedicaService {
 	
 	@Inject
 	RecetaMedicaFactory recetaMedicaFactory;
+	
+	@Inject
+	MedicamentoService medicamentoService;
+	
+	@Inject
+	MedicamentoFactory medicamentoFactory;
 
 	@Transactional
     public Collection<RecetaMedicaResponseDto> getRecetaMedica() {
@@ -58,6 +67,7 @@ public class RecetaMedicaService {
 				throw new RuntimeException("Esta receta ya existe en el turno");
 			}
             this.recetaMedicaRepository.persist(recetaMedica);
+            this.medicamentoService.persistMedicamento(recetaMedica.getCodigo(), dto.getMedicamentos());
             response.add(recetaMedicaFactory.createResponseFromEntity(recetaMedica));
         }
         
@@ -65,25 +75,23 @@ public class RecetaMedicaService {
     }
     
     @Transactional
-    public RecetaMedicaResponseDto updateRecetaMedica(Long id, RecetaMedicaRequestDto dto) {
-        Optional<RecetaMedica> optionalRecetaMedica = Optional.of(recetaMedicaRepository.findById(id));
+    public void updateRecetaMedica(String codigo, RecetaMedicaRequestDto dto) {
+        Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigo);
         if (optionalRecetaMedica.isPresent()) {
-            RecetaMedica RecetaMedica = optionalRecetaMedica.get();
-            
-            try {
-                // Copiar propiedades del DTO a la entidad, excluyendo id y recetaMedica
-                BeanUtils.copyProperties(RecetaMedica, dto);
+            RecetaMedica recetaMedica = optionalRecetaMedica.get();
+            recetaMedica.setId(optionalRecetaMedica.get().getId());
+            recetaMedica.setUltimaModificacion(LocalDate.now());
+            recetaMedica.setCantDiasVigencia(dto.getCantDiasVigencia());
+            /*try {
+                //BeanUtils.copyProperties(recetaMedica, dto);
                 
-                // Reasignar manualmente el ID y la receta médica para evitar cambios no deseados
-                RecetaMedica.setId(optionalRecetaMedica.get().getId());
-                RecetaMedica.setUltimaModificacion(LocalDate.now());
+                
 
-                // No es necesario llamar a persist, ya que Panache sincroniza automáticamente
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Error al copiar propiedades", e);
-            }
+            }*/
             
-            return this.recetaMedicaFactory.createResponseFromEntity(RecetaMedica);
+            //return this.recetaMedicaFactory.createResponseFromEntity(recetaMedica);
         } else {
             throw new RecetaMedicaNotFoundException("RecetaMedica no encontrado");
         }

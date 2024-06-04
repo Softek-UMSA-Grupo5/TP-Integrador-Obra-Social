@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.softek.g5.entities.medicamento.Medicamento;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,6 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class RecetaMedica extends PanacheEntityBase{
 	
 	@Id
@@ -39,7 +43,9 @@ public class RecetaMedica extends PanacheEntityBase{
     private int cantDiasVigencia;
     private Boolean estaEliminado;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy="recetaMedica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medicamento> medicamentos;
     
 }
+	

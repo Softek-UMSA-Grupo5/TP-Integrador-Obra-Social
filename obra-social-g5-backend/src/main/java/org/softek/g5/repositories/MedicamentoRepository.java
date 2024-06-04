@@ -18,4 +18,8 @@ public class MedicamentoRepository implements PanacheRepositoryBase<Medicamento,
 		return find("codigo", codigo).firstResultOptional();
 	} 
 	
+	public Optional<Medicamento> findByCodigoyReceta(String codigo, Long idReceta) {
+		return find("codigo = ?1 and recetaMedica.id = ?2", codigo, idReceta).firstResultOptional();
+	} 
+	
 }
