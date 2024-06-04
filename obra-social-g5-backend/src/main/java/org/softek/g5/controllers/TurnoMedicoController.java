@@ -9,6 +9,7 @@ import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.services.TurnoMedicoService;
 
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class TurnoMedicoController {
 	TurnoMedicoService TurnoMedicoService;
 
 	@GET
+	@RolesAllowed("USER")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<TurnoMedicoResponseDto> getAll() {
 		return this.TurnoMedicoService.getTurnoMedico();
