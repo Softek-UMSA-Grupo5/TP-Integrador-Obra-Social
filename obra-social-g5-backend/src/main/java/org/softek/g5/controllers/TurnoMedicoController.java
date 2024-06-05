@@ -42,6 +42,7 @@ public class TurnoMedicoController {
 	}
 
 	@POST
+	@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
