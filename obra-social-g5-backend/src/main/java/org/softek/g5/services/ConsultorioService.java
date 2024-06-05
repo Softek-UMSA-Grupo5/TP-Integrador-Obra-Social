@@ -19,6 +19,7 @@ import org.softek.g5.repositories.UbicacionRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 
 @ApplicationScoped
@@ -29,6 +30,7 @@ public class ConsultorioService {
 	private final UbicacionRepository ubicacionRepository;
 	private final HorarioRepository horarioRepository;
 	
+	@Transactional
 	public List<ConsultorioResponseDto> getAllConsultorios() {
         List<Consultorio> consultorios = consultorioRepository.listAll();
         return consultorios.stream()
@@ -36,6 +38,23 @@ public class ConsultorioService {
                 .map(ConsultorioFactory::toDto)
                 .collect(Collectors.toList());
     }
+
+	
+	public ConsultorioResponseDto getConsultorioByCodigo(String codigo) {
+		return consultorioRepository.find("codigo", codigo)
+				.firstResultOptional()
+				.filter(consultorio -> !consultorio.isEstaEliminado())
+				.map(ConsultorioFactory::toDto)
+				.orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado"));
+	}
+	
+	public List<ConsultorioResponseDto> getAllConsultoriosDeleted() {
+		List<Consultorio> consultoriosEliminados = consultorioRepository.listAll();
+		return consultoriosEliminados.stream()
+				.filter(Consultorio::isEstaEliminado)
+				.map(ConsultorioFactory::toDto)
+				.collect(Collectors.toList());
+	}
     
     @Transactional
     public ConsultorioResponseDto createConsultorio(ConsultorioRequestDto dto) {
@@ -48,6 +67,8 @@ public class ConsultorioService {
         List<Horario> horarios = dto.getHorarioAtencion().stream()
                 .map(HorarioFactory::toEntity)
                 .collect(Collectors.toList());
+        
+        
 
         Consultorio consultorio = Consultorio.builder()
                 .ubicacion(ubicacion)
@@ -58,6 +79,8 @@ public class ConsultorioService {
             horario.setConsultorio(consultorio);
             horarioRepository.persist(horario);
         }
+        
+      
         
         consultorio.setHorarioAtencion(horarios);
         consultorioRepository.persist(consultorio);
@@ -79,10 +102,36 @@ public class ConsultorioService {
                     .collect(Collectors.toList());
             nuevosHorarios.forEach(horario -> horario.setConsultorio(consultorio));
             consultorio.getHorarioAtencion().addAll(nuevosHorarios);
-
+            
             consultorioRepository.persistAndFlush(consultorio); 
         } else {
             throw new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo);
+        }
+    }
+    
+    @Transactional
+    public boolean deleteConsultorio(String codigo) {
+        Consultorio consultorio = consultorioRepository.find("codigo", codigo)
+                .firstResultOptional()
+                .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo));
+
+        consultorio.setEstaEliminado(true);
+        consultorioRepository.persist(consultorio);
+        return true;
+    }
+
+    @Transactional
+    public Response restoreConsultorio(String codigo) {
+        Consultorio consultorio = consultorioRepository.find("codigo", codigo)
+                .firstResultOptional()
+                .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo));
+
+        if (consultorio.isEstaEliminado()) {
+            consultorio.setEstaEliminado(false);
+            consultorioRepository.persist(consultorio);
+            return Response.ok("Consultorio restaurado con éxito.").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("El consultorio no está eliminado.").build();
         }
     }
 

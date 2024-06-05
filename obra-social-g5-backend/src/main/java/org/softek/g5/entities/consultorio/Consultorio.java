@@ -3,6 +3,7 @@ package org.softek.g5.entities.consultorio;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 
@@ -38,12 +39,12 @@ public class Consultorio extends PanacheEntityBase{
 	private Long id;
 	
 	@OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Horario> horarioAtencion;
+	@BatchSize(size = 10)
+	private List<Horario> horarioAtencion;
 	
 	@ManyToOne
     @JoinColumn(name = "ubicacion_id", nullable = false)
     private Ubicacion ubicacion;
-	
 	private boolean estaEliminado;
 	
 	@Column(unique = true)
