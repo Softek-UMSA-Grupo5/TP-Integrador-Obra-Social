@@ -15,8 +15,8 @@ import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedic
 import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoNotFoundException;
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
+import org.softek.g5.utils.ReflectionMapper;
 import org.softek.g5.validation.entitiesValidation.MedicamentoValidator;
-import org.springframework.beans.BeanUtils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -93,7 +93,7 @@ public class MedicamentoService {
 			
 			Medicamento medicamento = optionalMedicamento.get();
 
-				BeanUtils.copyProperties(dto, medicamento);
+				ReflectionMapper.copyProperties(dto, medicamento);
 				
 				medicamento.setId(optionalMedicamento.get().getId());
 				medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
