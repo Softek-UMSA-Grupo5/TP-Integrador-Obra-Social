@@ -16,6 +16,7 @@ import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoN
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
 import org.softek.g5.utils.ReflectionMapper;
+import org.softek.g5.validation.DataValidator;
 import org.softek.g5.validation.entitiesValidation.MedicamentoValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -60,6 +61,8 @@ public class MedicamentoService {
 		
 		for (MedicamentoRequestDto dto : dtos) {
 			
+			DataValidator.validateDtoFields(dto);
+			
 			if(!MedicamentoValidator.validateRequestDto(dto)) {
 				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
 			}
@@ -87,6 +90,8 @@ public class MedicamentoService {
 		Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento, idReceta);
 		if (optionalMedicamento.isPresent()) {
 			
+			DataValidator.validateDtoFields(dto);
+			
 			if(!MedicamentoValidator.validateRequestDto(dto)) {
 				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
 			}
@@ -106,7 +111,7 @@ public class MedicamentoService {
 
 	@Transactional
 	public void deleteMedicamento(String codigoMedicamento, Long idReceta) {
-		int updatedRows = this.medicamentoRepository.update("estaEliminado = true WHERE codigo = ?1 and recetaMedica_id = ?2", codigoMedicamento, idReceta);
+		int updatedRows = this.medicamentoRepository.update("estaEliminado = true WHERE codigo = ?1 and recetaMedica.id = ?2", codigoMedicamento, idReceta);
 		if (updatedRows == 0) {
 			throw new MedicamentoNotFoundException("Medicamento no encontrado");
 		}

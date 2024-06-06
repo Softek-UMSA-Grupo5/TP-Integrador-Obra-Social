@@ -1,6 +1,14 @@
 package org.softek.g5.validation;
 
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
+
+import org.softek.g5.exceptions.MissingFieldsException;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +54,32 @@ public class DataValidator<T> {
     
     public static boolean validateBoolean(Boolean value) {
     	return validate(value, v -> v != null && (v == true || v == false));
+    }
+    
+    public static boolean validateFields(Boolean value) {
+    	return validate(value, v -> v != null && (v == true || v == false));
+    }
+    
+    public static <T> void validateDtoFields(T dto) {
+        List<String> missingFields = new ArrayList<>();
+        Field[] fields = dto.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(NotNull.class)) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(dto);
+                    if (value == null) {
+                        missingFields.add(field.getName());
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error al acceder al campo: " + field.getName(), e);
+                }
+            }
+        }
+
+        if (!missingFields.isEmpty()) {
+            throw new MissingFieldsException("Los siguientes campos son obligatorios y no están presentes: " + missingFields);
+        }
     }
 	
 }
