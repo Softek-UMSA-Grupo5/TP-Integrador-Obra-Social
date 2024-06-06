@@ -1,16 +1,12 @@
 package org.softek.g5.services;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
-import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;

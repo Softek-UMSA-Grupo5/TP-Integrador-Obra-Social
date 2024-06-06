@@ -1,21 +1,22 @@
 package org.softek.g5.services;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 import org.softek.g5.exceptions.EmptyTableException;
-import org.softek.g5.exceptions.entitiesCustomException.MedicamentoNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedicamentoData;
+import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoNotFoundException;
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
+import org.softek.g5.validation.entitiesValidation.MedicamentoValidator;
+import org.springframework.beans.BeanUtils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -38,14 +39,15 @@ public class MedicamentoService {
 	@Transactional
 	public Collection<MedicamentoResponseDto> getMedicamentos() {
 		Collection<Medicamento> medicamentos = medicamentoRepository.listAll();
+		
+		if (medicamentos.isEmpty()) {
+			throw new EmptyTableException("No hay registros de medicamentos");
+		}
+		
 		Collection<MedicamentoResponseDto> dtos = new ArrayList<>();
 
 		for (Medicamento m : medicamentos) {
 			dtos.add(medicamentoFactory.createResponseFromEntity(m));
-		}
-
-		if (dtos.isEmpty()) {
-			throw new EmptyTableException("No hay registros de medicamentos");
 		}
 
 		return dtos;
@@ -53,20 +55,25 @@ public class MedicamentoService {
 
 	@Transactional
 	public Collection<MedicamentoResponseDto> persistMedicamento(String codigoReceta, List<MedicamentoRequestDto> dtos) {
-		// Agregar validaciones si es necesario
+		
 		Collection<MedicamentoResponseDto> response = new ArrayList<>();
 		
 		for (MedicamentoRequestDto dto : dtos) {
 			
+			if(!MedicamentoValidator.validateRequestDto(dto)) {
+				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
+			}
+			
 			Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
 			
 			RecetaMedica recetaMedica = recetaMedicaRepository.findByCodigo(codigoReceta).get();
-			medicamento.setRecetaMedica(recetaMedica);
 			
 			Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(medicamento.getCodigo(), recetaMedica.getId());
 			if(optionalMedicamento.isPresent()) {
 				throw new RuntimeException(medicamento.getCodigo() + " este medicamento ya existe en la receta");
 			}
+			
+			medicamento.setRecetaMedica(recetaMedica);
 			
 			this.medicamentoRepository.persist(medicamento);
 			response.add(medicamentoFactory.createResponseFromEntity(medicamento));
@@ -79,18 +86,17 @@ public class MedicamentoService {
 	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta, MedicamentoRequestDto dto) {
 		Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento, idReceta);
 		if (optionalMedicamento.isPresent()) {
+			
+			if(!MedicamentoValidator.validateRequestDto(dto)) {
+				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
+			}
+			
 			Medicamento medicamento = optionalMedicamento.get();
 
-				try {
-					
-					BeanUtils.copyProperties(medicamento, dto);
-					
-					medicamento.setId(optionalMedicamento.get().getId());
-					medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
-					
-				} catch (IllegalAccessException | InvocationTargetException e) {
-	                throw new RuntimeException("Error al copiar propiedades", e);
-				}
+				BeanUtils.copyProperties(dto, medicamento);
+				
+				medicamento.setId(optionalMedicamento.get().getId());
+				medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
 				
 			return this.medicamentoFactory.createResponseFromEntity(medicamento);
 		} else {
