@@ -1,8 +1,10 @@
 package org.softek.g5.exceptions.entitiesCustomException;
 
+
 public class UbicacionNotFoundException extends RuntimeException {
 
-    public UbicacionNotFoundException() {
+	
+	public UbicacionNotFoundException() {
         super("Ubicación no encontrada");
     }
 

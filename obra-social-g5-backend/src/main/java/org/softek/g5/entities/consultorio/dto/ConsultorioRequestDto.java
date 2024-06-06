@@ -17,7 +17,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class ConsultorioRequestDto {
-
 	 private List<HorarioRequestDto> horarioAtencion;
 	 private UbicacionRequestDto ubicacion;
 }

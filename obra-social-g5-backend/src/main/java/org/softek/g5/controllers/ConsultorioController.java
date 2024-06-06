@@ -28,14 +28,13 @@ import lombok.AllArgsConstructor;
 @Blocking
 @ApplicationScoped
 @AllArgsConstructor
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "ConsultorioController", description = "Endpoint para el servicio Consultorio")
 public class ConsultorioController {
 	
 	private final ConsultorioService consultorioService;
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener todos los consultorios", description = "Se obtendrá una lista de todos los consultorios disponibles")
 	public List<ConsultorioResponseDto>hetAllConsultorios() {
 		return consultorioService.getAllConsultorios();
@@ -43,6 +42,7 @@ public class ConsultorioController {
 	
 	@GET
     @Path("/{codigo}")
+	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener consultorio por código", description = "Se obtendrá un consultorio por su código")
     public ConsultorioResponseDto getConsultorioByCodigo(@PathParam("codigo") String codigo) {
         return consultorioService.getConsultorioByCodigo(codigo);
@@ -57,6 +57,7 @@ public class ConsultorioController {
 	
     @POST
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear consultorio", description = "Se creará un nuevo consultorio")
     public Response createConsultorio(@Valid ConsultorioRequestDto dto) {
         ConsultorioResponseDto createdDto = consultorioService.createConsultorio(dto);

@@ -26,21 +26,30 @@ import lombok.AllArgsConstructor;
 @Path("/ubicaciones")
 @Blocking
 @AllArgsConstructor
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name="UbicacionController", description="Enpoints del servicio ubicaciones")
 public class UbicacionController {
 
     private final UbicacionService ubicacionService;
 
     @GET
+	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicaciones", description ="Se obtendrá una lista de ubicaciones")
     public List<UbicacionResponseDto> getAllUbicaciones() {
         return ubicacionService.getAllUbicaciones();
     }
-
+    
+    @GET
+    @Path("/eliminados")
+	@Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Obtener ucicacion eliminadas", description = "Se obtendrá una lista con las ubicaciones eliminadas")
+    public List<UbicacionResponseDto> getAllUbicacionDeleted(){
+    	return ubicacionService.getAllUbicacionesDeleted();
+    }
+    
+    
     @GET
     @Path("/{codigo}")
+	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicación", description ="Se obtendrá una ubicación en particular")
     public Response getUbicacionByCodigo(@PathParam("codigo") String codigo) {
         UbicacionResponseDto dto = ubicacionService.getUbicacionByCodigo(codigo);
@@ -52,6 +61,7 @@ public class UbicacionController {
 
     @POST
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear ubicación", description ="Se creará una ubicación en particular")
     public Response createUbicacion(@Valid UbicacionRequestDto dto) {
         UbicacionResponseDto createdDto = ubicacionService.createUbicacion(dto);
@@ -83,9 +93,6 @@ public class UbicacionController {
     @Transactional
     @Operation(summary = "Eliminar ubicación", description ="Se eliminará una ubicación por soft delete")
     public Response deleteUbicacion(@PathParam("codigo") String codigo) {
-        if (ubicacionService.deleteUbicacion(codigo)) {
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ubicacionService.deleteUbicacion(codigo);
     }
 }

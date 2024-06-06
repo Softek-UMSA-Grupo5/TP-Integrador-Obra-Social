@@ -3,6 +3,7 @@ package org.softek.g5.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.service.spi.ServiceException;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
@@ -11,87 +12,114 @@ import org.softek.g5.exceptions.entitiesCustomException.HorarioNotFoundException
 import org.softek.g5.repositories.HorarioRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
-import lombok.AllArgsConstructor;
 
 @ApplicationScoped
-@AllArgsConstructor
 public class HorarioService {
-
-    private final HorarioRepository horarioRepository;
+    @Inject
+    HorarioRepository horarioRepository;
 
     public List<HorarioResponseDto> getAllHorarios() {
-        List<Horario> horarios = horarioRepository.listAll();
-        return horarios.stream()
-                .filter(horario -> !horario.isEstaEliminado())
-                .map(HorarioFactory::toDto)
-                .collect(Collectors.toList());
+        try {
+            List<Horario> horarios = horarioRepository.listAll();
+            return horarios.stream()
+                    .filter(horario -> !horario.isEstaEliminado())
+                    .map(HorarioFactory::toDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ServiceException("Error al obtener todos los horarios", e);
+        }
     }
 
     public List<HorarioResponseDto> getAllHorariosDeleted() {
-        List<Horario> horariosEliminados = horarioRepository.listAll();
-        return horariosEliminados.stream()
-                .filter(Horario::isEstaEliminado)
-                .map(HorarioFactory::toDto)
-                .collect(Collectors.toList());
+        try {
+            List<Horario> horariosEliminados = horarioRepository.listAll();
+            return horariosEliminados.stream()
+                    .filter(Horario::isEstaEliminado)
+                    .map(HorarioFactory::toDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ServiceException("Error al obtener todos los horarios eliminados", e);
+        }
     }
 
     public HorarioResponseDto getHorarioByCodigo(String codigo) {
-        return horarioRepository.find("codigo", codigo)
-                .firstResultOptional()
-                .filter(horario -> !horario.isEstaEliminado())
-                .map(HorarioFactory::toDto)
-                .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+        try {
+            return horarioRepository.find("codigo", codigo)
+                    .firstResultOptional()
+                    .filter(horario -> !horario.isEstaEliminado())
+                    .map(HorarioFactory::toDto)
+                    .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+        } catch (Exception e) {
+            throw new ServiceException("Error al obtener el horario por código", e);
+        }
     }
-
+    
     @Transactional
-    public HorarioResponseDto createHorario(@Valid HorarioRequestDto dto) {
-        Horario horario = HorarioFactory.toEntity(dto);
-        horario.setEstaEliminado(false);
-        horarioRepository.persist(horario);
-        return HorarioFactory.toDto(horario);
+    public Response createHorario(@Valid HorarioRequestDto dto) {
+        try {
+            Horario horario = HorarioFactory.toEntity(dto);
+            horario.setEstaEliminado(false);
+            horarioRepository.persist(horario);
+            return Response.ok(HorarioFactory.toDto(horario)).build();
+        } catch (Exception e) {
+            throw new ServiceException("Error al crear el horario: ", e);
+        }
     }
-
+   
     @Transactional
     public HorarioResponseDto updateHorario(String codigo, @Valid HorarioRequestDto dto) {
-        Horario horario = horarioRepository.find("codigo", codigo)
-                .firstResultOptional()
-                .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+        try {
+            Horario horario = horarioRepository.find("codigo", codigo)
+                    .firstResultOptional()
+                    .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
 
-        if (horario.isEstaEliminado()) {
-            throw new HorarioNotFoundException("Horario no encontrado con código: " + codigo);
+            if (horario.isEstaEliminado()) {
+                throw new HorarioNotFoundException("Horario no encontrado con código: " + codigo);
+            }
+
+            HorarioFactory.updateEntity(horario, dto);
+            horarioRepository.persist(horario);
+            return HorarioFactory.toDto(horario);
+        } catch (Exception e) {
+            throw new ServiceException("Error al actualizar el horario", e);
         }
-
-        HorarioFactory.updateEntity(horario, dto);
-        horarioRepository.persist(horario);
-        return HorarioFactory.toDto(horario);
     }
 
     @Transactional
-    public boolean deleteHorario(String codigo) {
-        Horario horario = horarioRepository.find("codigo", codigo)
-                .firstResultOptional()
-                .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+    public Response deleteHorario(String codigo) {
+        try {
+            Horario horario = horarioRepository.find("codigo", codigo)
+                    .firstResultOptional()
+                    .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
 
-        horario.setEstaEliminado(true);
-        horarioRepository.persist(horario);
-        return true;
+            horario.setEstaEliminado(true);
+            horarioRepository.persist(horario);
+            return Response.ok("Horario eliminado con éxito.").build();
+        } catch (Exception e) {
+            throw new ServiceException("Error al eliminar el horario", e);
+        }
     }
 
     @Transactional
     public Response restoreHorario(String codigo) {
-        Horario horario = horarioRepository.find("codigo", codigo)
-                .firstResultOptional()
-                .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+        try {
+            Horario horario = horarioRepository.find("codigo", codigo)
+                    .firstResultOptional()
+                    .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
 
-        if (horario.isEstaEliminado()) {
-            horario.setEstaEliminado(false);
-            horarioRepository.persist(horario);
-            return Response.ok("Horario restaurado con éxito.").build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("El horario no está eliminado.").build();
+            if (horario.isEstaEliminado()) {
+                horario.setEstaEliminado(false);
+                horarioRepository.persist(horario);
+                return Response.ok("Horario restaurado con éxito.").build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity("El horario no está eliminado.").build();
+            }
+        } catch (Exception e) {
+            throw new ServiceException("Error al restaurar el horario", e);
         }
     }
 }

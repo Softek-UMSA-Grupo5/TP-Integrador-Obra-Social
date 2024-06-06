@@ -26,14 +26,13 @@ import lombok.AllArgsConstructor;
 @Path("/horarios")
 @Blocking
 @AllArgsConstructor
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name="HorarioController", description="Enpoints del servicio horarios")
 public class HorarioController {
 
     private final HorarioService horarioService;
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener horarios", description ="Se obtendrá una lista de horarios")
     public List<HorarioResponseDto> getAllHorarios() {
         return horarioService.getAllHorarios();
@@ -41,6 +40,7 @@ public class HorarioController {
 
     @GET
     @Path("/eliminados")
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener horarios eliminados", description = "Se obtendrá una Lista de horarios eliminados por soft delete")
     public List<HorarioResponseDto> getAllHorariosDeleted() {
         return horarioService.getAllHorariosDeleted();
@@ -48,6 +48,7 @@ public class HorarioController {
 
     @GET
     @Path("/{codigo}")
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener horario", description ="Se obtendrá un horario en particular")
     public Response getHorarioByCodigo(@PathParam("codigo") String codigo) {
         HorarioResponseDto dto = horarioService.getHorarioByCodigo(codigo);
@@ -59,10 +60,10 @@ public class HorarioController {
 
     @POST
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crea horario", description ="Se creará un horario")
     public Response createHorario(@Valid HorarioRequestDto dto) {
-        HorarioResponseDto createdDto = horarioService.createHorario(dto);
-        return Response.status(Response.Status.CREATED).entity(createdDto).build();
+        return horarioService.createHorario(dto);
     }
 
     @PUT
@@ -90,9 +91,6 @@ public class HorarioController {
     @Transactional
     @Operation(summary = "Borrar horario", description ="Se borrará un horario por soft delete")
     public Response deleteHorario(@PathParam("codigo") String codigo) {
-        if (horarioService.deleteHorario(codigo)) {
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+    	return horarioService.deleteHorario(codigo);
     }
 }
