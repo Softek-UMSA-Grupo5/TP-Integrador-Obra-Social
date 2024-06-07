@@ -2,7 +2,7 @@ package org.softek.g5.exceptions.entitiesCustomException;
 
 public class MedicoNotFoundException extends RuntimeException{
 	public MedicoNotFoundException() {
-        super("Ubicación no encontrada");
+        super();
     }
 
     public MedicoNotFoundException(String message) {
@@ -16,5 +16,4 @@ public class MedicoNotFoundException extends RuntimeException{
     public MedicoNotFoundException(Throwable cause) {
         super(cause);
     }
-	
 }
