@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
@@ -33,51 +35,64 @@ public class MedicamentoService {
 
 	@Inject
 	MedicamentoFactory medicamentoFactory;
-	
+
 	@Inject
 	RecetaMedicaRepository recetaMedicaRepository;
+
+	@Inject
+	SessionFactory sessionFactory;
 
 	@Transactional
 	public Collection<MedicamentoResponseDto> getMedicamentos() {
 		Collection<Medicamento> medicamentos = medicamentoRepository.listAll();
-		
+
 		if (medicamentos.isEmpty()) {
 			throw new EmptyTableException("No hay registros de medicamentos");
 		}
-		
+
 		Collection<MedicamentoResponseDto> dtos = new ArrayList<>();
 
 		for (Medicamento m : medicamentos) {
-			dtos.add(medicamentoFactory.createResponseFromEntity(m));
+			MedicamentoResponseDto dto = new MedicamentoResponseDto();
+			dto = ReflectionMapper.copyProperties(m, dto);
+			dtos.add(dto);
+			// dtos.add(medicamentoFactory.createResponseFromEntity(m));
 		}
 
 		return dtos;
 	}
 
 	@Transactional
-	public Collection<MedicamentoResponseDto> persistMedicamento(String codigoReceta, List<MedicamentoRequestDto> dtos) {
-		
+	public Collection<MedicamentoResponseDto> persistMedicamento(String codigoReceta,
+			List<MedicamentoRequestDto> dtos) {
+
 		Collection<MedicamentoResponseDto> response = new ArrayList<>();
-		
+
 		for (MedicamentoRequestDto dto : dtos) {
-			
+
 			DataValidator.validateDtoFields(dto);
-			
-			if(!MedicamentoValidator.validateRequestDto(dto)) {
+
+			if (!MedicamentoValidator.validateRequestDto(dto)) {
 				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
 			}
-			
-			Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
-			
+
+			// Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
+
+			Medicamento medicamento = new Medicamento();
+			medicamento = ReflectionMapper.copyProperties(dto, medicamento);
+			medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
+			medicamento.setEstaEliminado(false);
+
 			RecetaMedica recetaMedica = recetaMedicaRepository.findByCodigo(codigoReceta).get();
-			
-			Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(medicamento.getCodigo(), recetaMedica.getId());
-			if(optionalMedicamento.isPresent()) {
+
+			Optional<Medicamento> optionalMedicamento = medicamentoRepository
+					.findByCodigoyReceta(medicamento.getCodigo(), recetaMedica.getId());
+			if (optionalMedicamento.isPresent()) {
 				throw new RuntimeException(medicamento.getCodigo() + " este medicamento ya existe en la receta");
 			}
-			
+
 			medicamento.setRecetaMedica(recetaMedica);
-			
+
 			this.medicamentoRepository.persist(medicamento);
 			response.add(medicamentoFactory.createResponseFromEntity(medicamento));
 		}
@@ -87,22 +102,25 @@ public class MedicamentoService {
 
 	@Transactional
 	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta, MedicamentoRequestDto dto) {
-		Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento, idReceta);
+		Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento,
+				idReceta);
+
 		if (optionalMedicamento.isPresent()) {
-			
+
+			// Validación de los datos del DTO
 			DataValidator.validateDtoFields(dto);
-			
-			if(!MedicamentoValidator.validateRequestDto(dto)) {
-				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
+			if (!MedicamentoValidator.validateRequestDto(dto)) {
+				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erróneos");
 			}
-			
+
 			Medicamento medicamento = optionalMedicamento.get();
 
-				ReflectionMapper.copyProperties(dto, medicamento);
-				
-				medicamento.setId(optionalMedicamento.get().getId());
-				medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
-				
+			// Copiar las propiedades del DTO al objeto Medicamento
+			medicamento = ReflectionMapper.copyProperties(dto, medicamento);
+
+			// Ajustar el código según los datos del DTO
+			medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
+
 			return this.medicamentoFactory.createResponseFromEntity(medicamento);
 		} else {
 			throw new MedicamentoNotFoundException("Medicamento no encontrado");
@@ -111,7 +129,8 @@ public class MedicamentoService {
 
 	@Transactional
 	public void deleteMedicamento(String codigoMedicamento, Long idReceta) {
-		int updatedRows = this.medicamentoRepository.update("estaEliminado = true WHERE codigo = ?1 and recetaMedica.id = ?2", codigoMedicamento, idReceta);
+		int updatedRows = this.medicamentoRepository
+				.update("estaEliminado = true WHERE codigo = ?1 and recetaMedica.id = ?2", codigoMedicamento, idReceta);
 		if (updatedRows == 0) {
 			throw new MedicamentoNotFoundException("Medicamento no encontrado");
 		}
