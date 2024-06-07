@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions.entitiesCustomException;
+package org.softek.g5.exceptions.entitiesCustomException.medicamento;
 
 public class MedicamentoNotFoundException extends RuntimeException{
 

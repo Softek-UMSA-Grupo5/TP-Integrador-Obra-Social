@@ -1,5 +1,6 @@
 package org.softek.g5.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.medicamento.Medicamento;
@@ -19,7 +20,12 @@ public class MedicamentoRepository implements PanacheRepositoryBase<Medicamento,
 	} 
 	
 	public Optional<Medicamento> findByCodigoyReceta(String codigo, Long idReceta) {
+		System.out.println(codigo + "  " + idReceta);
 		return find("codigo = ?1 and recetaMedica.id = ?2", codigo, idReceta).firstResultOptional();
+	}
+	
+	public List<Medicamento> findByReceta(Long id) {
+		return find("recetaMedica.id = ?1 ", id).list();
 	} 
 	
 }

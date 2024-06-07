@@ -3,14 +3,13 @@ package org.softek.g5.entities.recetaMedica;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
-import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
+import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,11 +22,14 @@ public class RecetaMedicaFactory {
     MedicamentoFactory medicamentoFactory;
 	
 	@Inject
+	MedicamentoRepository medicamentoRepository;
+	
+	@Inject
 	RecetaMedicaRepository recetaMedicaRepository;
 
     public RecetaMedica createEntityFromDto(RecetaMedicaRequestDto dto) {
         return RecetaMedica.builder()
-                .codigo("Receta-" + (recetaMedicaRepository.count() + 1))
+                .codigo("receta-" + (recetaMedicaRepository.count() + 1))
                 .fechaEmision(LocalDate.now())
                 .ultimaModificacion(LocalDate.now())
                 .cantDiasVigencia(dto.getCantDiasVigencia())
@@ -53,7 +55,7 @@ public class RecetaMedicaFactory {
                 .ultimaModificacion(recetaMedica.getUltimaModificacion())
                 .cantDiasVigencia(recetaMedica.getCantDiasVigencia())
                 .estaEliminado(recetaMedica.getEstaEliminado())
-                .medicamentos(createListMedicamentoDtoFromEntity(recetaMedica.getMedicamentos()))
+                .medicamentos(createListMedicamentoDtoFromEntity(medicamentoRepository.findByReceta(recetaMedica.getId())))
                 .build();
     }
 

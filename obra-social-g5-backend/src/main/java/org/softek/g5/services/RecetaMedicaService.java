@@ -1,14 +1,11 @@
 package org.softek.g5.services;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
@@ -18,6 +15,7 @@ import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.RecetaMedicaNotFoundException;
 import org.softek.g5.repositories.RecetaMedicaRepository;
+import org.softek.g5.utils.ReflectionMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -79,9 +77,14 @@ public class RecetaMedicaService {
         Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigo);
         if (optionalRecetaMedica.isPresent()) {
             RecetaMedica recetaMedica = optionalRecetaMedica.get();
+            //ReflectionMapper.copyProperties(dto, recetaMedica);
             recetaMedica.setId(optionalRecetaMedica.get().getId());
-            recetaMedica.setUltimaModificacion(LocalDate.now());
             recetaMedica.setCantDiasVigencia(dto.getCantDiasVigencia());
+            recetaMedica.setUltimaModificacion(LocalDate.now());
+            System.out.println(recetaMedica.getId());
+            for(MedicamentoRequestDto d : dto.getMedicamentos()) {
+            	medicamentoService.updateMedicamento((d.getNombre() + "-" + d.getConcentracion() + "-" + d.getFormaFarmaceutica()), recetaMedica.getId(), d);
+            }
             /*try {
                 //BeanUtils.copyProperties(recetaMedica, dto);
                 
