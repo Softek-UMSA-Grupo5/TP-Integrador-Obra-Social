@@ -27,7 +27,6 @@ public class UbicacionControllerTest {
         ubicacionDto.setCodigo("U0022");
         ubicacionDto.setCiudad("Ciudad1");
         ubicacionDto.setProvincia("Provincia1");
-        ubicacionDto.setDireccion("Dirección1");
         ubicacionDto.setAltura(123);
 
         try {

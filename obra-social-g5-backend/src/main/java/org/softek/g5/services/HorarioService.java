@@ -74,6 +74,7 @@ public class HorarioService {
             horarioRepository.persist(horario);
 
             //return Response.ok(HorarioFactory.toDto(horario)).build();
+
         } catch (Exception e) {
             throw new ServiceException("Error al crear el horario: ", e);
         }
