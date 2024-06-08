@@ -64,7 +64,7 @@ public class HorarioService {
             Horario horario = HorarioFactory.toEntity(dto);
             horario.setEstaEliminado(false);
             horarioRepository.persist(horario);
-            return Response.ok(HorarioFactory.toDto(horario)).build();
+            return Response.status(Response.Status.CREATED).entity(HorarioFactory.toDto(horario)).build();
         } catch (Exception e) {
             throw new ServiceException("Error al crear el horario: ", e);
         }

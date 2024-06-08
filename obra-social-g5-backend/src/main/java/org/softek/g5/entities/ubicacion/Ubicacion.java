@@ -46,6 +46,6 @@ public class Ubicacion extends PanacheEntityBase{
 	
 	@PrePersist
     protected void generarCodigo() {
-        this.codigo = UUID.randomUUID().toString().substring(0, 5);
+        this.codigo = UUID.randomUUID().toString().substring(0, 10);
 	}
 }
