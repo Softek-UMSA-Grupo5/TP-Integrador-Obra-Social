@@ -6,6 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
+import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
 import org.softek.g5.services.UbicacionService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -73,11 +74,12 @@ public class UbicacionController {
     @Transactional
     @Operation(summary = "Actualizar ubicación", description ="Se actualizará una ubicación en particular")
     public Response updateUbicacion(@PathParam("codigo") String codigo, @Valid UbicacionRequestDto dto) {
-        UbicacionResponseDto updatedDto = ubicacionService.updateUbicacion(codigo, dto);
-        if (updatedDto == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(updatedDto).build();
+    	 try {
+             UbicacionResponseDto updatedDto = ubicacionService.updateUbicacion(codigo, dto);
+             return Response.ok(updatedDto).build();
+         } catch (UbicacionNotFoundException e) {
+             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+         }
     }
 
     @PUT
@@ -93,6 +95,10 @@ public class UbicacionController {
     @Transactional
     @Operation(summary = "Eliminar ubicación", description ="Se eliminará una ubicación por soft delete")
     public Response deleteUbicacion(@PathParam("codigo") String codigo) {
-        return ubicacionService.deleteUbicacion(codigo);
+    	 try {
+             return ubicacionService.deleteUbicacion(codigo);
+         } catch (UbicacionNotFoundException e) {
+             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+         }
     }
 }
