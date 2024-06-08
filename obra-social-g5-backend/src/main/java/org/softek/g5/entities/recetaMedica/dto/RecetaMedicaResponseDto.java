@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
+import org.softek.g5.entities.turnoMedico.TurnoMedico;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +25,6 @@ public class RecetaMedicaResponseDto {
     private int cantDiasVigencia;
     private Boolean estaEliminado;
     private List<MedicamentoResponseDto> medicamentos;
+    private Long turno;
 	
 }

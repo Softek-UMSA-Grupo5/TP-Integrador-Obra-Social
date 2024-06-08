@@ -20,6 +20,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -43,21 +44,23 @@ public class RecetaMedicaController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Collection<RecetaMedicaResponseDto> addRecetaMedica(@Valid List<RecetaMedicaRequestDto> dtos) {
-		Collection<RecetaMedicaResponseDto> response = this.RecetaMedicaService.persistRecetaMedica(dtos);
+	public RecetaMedicaResponseDto addRecetaMedica(@Valid RecetaMedicaRequestDto dto,
+			@Valid @QueryParam("codigoTurno") String codigoTurno) {
+		RecetaMedicaResponseDto response = this.RecetaMedicaService.persistRecetaMedica(codigoTurno, dto);
 		return response;
 	}
 
 	@PUT
 	@Path("/{codigo}")
-	public ResponseBuilder update(@Parameter(required = true, description = "RecetaMedica name") @PathParam("codigo") String codigo, RecetaMedicaRequestDto dto) {
+	public ResponseBuilder update(@PathParam("codigo") String codigo
+			, RecetaMedicaRequestDto dto) {
 		RecetaMedicaService.updateRecetaMedica(codigo, dto);
 		return Response.ok();
 	}
 
 	@DELETE
 	@Path("/{codigo}")
-	public void delete(@Parameter(required = true, description = "RecetaMedica name") @PathParam("nombre") String codigo) {
+	public void delete(@PathParam("codigo") String codigo) {
 		this.RecetaMedicaService.deleteRecetaMedica(codigo);
 	}
 	

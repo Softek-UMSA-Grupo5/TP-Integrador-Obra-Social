@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.lang.reflect.InvocationTargetException;
+
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
@@ -13,7 +13,7 @@ import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.BeneficiarioNotFoundException;
 import org.softek.g5.repositories.BeneficiarioRepository;
 import org.softek.g5.repositories.SocioRepository;
-import org.apache.commons.beanutils.BeanUtils;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -70,12 +70,9 @@ public class BeneficiarioService {
 		Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository.findByDniyIdSocio(dniBeneficiario, idSocio);
 		if (optionalBeneficiario.isPresent()) {
 			Beneficiario beneficiario = optionalBeneficiario.get();
-				try {
-					BeanUtils.copyProperties(beneficiario, dto);
-					beneficiario.setId(optionalBeneficiario.get().getId());
-				} catch (IllegalAccessException | InvocationTargetException e) {
-	                throw new RuntimeException("Error al copiar propiedades", e);
-				}
+				
+			//Actualizar datos de socio manualmente (beneficiario.setTanto(dto.tanto)...)
+			
 			return this.beneficiarioFactory.createResponseFromEntity(beneficiario);
 		} else {
 			throw new BeneficiarioNotFoundException("Beneficiario no encontrado");

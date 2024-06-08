@@ -1,12 +1,13 @@
 package org.softek.g5.controllers;
 import java.util.Collection;
-import java.util.List;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
 import org.softek.g5.services.SocioService;
+
 import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -44,8 +45,8 @@ public class SocioController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
 	@Transactional
-	public Collection<SocioResponseDto> addSocio(@Valid List<SocioRequestDto> dtos) {
-		Collection<SocioResponseDto> response = this.socioService.persistSocio(dtos);
+	public SocioResponseDto addSocio(@Valid SocioRequestDto dto) {
+		SocioResponseDto response = this.socioService.persistSocio(dto);
 		return response;
 	}
 	

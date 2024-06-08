@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.BatchSize;
 import org.softek.g5.entities.horario.Horario;
+import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -15,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -49,6 +51,9 @@ public class Consultorio extends PanacheEntityBase{
 	
 	@Column(unique = true)
     private String codigo;
+	
+	@ManyToMany
+	private List<Medico> medicos;
 	
 	@PrePersist
     protected void generarCodigo() {

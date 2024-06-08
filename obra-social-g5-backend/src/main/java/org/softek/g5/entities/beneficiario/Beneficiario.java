@@ -3,6 +3,7 @@ import java.sql.Date;
 
 import org.softek.g5.entities.persona.Persona;
 import org.softek.g5.entities.socio.Socio;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;

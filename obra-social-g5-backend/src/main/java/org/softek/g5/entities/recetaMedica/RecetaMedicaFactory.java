@@ -34,19 +34,8 @@ public class RecetaMedicaFactory {
                 .ultimaModificacion(LocalDate.now())
                 .cantDiasVigencia(dto.getCantDiasVigencia())
                 .estaEliminado(false)
-                //.medicamentos(createListMedicamentoFromDto(dto.getMedicamentos()))
                 .build();
     }
-    
-    /*
-    public List<Medicamento> createListMedicamentoFromDto(List<MedicamentoRequestDto> dtos){
-    	List<Medicamento> medicamentos = new ArrayList<>();
-    	for (MedicamentoRequestDto dto : dtos) {
-    		medicamentos.add(medicamentoFactory.createEntityFromDto(dto));
-		}
-    	return medicamentos;
-    }
-    */
 
     public RecetaMedicaResponseDto createResponseFromEntity(RecetaMedica recetaMedica) {
         return RecetaMedicaResponseDto.builder()
@@ -56,6 +45,7 @@ public class RecetaMedicaFactory {
                 .cantDiasVigencia(recetaMedica.getCantDiasVigencia())
                 .estaEliminado(recetaMedica.getEstaEliminado())
                 .medicamentos(createListMedicamentoDtoFromEntity(medicamentoRepository.findByReceta(recetaMedica.getId())))
+                .turno(recetaMedica.getTurno().getId())
                 .build();
     }
 
