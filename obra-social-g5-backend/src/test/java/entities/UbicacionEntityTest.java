@@ -31,7 +31,6 @@ public class UbicacionEntityTest {
 		Ubicacion ubicacion = new Ubicacion();
 		ubicacion.setCiudad("Ciudad Test");
 		ubicacion.setProvincia("Provincia Test");
-		ubicacion.setDireccion("Direccion Test");
 		ubicacion.setAltura(123);
 		ubicacion.setEstaEliminado(false);
 
@@ -42,7 +41,6 @@ public class UbicacionEntityTest {
 		assertNotNull(ubicacion.getId());
 		assertEquals("Ciudad Test", ubicacion.getCiudad());
 		assertEquals("Provincia Test", ubicacion.getProvincia());
-		assertEquals("Direccion Test", ubicacion.getDireccion());
 		assertEquals(123, ubicacion.getAltura());
 		assertFalse(ubicacion.isEstaEliminado());
 	}

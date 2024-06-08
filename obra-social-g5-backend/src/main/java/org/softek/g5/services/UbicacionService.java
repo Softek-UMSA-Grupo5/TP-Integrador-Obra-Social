@@ -60,7 +60,7 @@ public class UbicacionService {
 
     @Transactional
     public UbicacionResponseDto createUbicacion(@Valid UbicacionRequestDto dto) {
-    	if (dto == null || dto.getCiudad().isEmpty() || dto.getProvincia().isEmpty() || dto.getDireccion().isEmpty() || dto.getAltura() <= 0) {
+    	if (dto == null || dto.getCiudad().isEmpty() || dto.getProvincia().isEmpty() || dto.getCalle().isEmpty() || dto.getAltura() <= 0) {
     	        throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no pueden ser nulos o estar en blanco");
     	    }
     	try {

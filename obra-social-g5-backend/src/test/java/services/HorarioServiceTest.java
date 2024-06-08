@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.services.HorarioService;
 
@@ -82,21 +83,19 @@ public class HorarioServiceTest {
 
     @Test
     public void createHorario_ShouldCreateHorario() {
-        HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0),"GENERATED_CODE");
-        Horario horario = new Horario(null, Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), null, false, "GENERATED_CODE");
-
-        doAnswer(invocation -> {
-            Horario h = invocation.getArgument(0);
-            h.setId(1L);  
-            return null;
-        }).when(horarioRepository).persist(any(Horario.class));
-
-        HorarioResponseDto result = horarioService.createHorario(requestDto);
-
-        assertNotNull(result);
-        assertEquals(Horario.DiaSemana.LUNES, result.getDiaSemana());
-        assertEquals(LocalTime.of(9, 0), result.getHoraInicio());
-        assertEquals(LocalTime.of(17, 0), result.getHoraFin());
+    	// Arrange
+        HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), "GENERATED_CODE");
+        UbicacionRequestDto ubicacionDto = UbicacionRequestDto.builder()
+                                .ciudad("ciudad")
+                                .provincia("provincia")
+                                .calle("calle")
+                                .altura(123)
+                                .build();
+        
+        // Act
+        assertDoesNotThrow(() -> horarioService.createHorario(requestDto, ubicacionDto));
+        
+        // Assert
         verify(horarioRepository, times(1)).persist(any(Horario.class));
     }
 

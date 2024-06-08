@@ -71,7 +71,13 @@ public class BeneficiarioService {
 		if (optionalBeneficiario.isPresent()) {
 			Beneficiario beneficiario = optionalBeneficiario.get();
 				
-			//Actualizar datos de socio manualmente (beneficiario.setTanto(dto.tanto)...)
+			beneficiario.setNombre(dto.getNombre());
+			beneficiario.setApellido(dto.getApellido());
+			beneficiario.setTelefono(dto.getTelefono());
+			beneficiario.setEmail(dto.getEmail());
+			beneficiario.setDni(dto.getDni());
+			beneficiario.setFechaNacimiento(dto.getFechaNacimiento());
+			beneficiario.setCuil(dto.getCuil());
 			
 			return this.beneficiarioFactory.createResponseFromEntity(beneficiario);
 		} else {

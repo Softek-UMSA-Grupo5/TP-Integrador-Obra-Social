@@ -35,8 +35,8 @@ public class Ubicacion extends PanacheEntityBase{
 	private String ciudad;
 	@NotBlank(message = "Provincia no puede estar vacía")
 	private String provincia;
-	@NotBlank(message = "Direccion no puede estar vacía")
-	private String direccion;
+	@NotBlank(message = "calle no puede estar vacía")
+	private String calle;
 	@NotNull
 	private int altura;
 	private boolean estaEliminado;

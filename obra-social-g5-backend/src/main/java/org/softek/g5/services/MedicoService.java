@@ -3,13 +3,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.softek.g5.entities.consultorio.Consultorio;
+import org.softek.g5.entities.consultorio.ConsultorioFactory;
+import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.medico.dto.MedicoResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.MedicoNotFoundException;
+import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.MedicoRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,6 +30,9 @@ public class MedicoService {
 	
 	@Inject
 	MedicoFactory medicoFactory;
+	
+	@Inject
+	ConsultorioRepository consultorioRepository;
 	
 	@Transactional
 	public Collection<MedicoResponseDto> getMedicosEspecialistas(){
@@ -53,8 +61,22 @@ public class MedicoService {
 				throw new RuntimeException("Este medico ya existe");
 			}
 			
+			if(dto.getConsultorios() != null) {
+				if(!dto.getConsultorios().isEmpty()) {
+					List<Consultorio> consultorios = new ArrayList<>();
+					for(ConsultorioRequestDto d : dto.getConsultorios()) {
+						Consultorio c = consultorioRepository.findByUbicacion(d.getUbicacion().getCiudad()
+								, d.getUbicacion().getProvincia()
+								, d.getUbicacion().getCalle()
+								, d.getUbicacion().getAltura());
+						c.setMedico(medico);
+						consultorios.add(c);
+					}
+					medico.setConsultorios(consultorios);
+				}
+			}
+			
 			this.medicoRepository.persist(medico);
-			//persistir consultorio
 			
 			response.add(medicoFactory.createResponseFromEntity(medico));
 		}
@@ -75,8 +97,6 @@ public class MedicoService {
             throw new MedicoNotFoundException("Medico no encontrado");
         }
     }
-	
-	//Agregar método para setear turno medico
 	
 	@Transactional
 	public void deleteMedico(Long id) {

@@ -6,24 +6,20 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
-import org.softek.g5.exceptions.entitiesCustomException.HorarioNotFoundException;
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import lombok.AllArgsConstructor;
 
 @Path("/horarios")
@@ -61,30 +57,27 @@ public class HorarioController {
 		return Response.ok(dto).build();
 	}
 
-	@POST
-	@Transactional
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Operation(summary = "Crea horario", description = "Se creará un horario")
-	public Response createHorario(@Valid HorarioRequestDto dto) {
-		HorarioResponseDto resposeDto = horarioService.createHorario(dto); 
-		return Response.status(Status.CREATED).build();
-	}
-
 	@PUT
-	@Path("/{codigo}")
-	@Transactional
-	@Operation(summary = "Actualiza horario", description = "Se actualizará un horario en particular")
-	public Response updateHorario(@PathParam("codigo") String codigo, @Valid HorarioRequestDto dto) {
-		try {
-			HorarioResponseDto updatedDto = horarioService.updateHorario(codigo, dto);
-			return Response.ok(updatedDto).build();
-		} catch (HorarioNotFoundException e) {
-			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el horario")
-					.build();
-		}
-	}
+    @Path("/{codigo}")
+    @Transactional
+    @Operation(summary = "Actualiza horario", description ="Se actualizará un horario en particular")
+    public Response updateHorario(@PathParam("codigo") String codigo, @Valid HorarioRequestDto dto) {
+        HorarioResponseDto updatedDto = horarioService.updateHorario(codigo, dto);
+        if (updatedDto == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(updatedDto).build();
+    }
+	
+    /*@POST
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Crea horario", description ="Se creará un horario")
+    public Response createHorario(@Valid HorarioRequestDto dto
+    		, @Valid UbicacionRequestDto ubicacionConsultorio) {
+        horarioService.createHorario(dto, ubicacionConsultorio);
+        return Response.ok().build();
+    }*/
 
 	@PUT
 	@Path("/restore/{codigo}")
