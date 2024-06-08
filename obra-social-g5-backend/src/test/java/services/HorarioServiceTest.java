@@ -61,6 +61,7 @@ public class HorarioServiceTest {
     @Test
     public void getAllHorariosDeleted_ShouldReturnListOfDeletedHorarios() {
 
+
         List<Horario> horariosEliminados = Arrays.asList(
                 new Horario(3L,Horario.DiaSemana.MIERCOLES, LocalTime.of(9, 0), LocalTime.of(17, 0), null, true, "H003NJ45OS")
         );
@@ -103,6 +104,7 @@ public class HorarioServiceTest {
         assertDoesNotThrow(() -> horarioService.createHorario(requestDto, ubicacionDto));
         
         
+
         verify(horarioRepository, times(1)).persist(any(Horario.class));
     }
 
@@ -135,12 +137,10 @@ public class HorarioServiceTest {
         when(horarioRepository.find("codigo", "H001567890")).thenReturn(mockQuery);
 
 
-        // Act
         Response result = horarioService.deleteHorario("H001567890");
 
-        // Assert
         assertNotNull(result);
-        assertEquals(200, result.getStatus());
+        assertEquals(204, result.getStatus());
         verify(horarioRepository).persist(any(Horario.class));
     }
 

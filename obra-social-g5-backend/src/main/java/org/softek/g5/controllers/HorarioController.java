@@ -6,6 +6,9 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
+
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
+
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -20,6 +23,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import lombok.AllArgsConstructor;
 
 @Path("/horarios")
@@ -69,6 +73,7 @@ public class HorarioController {
         return Response.ok(updatedDto).build();
     }
 	
+
     /*@POST
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
@@ -78,6 +83,8 @@ public class HorarioController {
         horarioService.createHorario(dto, ubicacionConsultorio);
         return Response.ok().build();
     }*/
+
+
 
 	@PUT
 	@Path("/restore/{codigo}")

@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 @ApplicationScoped
 public class HorarioService {
@@ -64,7 +65,9 @@ public class HorarioService {
     
     @Transactional
 
+
     public void createHorario(HorarioRequestDto dto, UbicacionRequestDto ubicacionConsultorio) {
+
         try {
             Horario horario = HorarioFactory.toEntity(dto);
             horario.setConsultorio(consultorioRepository.findByUbicacion(ubicacionConsultorio.getCiudad()
