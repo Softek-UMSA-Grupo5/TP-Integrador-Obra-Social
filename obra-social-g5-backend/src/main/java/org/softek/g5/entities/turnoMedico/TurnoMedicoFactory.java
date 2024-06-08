@@ -27,6 +27,11 @@ public class TurnoMedicoFactory {
 	}
 
 	public TurnoMedicoResponseDto createResponseFromEntity(TurnoMedico turnoMedico) {
+		Long recetaId = 0L;
+		if(turnoMedico.getRecetaMedica() != null) {
+			recetaId = turnoMedico.getRecetaMedica().getId();
+		}
+		
 		return TurnoMedicoResponseDto.builder()
 				.codigo(turnoMedico.getCodigo())
 				.fecha(turnoMedico.getFecha())
@@ -34,7 +39,8 @@ public class TurnoMedicoFactory {
 				.minutos(turnoMedico.getMinutos())
 				.estado(turnoMedico.getEstado())
 				.motivoConsulta(turnoMedico.getMotivoConsulta())
-				.recetaMedica(turnoMedico.getRecetaMedica().getId())
+				.estaDisponible(turnoMedico.getEstaDisponible())
+				.recetaMedica(recetaId)
 				.socioId(turnoMedico.getSocio().getId())
 				.medicoId(turnoMedico.getMedico().getId())
 				.build();

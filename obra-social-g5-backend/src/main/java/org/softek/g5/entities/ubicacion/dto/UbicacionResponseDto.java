@@ -14,7 +14,7 @@ import lombok.Setter;
 public class UbicacionResponseDto {
     private String ciudad;
     private String provincia;
-    private String direccion;
+    private String calle;
     private int altura;
     private boolean estaEliminado;
     private String codigo;

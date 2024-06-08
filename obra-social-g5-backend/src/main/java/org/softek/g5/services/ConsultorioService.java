@@ -11,11 +11,15 @@ import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
 import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.horario.HorarioFactory;
+import org.softek.g5.entities.horario.dto.HorarioRequestDto;
+import org.softek.g5.entities.medico.Medico;
+import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 import org.softek.g5.exceptions.entitiesCustomException.ConsultorioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
+import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.repositories.UbicacionRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -31,7 +35,17 @@ public class ConsultorioService {
     @Inject
     UbicacionRepository ubicacionRepository;
     @Inject
+    UbicacionService ubicacionService;
+    @Inject
     HorarioRepository horarioRepository;
+    @Inject
+    HorarioService horarioService;
+    @Inject
+    MedicoService medicoService;
+    @Inject
+    MedicoFactory medicoFactory;
+    @Inject
+    MedicoRepository medicoRepository;
 
     @Transactional
     public List<ConsultorioResponseDto> getAllConsultorios() {
@@ -72,34 +86,38 @@ public class ConsultorioService {
 
     @Transactional
     public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) {
-        try {
-            Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(), dto.getUbicacion().getProvincia(), dto.getUbicacion().getDireccion(), dto.getUbicacion().getAltura());
+    		//Falta verificar que los horarios no se choquen al crear un consultorio
+            Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
-            if (ubicacion == null) {
-                throw new UbicacionNotFoundException("Ubicacion no encontrada");
+            Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
+            		, consultorio.getUbicacion().getProvincia()
+            		, consultorio.getUbicacion().getCalle()
+            		, consultorio.getUbicacion().getAltura());
+            
+            if(ubicacion == null) {
+            	ubicacionService.createUbicacion(dto.getUbicacion());
+            	ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
+                		, consultorio.getUbicacion().getProvincia()
+                		, consultorio.getUbicacion().getCalle()
+                		, consultorio.getUbicacion().getAltura());
             }
-
-            List<Horario> horarios = dto.getHorarioAtencion().stream()
-                    .map(HorarioFactory::toEntity)
-                    .collect(Collectors.toList());
-
-            Consultorio consultorio = Consultorio.builder()
-                    .ubicacion(ubicacion)
-                    .estaEliminado(false)
-                    .build();
-
-            for (Horario horario : horarios) {
-                horario.setConsultorio(consultorio);
-                horarioRepository.persist(horario);
+            
+            if(dto.getMedico() != null) {
+            	Optional<Medico> medico = medicoRepository.findByDni(dto.getMedico().getDni());
+            	consultorio.setMedico(medico.get());
             }
-
-            consultorio.setHorarioAtencion(horarios);
+            
+            consultorio.setUbicacion(ubicacion);
+            
+            
             consultorioRepository.persist(consultorio);
-
+            
+            for (HorarioRequestDto horario : dto.getHorarioAtencion()) {
+            	horarioService.createHorario(horario, dto.getUbicacion());
+            }
+            
             return ConsultorioFactory.toDto(consultorio);
-        } catch (Exception e) {
-            throw new ServiceException("Error al crear el consultorio", e);
-        }
+        
     }
 
     @Transactional
@@ -108,7 +126,7 @@ public class ConsultorioService {
             Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
             if (optionalConsultorio.isPresent()) {
                 Consultorio consultorio = optionalConsultorio.get();
-                Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getDireccion(),dto.getUbicacion().getAltura());
+                Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());
                 
                 if (ubicacion == null) {
                     throw new UbicacionNotFoundException("Ubicación no válida: " + dto.getUbicacion());

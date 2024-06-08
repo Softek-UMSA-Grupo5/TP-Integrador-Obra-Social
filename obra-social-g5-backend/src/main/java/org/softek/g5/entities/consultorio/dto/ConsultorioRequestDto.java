@@ -20,5 +20,5 @@ import lombok.Setter;
 public class ConsultorioRequestDto {
 	 private List<HorarioRequestDto> horarioAtencion;
 	 private UbicacionRequestDto ubicacion;
-	 private List<MedicoRequestDto> medicos;
+	 private MedicoRequestDto medico;
 }

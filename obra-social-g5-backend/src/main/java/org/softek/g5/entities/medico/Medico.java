@@ -32,7 +32,7 @@ public class Medico extends Persona{
 	@OneToMany(mappedBy="medico", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TurnoMedico> turnos;
 	
-	@ManyToMany
+	@OneToMany(mappedBy="medico", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Consultorio> consultorios;
 	
 	@Builder

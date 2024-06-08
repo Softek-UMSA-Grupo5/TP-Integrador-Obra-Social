@@ -8,7 +8,9 @@ import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.exceptions.entitiesCustomException.HorarioNotFoundException;
+import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +23,8 @@ import jakarta.ws.rs.core.Response;
 public class HorarioService {
     @Inject
     HorarioRepository horarioRepository;
+    @Inject
+    ConsultorioRepository consultorioRepository;
 
     public List<HorarioResponseDto> getAllHorarios() {
         try {
@@ -59,12 +63,15 @@ public class HorarioService {
     }
     
     @Transactional
-    public Response createHorario(@Valid HorarioRequestDto dto) {
+    public void createHorario(HorarioRequestDto dto, UbicacionRequestDto ubicacionConsultorio) {
         try {
             Horario horario = HorarioFactory.toEntity(dto);
-            horario.setEstaEliminado(false);
+            horario.setConsultorio(consultorioRepository.findByUbicacion(ubicacionConsultorio.getCiudad()
+            		, ubicacionConsultorio.getProvincia()
+            		, ubicacionConsultorio.getCalle()
+            		, ubicacionConsultorio.getAltura()));
             horarioRepository.persist(horario);
-            return Response.ok(HorarioFactory.toDto(horario)).build();
+            //return Response.ok(HorarioFactory.toDto(horario)).build();
         } catch (Exception e) {
             throw new ServiceException("Error al crear el horario: ", e);
         }

@@ -6,6 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -58,13 +59,15 @@ public class HorarioController {
         return Response.ok(dto).build();
     }
 
-    @POST
+    /*@POST
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crea horario", description ="Se creará un horario")
-    public Response createHorario(@Valid HorarioRequestDto dto) {
-        return horarioService.createHorario(dto);
-    }
+    public Response createHorario(@Valid HorarioRequestDto dto
+    		, @Valid UbicacionRequestDto ubicacionConsultorio) {
+        horarioService.createHorario(dto, ubicacionConsultorio);
+        return Response.ok().build();
+    }*/
 
     @PUT
     @Path("/{codigo}")

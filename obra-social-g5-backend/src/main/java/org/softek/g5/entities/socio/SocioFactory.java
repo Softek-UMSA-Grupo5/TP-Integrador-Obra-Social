@@ -57,13 +57,16 @@ public class SocioFactory {
 				.fechaNacimiento(socio.getFechaNacimiento())
 				.nroAfiliado(socio.getNroAfiliado())
 				.estaEliminado(socio.getEstaEliminado())
-				.beneficiarios(createListBeneficiarioDtoFromEntity(beneficiarioRepository.findBySocio(socio.getId())))
-				.turnos(createListTurnoDtoFromEntity(turnoMedicoRepository.findByTurno(socio.getId())))
+				.beneficiarios(createListBeneficiarioDtoFromEntity(socio.getBeneficiarios()))
+				.turnos(createListTurnoDtoFromEntity(socio.getTurnos()))
 				.build();
 	}
 	
 	public List<BeneficiarioResponseDto> createListBeneficiarioDtoFromEntity(List<Beneficiario> beneficiarios){
 		List<BeneficiarioResponseDto> response = new ArrayList<>();
+		if(beneficiarios == null) {
+			return response;
+		}
     	for (Beneficiario b : beneficiarios) {
     		response.add(beneficiarioFactory.createResponseFromEntity(b));
 		}
@@ -72,6 +75,9 @@ public class SocioFactory {
 	
 	public List<TurnoMedicoResponseDto> createListTurnoDtoFromEntity(List<TurnoMedico> turnos){
 		List<TurnoMedicoResponseDto> response = new ArrayList<>();
+		if(turnos == null) {
+			return response;
+		}
     	for (TurnoMedico t : turnos) {
     		response.add(turnoMedicoFactory.createResponseFromEntity(t));
 		}
