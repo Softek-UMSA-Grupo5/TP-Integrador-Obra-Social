@@ -1,4 +1,5 @@
 package org.softek.g5.services;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,50 +25,52 @@ import lombok.AllArgsConstructor;
 public class SocioService {
 	@Inject
 	SocioRepository socioRepository;
-	
+
 	@Inject
 	SocioFactory socioFactory;
-	
+
 	@Inject
 	BeneficiarioService beneficiarioService;
-	
+
 	@Inject
 	BeneficiarioFactory beneficiarioFactory;
-	
+
 	@Inject
 	BeneficiarioRepository beneficiarioRepository;
-	
+
 	@Transactional
-	public Collection<SocioResponseDto> getSocios(){
+	public Collection<SocioResponseDto> getSocios() {
 		Collection<Socio> socios = socioRepository.listAll();
 		Collection<SocioResponseDto> dtos = new ArrayList<>();
 
 		for (Socio s : socios) {
 			dtos.add(socioFactory.createResponseFromEntity(s));
 		}
-		
+
 		if (dtos.isEmpty()) {
-            throw new EmptyTableException("No hay registros de Socio");
-        }
+			throw new EmptyTableException("No hay registros de Socio");
+		}
 		return dtos;
 	}
-	
+
 	@Transactional
-	public Collection<SocioResponseDto> persistSocio(List<SocioRequestDto> dtos) {
-		Collection<SocioResponseDto> response = new ArrayList<>();
-		for (SocioRequestDto dto : dtos) {
-			Socio socio = socioFactory.createEntityFromDto(dto);
-			Optional<Socio> optionalSocio = socioRepository.findByDni(socio.getDni());
-			if(optionalSocio.isPresent()) {
-				throw new RuntimeException("Este socio ya existe");
-			}
-			this.socioRepository.persist(socio);
-			this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());
-			response.add(socioFactory.createResponseFromEntity(socio));
+	public SocioResponseDto persistSocio(SocioRequestDto dto) {
+		SocioResponseDto response = new SocioResponseDto();
+
+		Socio socio = socioFactory.createEntityFromDto(dto);
+		Optional<Socio> optionalSocio = socioRepository.findByDni(socio.getDni());
+		if (optionalSocio.isPresent()) {
+			throw new RuntimeException("Este socio ya existe");
 		}
+		
+		this.socioRepository.persist(socio);
+		this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());
+		
+		response = socioFactory.createResponseFromEntity(socio);
+
 		return response;
 	}
-	
+
 	@Transactional
 	public SocioResponseDto updateSocio(Long id, SocioRequestDto dto) {
 		Optional<Socio> optionalSocio = Optional.of(socioRepository.findById(id));
@@ -91,15 +94,17 @@ public class SocioService {
 		}
 	}
 	
+	//Añadir método para asociar un turno médico al socio
+
 	@Transactional
 	public void deleteSocio(Long id) {
 		int updatedRows = this.socioRepository.update("estaEliminado = true WHERE id = ?1", id);
-		List<Beneficiario> beneficiarios=this.beneficiarioRepository.findBySocio(id);
-		for (Beneficiario b: beneficiarios) {
-			beneficiarioService.deleteBeneficiario(b.getId(), id);
-		}
 		if (updatedRows == 0) {
 			throw new SocioNotFoundException("Socio no encontrado");
+		}
+		List<Beneficiario> beneficiarios = this.beneficiarioRepository.findBySocio(id);
+		for (Beneficiario b : beneficiarios) {
+			beneficiarioService.deleteBeneficiario(b.getId(), id);
 		}
 	}
 }

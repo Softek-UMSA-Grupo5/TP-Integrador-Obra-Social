@@ -21,6 +21,8 @@ public class TurnoMedicoFactory {
 				.minutos(dto.getMinutos())
 				.estado(TurnoMedicoEstadoEnum.PENDIENTE)
 				.motivoConsulta(dto.getMotivoConsulta())
+				.estaDisponible(false)
+				.recetaMedica(null)
 				.build();
 	}
 
@@ -32,6 +34,9 @@ public class TurnoMedicoFactory {
 				.minutos(turnoMedico.getMinutos())
 				.estado(turnoMedico.getEstado())
 				.motivoConsulta(turnoMedico.getMotivoConsulta())
+				.recetaMedica(turnoMedico.getRecetaMedica().getId())
+				.socioId(turnoMedico.getSocio().getId())
+				.medicoId(turnoMedico.getMedico().getId())
 				.build();
 	}
 

@@ -1,5 +1,6 @@
 package org.softek.g5.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
@@ -13,5 +14,9 @@ public class TurnoMedicoRepository implements PanacheRepositoryBase<TurnoMedico,
 	public Optional<TurnoMedico> findByCodigo(String codigo) {
 		return find("codigo", codigo).firstResultOptional();
 	} 
+	
+	public List<TurnoMedico> findByTurno(Long id) {
+		return find("turno.id = ?1 ", id).list();
+	}
 	
 }

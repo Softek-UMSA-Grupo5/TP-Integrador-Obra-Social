@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.softek.g5.entities.medicamento.Medicamento;
+import org.softek.g5.entities.turnoMedico.TurnoMedico;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +48,9 @@ public class RecetaMedica extends PanacheEntityBase{
     @JsonIgnore
     @OneToMany(mappedBy="recetaMedica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medicamento> medicamentos;
+    
+    @OneToOne
+    private TurnoMedico turno;
     
 }
 	

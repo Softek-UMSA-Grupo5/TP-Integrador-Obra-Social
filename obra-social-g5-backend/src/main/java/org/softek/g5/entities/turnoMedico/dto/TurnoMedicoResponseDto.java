@@ -25,5 +25,10 @@ public class TurnoMedicoResponseDto {
 	private int minutos;
 	private TurnoMedicoEstadoEnum estado;
 	private String motivoConsulta;
+	private Long recetaMedica;
+	private Boolean estaDisponible;
+	private Long medicoId;
+	private Long socioId;
+	
 	
 }

@@ -7,7 +7,11 @@ import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
+import org.softek.g5.entities.turnoMedico.TurnoMedico;
+import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.repositories.BeneficiarioRepository;
+import org.softek.g5.repositories.TurnoMedicoRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,6 +24,12 @@ public class SocioFactory {
 	@Inject
 	BeneficiarioRepository beneficiarioRepository;
 	
+	@Inject
+	TurnoMedicoFactory turnoMedicoFactory;
+	
+	@Inject
+	TurnoMedicoRepository turnoMedicoRepository;
+	
 	public Socio createEntityFromDto(SocioRequestDto dto) {
 		return Socio.builder()
 				.nombre(dto.getNombre())
@@ -31,6 +41,8 @@ public class SocioFactory {
 				.fechaNacimiento(dto.getFechaNacimiento())
 				.nroAfiliado(dto.getNroAfiliado())
 				.estaEliminado(false)
+				.beneficiarios(null)
+				.turnos(null)
 				.build();
 	}
 	
@@ -46,6 +58,7 @@ public class SocioFactory {
 				.nroAfiliado(socio.getNroAfiliado())
 				.estaEliminado(socio.getEstaEliminado())
 				.beneficiarios(createListBeneficiarioDtoFromEntity(beneficiarioRepository.findBySocio(socio.getId())))
+				.turnos(createListTurnoDtoFromEntity(turnoMedicoRepository.findByTurno(socio.getId())))
 				.build();
 	}
 	
@@ -53,6 +66,14 @@ public class SocioFactory {
 		List<BeneficiarioResponseDto> response = new ArrayList<>();
     	for (Beneficiario b : beneficiarios) {
     		response.add(beneficiarioFactory.createResponseFromEntity(b));
+		}
+    	return response;
+    }
+	
+	public List<TurnoMedicoResponseDto> createListTurnoDtoFromEntity(List<TurnoMedico> turnos){
+		List<TurnoMedicoResponseDto> response = new ArrayList<>();
+    	for (TurnoMedico t : turnos) {
+    		response.add(turnoMedicoFactory.createResponseFromEntity(t));
 		}
     	return response;
     }

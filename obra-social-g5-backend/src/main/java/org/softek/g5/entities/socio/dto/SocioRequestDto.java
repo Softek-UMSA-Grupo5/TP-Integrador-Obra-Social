@@ -3,6 +3,7 @@ import java.sql.Date;
 import java.util.List;
 
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +26,5 @@ public class SocioRequestDto {
 	private Date fechaNacimiento;
 	private int nroAfiliado;
 	private List<BeneficiarioRequestDto> beneficiarios;
+	private List<TurnoMedicoRequestDto> turnos;
 }

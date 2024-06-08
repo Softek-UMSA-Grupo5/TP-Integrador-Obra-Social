@@ -1,6 +1,9 @@
 package org.softek.g5.entities.medico.dto;
 
 import java.sql.Date;
+import java.util.List;
+
+import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +25,5 @@ public class MedicoRequestDto {
 	private Date fechaNacimiento;
 	private String cuil;
 	private String especialidad;
-	private String consultorio;
+	private List<ConsultorioRequestDto> consultorios;
 }

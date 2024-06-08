@@ -5,6 +5,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.softek.g5.entities.medico.Medico;
+import org.softek.g5.entities.medico.MedicoFactory;
+import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
+import org.softek.g5.entities.socio.Socio;
+import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoEstadoEnum;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
@@ -12,6 +17,8 @@ import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.TurnoMedicoNotFoundException;
+import org.softek.g5.repositories.MedicoRepository;
+import org.softek.g5.repositories.SocioRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,6 +35,21 @@ public class TurnoMedicoService {
 	
 	@Inject
 	TurnoMedicoFactory turnoMedicoFactory;
+	
+	@Inject
+	RecetaMedicaFactory recetaMedicaFactory;
+	
+	@Inject
+	SocioRepository socioRepository;
+	
+	@Inject
+	SocioFactory socioFactory;
+	
+	@Inject
+	MedicoRepository medicoRepository;
+	
+	@Inject
+	MedicoFactory medicoFactory;
 
 	@Transactional
     public Collection<TurnoMedicoResponseDto> getTurnoMedico() {
@@ -55,8 +77,14 @@ public class TurnoMedicoService {
 			if(optionalturnoMedico.isPresent()) {
 				throw new RuntimeException("Este turno ya existe");
 			}
+			
+			Optional<Medico> medico = Optional.of(medicoRepository.findByDni(dto.getMedico().getDni()).get());
+			Optional<Socio> socio = Optional.of(socioRepository.findByDni(dto.getSocio().getDni()).get());
+			
+			turnoMedico.setMedico(medico.get());
+			turnoMedico.setSocio(socio.get());
+			
             this.turnoMedicoRepository.persist(turnoMedico);
-            //this.medicamentoService.persistMedicamento(turnoMedico.getCodigo(), dto.getMedicamentos());
             response.add(turnoMedicoFactory.createResponseFromEntity(turnoMedico));
         }
         
@@ -69,22 +97,15 @@ public class TurnoMedicoService {
         if (optionalturnoMedico.isPresent()) {
             TurnoMedico turnoMedico = optionalturnoMedico.get();
             
-            turnoMedico.setId(optionalturnoMedico.get().getId());
             turnoMedico.setEstado(dto.getEstado());
             turnoMedico.setFecha(dto.getFecha());
             turnoMedico.setHora(dto.getHora());
             turnoMedico.setMinutos(dto.getMinutos());
             turnoMedico.setMotivoConsulta(dto.getMotivoConsulta());
-            /*try {
-                //BeanUtils.copyProperties(turnoMedico, dto);
-                
-                
-
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("Error al copiar propiedades", e);
-            }*/
+            turnoMedico.setRecetaMedica(recetaMedicaFactory.createEntityFromDto(dto.getRecetaMedica()));
+            turnoMedico.setMedico(medicoFactory.createEntityFromDto(dto.getMedico()));
+            turnoMedico.setSocio(socioFactory.createEntityFromDto(dto.getSocio()));
             
-            //return this.turnoMedicoFactory.createResponseFromEntity(turnoMedico);
         } else {
             throw new TurnoMedicoNotFoundException("turnoMedico no encontrado");
         }
@@ -92,7 +113,7 @@ public class TurnoMedicoService {
     
     @Transactional
     public void deleteTurnoMedico(String codigo) {
-        int updatedRows = this.turnoMedicoRepository.update("estado = ?1 WHERE codigo = ?2", TurnoMedicoEstadoEnum.CANCELADA, codigo);
+        int updatedRows = this.turnoMedicoRepository.update("estado = ?1, estaDisponible = ?2 WHERE codigo = ?3", TurnoMedicoEstadoEnum.CANCELADA, 1, codigo);
         if (updatedRows == 0) {
             throw new TurnoMedicoNotFoundException("turnoMedico no encontrado");
         }

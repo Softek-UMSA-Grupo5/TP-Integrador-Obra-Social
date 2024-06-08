@@ -1,10 +1,9 @@
 package org.softek.g5.services;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.beanutils.BeanUtils;
+
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.medico.dto.MedicoRequestDto;
@@ -12,6 +11,7 @@ import org.softek.g5.entities.medico.dto.MedicoResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.MedicoNotFoundException;
 import org.softek.g5.repositories.MedicoRepository;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -54,6 +54,8 @@ public class MedicoService {
 			}
 			
 			this.medicoRepository.persist(medico);
+			//persistir consultorio
+			
 			response.add(medicoFactory.createResponseFromEntity(medico));
 		}
 
@@ -65,17 +67,16 @@ public class MedicoService {
         Optional<Medico> optionalMedico = Optional.of(medicoRepository.findById(id));
         if (optionalMedico.isPresent()) {
             Medico medico = optionalMedico.get();
-            try {
-                BeanUtils.copyProperties(medico, dto);
-                medico.setId(optionalMedico.get().getId());
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("Error al copiar propiedades", e);
-            }
+            
+            //Actualizar datos del medico manualmente
+            
             return this.medicoFactory.createResponseFromEntity(medico);
         } else {
             throw new MedicoNotFoundException("Medico no encontrado");
         }
     }
+	
+	//Agregar método para setear turno medico
 	
 	@Transactional
 	public void deleteMedico(Long id) {

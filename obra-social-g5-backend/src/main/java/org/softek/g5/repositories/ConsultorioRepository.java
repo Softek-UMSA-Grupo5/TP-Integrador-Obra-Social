@@ -1,8 +1,10 @@
 package org.softek.g5.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.consultorio.Consultorio;
+import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -20,4 +22,8 @@ public class ConsultorioRepository implements PanacheRepository<Consultorio>{
 	 public Optional<Consultorio> findByCodigo(String codigo) {
 	        return find("codigo", codigo).firstResultOptional();
 	    }
+	 public List<Consultorio> findByCodigo(Long id) {
+			return find("consultorio.id = ?1 ", id).list();
+		}
+	 
 }

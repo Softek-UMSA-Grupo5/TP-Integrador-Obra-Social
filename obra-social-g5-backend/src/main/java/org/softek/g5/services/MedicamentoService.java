@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
@@ -17,7 +15,6 @@ import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedic
 import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoNotFoundException;
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
-import org.softek.g5.utils.ReflectionMapper;
 import org.softek.g5.validation.DataValidator;
 import org.softek.g5.validation.entitiesValidation.MedicamentoValidator;
 
@@ -39,9 +36,6 @@ public class MedicamentoService {
 	@Inject
 	RecetaMedicaRepository recetaMedicaRepository;
 
-	@Inject
-	SessionFactory sessionFactory;
-
 	@Transactional
 	public Collection<MedicamentoResponseDto> getMedicamentos() {
 		Collection<Medicamento> medicamentos = medicamentoRepository.listAll();
@@ -53,10 +47,7 @@ public class MedicamentoService {
 		Collection<MedicamentoResponseDto> dtos = new ArrayList<>();
 
 		for (Medicamento m : medicamentos) {
-			MedicamentoResponseDto dto = new MedicamentoResponseDto();
-			dto = ReflectionMapper.copyProperties(m, dto);
-			dtos.add(dto);
-			// dtos.add(medicamentoFactory.createResponseFromEntity(m));
+			dtos.add(medicamentoFactory.createResponseFromEntity(m));
 		}
 
 		return dtos;
@@ -76,12 +67,7 @@ public class MedicamentoService {
 				throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
 			}
 
-			// Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
-
-			Medicamento medicamento = new Medicamento();
-			medicamento = ReflectionMapper.copyProperties(dto, medicamento);
-			medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
-			medicamento.setEstaEliminado(false);
+			Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
 
 			RecetaMedica recetaMedica = recetaMedicaRepository.findByCodigo(codigoReceta).get();
 
@@ -92,8 +78,9 @@ public class MedicamentoService {
 			}
 
 			medicamento.setRecetaMedica(recetaMedica);
+			
+			medicamento.persist();
 
-			this.medicamentoRepository.persist(medicamento);
 			response.add(medicamentoFactory.createResponseFromEntity(medicamento));
 		}
 
@@ -101,7 +88,9 @@ public class MedicamentoService {
 	}
 
 	@Transactional
-	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta, MedicamentoRequestDto dto) {
+	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta,
+			MedicamentoRequestDto dto) {
+
 		Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento,
 				idReceta);
 
@@ -116,11 +105,14 @@ public class MedicamentoService {
 			Medicamento medicamento = optionalMedicamento.get();
 
 			// Copiar las propiedades del DTO al objeto Medicamento
-			medicamento = ReflectionMapper.copyProperties(dto, medicamento);
-
-			// Ajustar el código según los datos del DTO
 			medicamento.setCodigo(dto.getNombre() + "-" + dto.getConcentracion() + "-" + dto.getFormaFarmaceutica());
-
+			medicamento.setNombre(dto.getNombre());
+			medicamento.setConcentracion(dto.getConcentracion());
+			medicamento.setFormaFarmaceutica(dto.getFormaFarmaceutica());
+			medicamento.setFrecuencia(dto.getFrecuencia());
+			medicamento.setDuracion(dto.getDuracion());
+			medicamento.setInstrucciones(dto.getInstrucciones());
+			
 			return this.medicamentoFactory.createResponseFromEntity(medicamento);
 		} else {
 			throw new MedicamentoNotFoundException("Medicamento no encontrado");

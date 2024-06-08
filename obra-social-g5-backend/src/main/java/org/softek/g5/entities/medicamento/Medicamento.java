@@ -38,5 +38,5 @@ public class Medicamento extends PanacheEntityBase{
     
     @ManyToOne
     private RecetaMedica recetaMedica;
-	
+    
 }
