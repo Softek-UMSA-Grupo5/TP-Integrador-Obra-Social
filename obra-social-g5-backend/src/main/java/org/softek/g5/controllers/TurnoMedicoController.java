@@ -35,14 +35,14 @@ public class TurnoMedicoController {
 	TurnoMedicoService TurnoMedicoService;
 
 	@GET
-	@RolesAllowed("USER")
+	//@RolesAllowed("USER")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<TurnoMedicoResponseDto> getAll() {
 		return this.TurnoMedicoService.getTurnoMedico();
 	}
 
 	@POST
-	@RolesAllowed("ADMIN")
+	//@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional

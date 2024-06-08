@@ -28,9 +28,12 @@ public class MedicoFactory {
 	@Inject
 	TurnoMedicoFactory turnoMedicoFactory;
 	
+	@Inject
+	ConsultorioFactory consultorioFactory;
+	
 	public Medico createEntityFromDto(MedicoRequestDto dto) {
 		return Medico.builder()
-				.nombre(null)
+				.nombre(dto.getNombre())
 				.apellido(dto.getApellido())
 				.telefono(dto.getTelefono())
 				.email(dto.getEmail())
@@ -39,6 +42,7 @@ public class MedicoFactory {
 				.fechaNacimiento(dto.getFechaNacimiento())
 				.especialidad(dto.getEspecialidad())
 				.consultorios(null)
+				.turnos(null)
 				.estaEliminado(false)
 				.build();
 	}
@@ -61,6 +65,9 @@ public class MedicoFactory {
 	
 	public List<ConsultorioResponseDto> createListConsultorioDtoFromEntity(List<Consultorio> consultorios){
 		List<ConsultorioResponseDto> response = new ArrayList<>();
+		if(consultorios == null || consultorios.isEmpty()) {
+			return response;
+		}
     	for (Consultorio c : consultorios) {
     		response.add(ConsultorioFactory.toDto(c));
 		}
@@ -69,6 +76,9 @@ public class MedicoFactory {
 	
 	public List<TurnoMedicoResponseDto> createListTurnoMedicoDtoFromEntity(List<TurnoMedico> turnos){
 		List<TurnoMedicoResponseDto> response = new ArrayList<>();
+		if(turnos == null || turnos.isEmpty()) {
+			return response;
+		}
     	for (TurnoMedico t : turnos) {
     		response.add(turnoMedicoFactory.createResponseFromEntity(t));
 		}

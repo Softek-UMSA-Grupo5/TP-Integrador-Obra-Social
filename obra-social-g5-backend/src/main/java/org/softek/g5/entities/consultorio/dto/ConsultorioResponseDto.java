@@ -22,5 +22,5 @@ public class ConsultorioResponseDto {
     private UbicacionResponseDto ubicacion;
     private boolean estaEliminado;
     private String codigo;
-    private List<MedicoResponseDto> medicos;
+    private Long medicoId;
 }

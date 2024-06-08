@@ -13,6 +13,7 @@ public class HorarioFactory {
                     .diaSemana(dto.getDiaSemana())
                     .horaInicio(dto.getHoraInicio())
                     .horaFin(dto.getHoraFin())
+                    .estaEliminado(false)
                     .build();
         }
 

@@ -19,7 +19,7 @@ public class UbicacionRequestDto {
 	@NotBlank
     private String provincia;
     @NotBlank
-	private String direccion;
+	private String calle;
     @NotNull
     private int altura;
     private String codigo;

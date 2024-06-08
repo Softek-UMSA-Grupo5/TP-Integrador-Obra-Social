@@ -64,7 +64,9 @@ public class SocioService {
 		}
 		
 		this.socioRepository.persist(socio);
-		this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());
+		if(socio.getBeneficiarios() != null) {
+			this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());
+		}
 		
 		response = socioFactory.createResponseFromEntity(socio);
 

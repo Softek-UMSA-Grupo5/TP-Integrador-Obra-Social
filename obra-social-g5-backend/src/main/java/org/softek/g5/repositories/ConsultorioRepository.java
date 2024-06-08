@@ -12,9 +12,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ConsultorioRepository implements PanacheRepository<Consultorio>{
-	 public Consultorio findByUbicacion(String ciudad, String provincia, String direccion, Integer altura) {
-	        return find("FROM Consultorio c WHERE c.ubicacion.ciudad = ?1 AND c.ubicacion.provincia = ?2 AND c.ubicacion.direccion = ?3 AND c.ubicacion.altura = ?4",
-	                ciudad, provincia, direccion, altura).firstResult();
+	 public Consultorio findByUbicacion(String ciudad, String provincia, String calle, Integer altura) {
+	        return find("FROM Consultorio c WHERE c.ubicacion.ciudad = ?1 AND c.ubicacion.provincia = ?2 AND c.ubicacion.calle = ?3 AND c.ubicacion.altura = ?4",
+	                ciudad, provincia, calle, altura).firstResult();
 	    }
 	 public Consultorio findByUbicacion(Ubicacion ubicacion) {
 	        return find("ubicacion", ubicacion).firstResult();
