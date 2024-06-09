@@ -15,11 +15,9 @@ import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
-
-import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-
 import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioSuperpuestoException;
+import org.softek.g5.exceptions.entitiesCustomException.medico.MedicoNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
@@ -33,8 +31,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @ApplicationScoped
 @AllArgsConstructor

@@ -25,7 +25,7 @@ public class UsuarioController {
 	UsuarioService usuarioService;
 	
 	@PermitAll
-	@GET
+	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)

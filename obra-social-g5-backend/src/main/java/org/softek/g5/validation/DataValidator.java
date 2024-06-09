@@ -75,6 +75,7 @@ public class DataValidator<T> {
     
     public static boolean validateFields(Boolean value) {
     	return validate(value, v -> v != null && (v == true || v == false));
+    }
 
     public static boolean validateDate(LocalDate date) {
         return validate(date, d -> d != null && !d.isBefore(LocalDate.now()));

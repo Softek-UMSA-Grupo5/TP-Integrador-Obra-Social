@@ -8,9 +8,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.services.BeneficiarioService;
-import jakarta.ws.rs.core.MediaType;
+
 import io.smallrye.common.annotation.Blocking;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,9 +20,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import lombok.AllArgsConstructor;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import lombok.AllArgsConstructor;
 
 @Path("/beneficiarios")
 @Blocking

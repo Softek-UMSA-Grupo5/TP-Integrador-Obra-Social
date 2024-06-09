@@ -34,7 +34,7 @@ public class MedicoController {
 	MedicoService medicoService;
 	
 	@GET
-	//@RolesAllowed("USER")
+	@RolesAllowed({"USER", "ADMIN"})
 	@Operation(summary = "Obtener todos los médicos especialistas", description ="Se obtendrá una lista de todos los médicos especialistas")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<MedicoResponseDto> getAll(){
@@ -42,7 +42,7 @@ public class MedicoController {
 	}
 	
 	@POST
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un médico especialista", description ="Se creará un médico especialista")
@@ -53,7 +53,7 @@ public class MedicoController {
 	}
 	
 	@PUT
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un médico especialista", description ="Se actualizará un médico especialista")
 	@Transactional
@@ -63,7 +63,7 @@ public class MedicoController {
 	}
 	
 	@DELETE
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un médico especialista", description ="Se eliminará un médico especialista")
 	@Transactional
