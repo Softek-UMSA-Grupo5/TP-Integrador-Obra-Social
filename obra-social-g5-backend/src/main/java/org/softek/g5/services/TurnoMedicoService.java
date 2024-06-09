@@ -17,9 +17,12 @@ import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
 import org.softek.g5.exceptions.entitiesCustomException.TurnoMedicoNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedicamentoData;
 import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.repositories.SocioRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
+import org.softek.g5.validation.DataValidator;
+import org.softek.g5.validation.entitiesValidation.TurnoMedicoValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -69,9 +72,15 @@ public class TurnoMedicoService {
     
     @Transactional
     public Collection<TurnoMedicoResponseDto> persistTurnoMedico(List<TurnoMedicoRequestDto> dtos) {
-        // Agregar validaciones si es necesario
         Collection<TurnoMedicoResponseDto> response = new ArrayList<>();
         for (TurnoMedicoRequestDto dto : dtos) {
+        	
+        	DataValidator.validateDtoFields(dto);
+
+			if (!TurnoMedicoValidator.validateRequestDto(dto)) {
+				throw new InvalidMedicamentoData("Los datos de turno medico enviados son erroneos");
+			}
+        	
             TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);
             Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(turnoMedico.getCodigo());
 			if(optionalturnoMedico.isPresent()) {
@@ -95,6 +104,13 @@ public class TurnoMedicoService {
     public void updateTurnoMedico(String codigo, TurnoMedicoRequestDto dto) {
         Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(codigo);
         if (optionalturnoMedico.isPresent()) {
+        	
+        	DataValidator.validateDtoFields(dto);
+
+			if (!TurnoMedicoValidator.validateRequestDto(dto)) {
+				throw new InvalidMedicamentoData("Los datos de turno medico enviados son erroneos");
+			}
+        	
             TurnoMedico turnoMedico = optionalturnoMedico.get();
             
             turnoMedico.setEstado(dto.getEstado());

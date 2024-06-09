@@ -1,6 +1,7 @@
 package org.softek.g5.exceptions.entitiesCustomException.medicamento;
 
 public class MedicamentoNotFoundException extends RuntimeException{
+	
 
 	public MedicamentoNotFoundException() {
         super();

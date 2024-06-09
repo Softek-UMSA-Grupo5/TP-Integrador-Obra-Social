@@ -13,9 +13,12 @@ import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.exceptions.EmptyTableException;
-import org.softek.g5.exceptions.entitiesCustomException.RecetaMedicaNotFoundException;
+import org.softek.g5.exceptions.InvalidDataRequest;
+import org.softek.g5.exceptions.entitiesCustomException.recetaMedica.RecetaMedicaNotFoundException;
 import org.softek.g5.repositories.RecetaMedicaRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
+import org.softek.g5.validation.DataValidator;
+import org.softek.g5.validation.entitiesValidation.RecetaMedicaValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -58,16 +61,24 @@ public class RecetaMedicaService {
 	}
 
 	@Transactional
-	public RecetaMedicaResponseDto persistRecetaMedica(String codigoTurno, RecetaMedicaRequestDto dto) {
-		// Agregar validaciones si es necesario
+	public RecetaMedicaResponseDto persistRecetaMedica(String codigoTurno, RecetaMedicaRequestDto dto) throws Exception {
+		
 		RecetaMedicaResponseDto response = new RecetaMedicaResponseDto();
+		
+		DataValidator.validateDtoFields(dto);
+		
+		if (!RecetaMedicaValidator.validateRequestDto(dto)) {
+			throw new InvalidDataRequest("Los datos de receta enviados son erroneos");
+		}
+		
 		RecetaMedica recetaMedica = recetaMedicaFactory.createEntityFromDto(dto);
+		
 		Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(recetaMedica.getCodigo());
 		if (optionalRecetaMedica.isPresent()) {
 			throw new RuntimeException("Esta receta ya existe en el turno");
 		}
 
-		Optional<TurnoMedico> turno = turnoMedicoRepository.findByCodigo("codigo");
+		Optional<TurnoMedico> turno = turnoMedicoRepository.findByCodigo(codigoTurno);
 		if (!optionalRecetaMedica.isPresent()) {
 			throw new RuntimeException("El turno no se ha encontrado");
 		}
@@ -81,10 +92,17 @@ public class RecetaMedicaService {
 	}
 
 	@Transactional
-	public void updateRecetaMedica(String codigo, RecetaMedicaRequestDto dto) {
+	public void updateRecetaMedica(String codigo, RecetaMedicaRequestDto dto) throws Exception {
 		Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigo);
 		if (optionalRecetaMedica.isPresent()) {
 			RecetaMedica recetaMedica = optionalRecetaMedica.get();
+			
+			DataValidator.validateDtoFields(dto);
+			
+			if (!RecetaMedicaValidator.validateRequestDto(dto)) {
+				throw new InvalidDataRequest("Los datos de receta enviados son erroneos");
+			}
+			
 			recetaMedica.setCantDiasVigencia(dto.getCantDiasVigencia());
 			recetaMedica.setUltimaModificacion(LocalDate.now());
 
