@@ -55,6 +55,7 @@ public class ConsultorioFactory {
     	                .collect(Collectors.toList());
     	    }
 
+
         UbicacionResponseDto ubicacionDto = UbicacionFactory.toDto(consultorio.getUbicacion());
 
         return ConsultorioResponseDto.builder()

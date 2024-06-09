@@ -22,4 +22,5 @@ public class ConsultorioRequestDto {
 	 private UbicacionRequestDto ubicacion;
 	 private MedicoRequestDto medico;
 	 private String codigo;
+  
 }

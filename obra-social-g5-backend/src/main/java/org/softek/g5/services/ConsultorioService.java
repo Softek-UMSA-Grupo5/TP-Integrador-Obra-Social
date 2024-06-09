@@ -57,6 +57,7 @@ public class ConsultorioService {
     @Inject
     private final ConsultorioFactory consultorioFactory;
 
+
     @Transactional
     public List<ConsultorioResponseDto> getAllConsultorios() {
         try {
@@ -107,6 +108,7 @@ public class ConsultorioService {
     	        throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
     	    }
     	    
+
             Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
             Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()

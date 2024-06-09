@@ -30,6 +30,7 @@ public class UbicacionFactory {
             .altura(ubicacion.getAltura())
             .estaEliminado(ubicacion.isEstaEliminado())
             .build();
+
         }
      
      public static void updateEntity(Ubicacion ubicacion, UbicacionRequestDto dto) {

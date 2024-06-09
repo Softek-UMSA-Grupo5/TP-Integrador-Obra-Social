@@ -10,6 +10,7 @@ import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioNotFoundException;
+
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 
@@ -64,6 +65,7 @@ public class HorarioService {
     
     @Transactional
     public void createHorario(HorarioRequestDto dto, UbicacionRequestDto ubicacionConsultorio) {
+
 
         try {
             Horario horario = HorarioFactory.toEntity(dto);

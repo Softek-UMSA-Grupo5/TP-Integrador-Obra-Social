@@ -34,4 +34,5 @@ public class ConsultorioRepository implements PanacheRepository<Consultorio> {
 		return find("consultorio.id = ?1 ", id).list();
 	}
 
+
 }
