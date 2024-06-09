@@ -86,7 +86,7 @@ public class UbicacionServiceTest {
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(ubicacion));
         when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
-        UbicacionResponseDto result = ubicacionService.getUbicacionByCodigo("U001");
+        UbicacionResponseDto result = ubicacionService.getUbicacionByCodigo("U0015");
 
         assertNotNull(result);
         assertEquals("CiudadA", result.getCiudad());
@@ -115,9 +115,9 @@ public class UbicacionServiceTest {
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, codigo);
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
-        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+        when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
-        UbicacionResponseDto result = ubicacionService.updateUbicacion("U001", requestDto);
+        UbicacionResponseDto result = ubicacionService.updateUbicacion("U0015", requestDto);
 
         assertNotNull(result);
         assertEquals("CiudadA", result.getCiudad());
@@ -129,9 +129,9 @@ public class UbicacionServiceTest {
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U0015");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
-        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+        when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
-        Response result = ubicacionService.deleteUbicacion("U001");
+        Response result = ubicacionService.deleteUbicacion("U0015");
 
         assertNotNull(result);
         assertEquals(200, result.getStatus());
@@ -142,9 +142,9 @@ public class UbicacionServiceTest {
     public void deleteUbicacionReturn404IfUbicacionNotFoundTest() {
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.empty());
-        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+        when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
-        Response result = ubicacionService.deleteUbicacion("U001");
+        Response result = ubicacionService.deleteUbicacion("U0015");
 
         assertNotNull(result);
         assertEquals(404, result.getStatus());
@@ -174,7 +174,7 @@ public class UbicacionServiceTest {
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
         when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
-        Response result = ubicacionService.restoreUbicacion("U001");
+        Response result = ubicacionService.restoreUbicacion("U0015");
 
         assertNotNull(result);
         assertEquals(200, result.getStatus());

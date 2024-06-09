@@ -29,25 +29,33 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @ApplicationScoped
+@AllArgsConstructor
 public class ConsultorioService {
     @Inject
-    ConsultorioRepository consultorioRepository;
+    private final ConsultorioRepository consultorioRepository;
     @Inject
-    UbicacionRepository ubicacionRepository;
+	private final UbicacionRepository ubicacionRepository;
     @Inject
-    UbicacionService ubicacionService;
+    private final UbicacionService ubicacionService;
     @Inject
-    HorarioRepository horarioRepository;
+    private final HorarioRepository horarioRepository;
     @Inject
-    HorarioService horarioService;
+    private final HorarioService horarioService;
     @Inject
-    MedicoService medicoService;
+    private final MedicoService medicoService;
     @Inject
-    MedicoFactory medicoFactory;
+    private final MedicoFactory medicoFactory;
     @Inject
-    MedicoRepository medicoRepository;
+    private final MedicoRepository medicoRepository;
+    @Inject
+    private final HorarioValidator horarioValidator;
+    @Inject
+    private final ConsultorioFactory consultorioFactory;
 
     @Transactional
     public List<ConsultorioResponseDto> getAllConsultorios() {
@@ -98,6 +106,7 @@ public class ConsultorioService {
     	    if (!HorarioValidator.validateHorarios(horarios)) {
     	        throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
     	    }
+    	    
             Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
             Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()

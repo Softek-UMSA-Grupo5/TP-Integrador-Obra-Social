@@ -6,7 +6,9 @@ import java.util.List;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.validation.DataValidator;
 
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class HorarioValidator {
 
     public static boolean validateRequestDto(HorarioRequestDto dto) {

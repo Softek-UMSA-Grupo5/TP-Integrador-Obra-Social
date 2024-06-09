@@ -21,4 +21,5 @@ public class ConsultorioRequestDto {
 	 private List<HorarioRequestDto> horarioAtencion;
 	 private UbicacionRequestDto ubicacion;
 	 private MedicoRequestDto medico;
+	 private String codigo;
 }

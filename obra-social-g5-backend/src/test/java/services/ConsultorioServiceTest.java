@@ -1,157 +1,254 @@
 package services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 
 import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.softek.g5.entities.consultorio.dto.*;
 import org.softek.g5.entities.consultorio.Consultorio;
+import org.softek.g5.entities.consultorio.ConsultorioFactory;
+import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
+import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
+import org.softek.g5.entities.horario.Horario;
+import org.softek.g5.entities.horario.dto.HorarioRequestDto;
+import org.softek.g5.entities.medico.Medico;
+import org.softek.g5.entities.medico.MedicoFactory;
+import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.ubicacion.Ubicacion;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
+import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
+import org.softek.g5.repositories.HorarioRepository;
+import org.softek.g5.repositories.MedicoRepository;
+import org.softek.g5.repositories.UbicacionRepository;
 import org.softek.g5.services.ConsultorioService;
+import org.softek.g5.services.HorarioService;
+import org.softek.g5.services.MedicoService;
+import org.softek.g5.services.UbicacionService;
+import org.softek.g5.validation.entitiesValidation.HorarioValidator;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.test.junit.QuarkusTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
+import java.sql.Date;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @QuarkusTest
 @ExtendWith(MockitoExtension.class)
 public class ConsultorioServiceTest {
 
-	
 	@InjectMocks
-    private ConsultorioService consultorioService;
-
+	ConsultorioService consultorioService;
     @Mock
     private ConsultorioRepository consultorioRepository;
     @Mock
-    ConsultorioRepository consultorioRepositoryMock;
+    private UbicacionRepository ubicacionRepository;
     @Mock
-    private PanacheQuery<Consultorio> mockPanacheQuery;
-    
+    private UbicacionService ubicacionService;
+    @Mock
+    private HorarioRepository horarioRepository;
+    @Mock
+    private HorarioService horarioService;
+    @Mock
+    private MedicoService medicoService;
+    @Mock
+    private MedicoFactory medicoFactory;
+    @Mock
+    private MedicoRepository medicoRepository;
+    @Mock
+    private HorarioValidator horarioValidator;
+    @Mock
+    private ConsultorioFactory consultorioFactory;
+	@BeforeEach
+	void setUp() {
+	    MockitoAnnotations.initMocks(this);
+	    
+	    consultorioService = new ConsultorioService(
+	            consultorioRepository,
+	            ubicacionRepository,
+	            ubicacionService,
+	            horarioRepository,
+	            horarioService,
+	            medicoService,
+	            medicoFactory,
+	            medicoRepository,
+	            horarioValidator,
+	            consultorioFactory
+	        );
+	}
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
+	@Test
+	void GetAllConsultoriosTest() {
+		Consultorio consultorio1 = new Consultorio();
+		Consultorio consultorio2 = new Consultorio();
+		when(consultorioRepository.listAll()).thenReturn(List.of(consultorio1, consultorio2));
 
-    @Test
-    public void testGetAllConsultorios() {
-        Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setCodigo("UB1234");
+		List<ConsultorioResponseDto> consultorios = consultorioService.getAllConsultorios();
 
-        Consultorio consultorio1 = new Consultorio();
-        consultorio1.setEstaEliminado(false);
-        consultorio1.setHorarioAtencion(new ArrayList<>()); 
-        consultorio1.setUbicacion(ubicacion);
-
-        Consultorio consultorio2 = new Consultorio();
-        consultorio2.setEstaEliminado(false);
-        consultorio2.setHorarioAtencion(new ArrayList<>()); 
-        consultorio2.setUbicacion(ubicacion);
-
-        List<Consultorio> consultorios = Arrays.asList(consultorio1, consultorio2);
-        when(consultorioRepository.listAll()).thenReturn(consultorios);
-
-        List<ConsultorioResponseDto> result = consultorioService.getAllConsultorios();
-
-        assertEquals(2, result.size());
-        verify(consultorioRepository, times(1)).listAll();
-    }
-    
-    @Test
-    public void testGetConsultorioByCodigo_Success() {
-        String codigo = "C1234";
+		verify(consultorioRepository, times(1)).listAll();
+	}
+	
+	@Test
+    void GetConsultorioByCodigoTest() {
+        String codigo = "testCodigo";
         Consultorio consultorio = new Consultorio();
         consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(false);
 
-        PanacheQuery<Consultorio> panacheQueryMock = mock(PanacheQuery.class);
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
 
-        when(consultorioRepositoryMock.find(anyString(), any(Object[].class))).thenReturn(panacheQueryMock);
+        ConsultorioResponseDto result = consultorioService.getConsultorioByCodigo(codigo);
 
-        Optional<Consultorio> optionalConsultorio = Optional.of(consultorio);
-        when(panacheQueryMock.firstResultOptional()).thenReturn(optionalConsultorio);
-
-        ConsultorioResponseDto response = consultorioService.getConsultorioByCodigo(codigo);
-
-        assertNotNull(response);
-        assertEquals(codigo, response.getCodigo());
-        verify(consultorioRepositoryMock).find("codigo", new Object[]{codigo});
+        assertNotNull(result);
+        assertEquals(codigo, result.getCodigo());
     }
+	@Test
+	void GetConsultorioByCodigoNotFoundTest() {
+	    String codigo = "testCodigo";
 
+	    when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
 
+	    ServiceException thrown = assertThrows(ServiceException.class, () -> {
+	        consultorioService.getConsultorioByCodigo(codigo);
+	    });
 
+	    assertTrue(thrown.getCause() instanceof ConsultorioNotFoundException);
+	    assertEquals("Consultorio no encontrado con código: " + codigo, thrown.getCause().getMessage());
+	}
 
-//    @Test
-//    public void testGetConsultorioByCodigo_NotFound() {
-//        // Arrange
-//        String codigo = "C123";
-//
-//        // Configurar el comportamiento del mock para que devuelva un Optional vacío
-//        when(consultorioRepositoryMock.find("codigo", codigo)).thenReturn(Optional.of(consultorio));
-//
-//        // Act & Assert
-//        assertThrows(ConsultorioNotFoundException.class, () -> consultorioService.getConsultorioByCodigo(codigo));
-//        verify(consultorioRepositoryMock, times(1)).find("codigo", codigo);
-//    }
 
     @Test
-    public void testGetConsultorioByCodigoServiceExceptionTest() {
-        String codigo = "C1234";
-        when(consultorioRepository.find("codigo", codigo)).thenThrow(new RuntimeException());
+    void GetConsultorioByCodigoEliminadoTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(true);
 
-        assertThrows(ServiceException.class, () -> consultorioService.getConsultorioByCodigo(codigo));
-        verify(consultorioRepository, times(1)).find("codigo", codigo);
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
+
+        ServiceException thrown = assertThrows(ServiceException.class, () -> {
+            consultorioService.getConsultorioByCodigo(codigo);
+        });
+
+        assertTrue(thrown.getCause() instanceof ConsultorioNotFoundException);
+        assertEquals("Consultorio eliminado encontrado con código: " + codigo, thrown.getCause().getMessage());
     }
+
 	
-//    @Test
-//    public void testCreateConsultorio() {
-//        ConsultorioRequestDto dto = new ConsultorioRequestDto();
-//        // Configurar dto con datos de prueba
-//
-//        Consultorio consultorio = new Consultorio();
-//        when(consultorioRepository.persist(any(Consultorio.class))).thenReturn(null);
-//
-//        Ubicacion ubicacion = new Ubicacion();
-//        when(ubicacionRepository.searchByDetails(anyString(), anyString(), anyString(), anyString())).thenReturn(ubicacion);
-//
-//        Medico medico = new Medico();
-//        when(medicoRepository.findByDni(anyString())).thenReturn(Optional.of(medico));
-//
-//        ConsultorioResponseDto response = consultorioService.createConsultorio(dto);
-//
-//        assertNotNull(response);
-//        verify(consultorioRepository, times(1)).persist(any(Consultorio.class));
-//        verify(horarioService, times(dto.getHorarioAtencion().size())).createHorario(any(HorarioRequestDto.class), any(Ubicacion.class));
-//    }
-//    @Test
-//    public void testGetConsultorioByCodigoNotFound() {
-//        String codigo = "testCodigo";
-//
-//        when(consultorioRepository.find("codigo", codigo)).thenReturn(Optional.empty());
-//
-//        Exception exception = assertThrows(ConsultorioNotFoundException.class, () -> {
-//            consultorioService.getConsultorioByCodigo(codigo);
-//        });
-//
-//        String expectedMessage = "Consultorio no encontrado";
-//        String actualMessage = exception.getMessage();
-//
-//        assertTrue(actualMessage.contains(expectedMessage));
-//        verify(consultorioRepository, times(1)).find("codigo", codigo);
-//    }
+	@Test
+    @Transactional
+    public void CreateConsultorioTest() {
+        when(ubicacionRepository.searchByDetails(anyString(), anyString(), anyString(), anyInt()))
+            .thenReturn(new Ubicacion());
+        Medico medico = new Medico();
+        when(medicoRepository.findByDni(anyInt())).thenReturn(Optional.of(medico));
+
+        ConsultorioRequestDto dto = createConsultorioRequestDto();
+
+        ConsultorioResponseDto responseDto = consultorioService.createConsultorio(dto);
+
+        assertNotNull(responseDto);
+    }
+
+	private ConsultorioRequestDto createConsultorioRequestDto() {
+	    ConsultorioRequestDto dto = new ConsultorioRequestDto();
+
+	    List<HorarioRequestDto> horarios = new ArrayList<>();
+
+	    HorarioRequestDto horario1 = new HorarioRequestDto();
+	    horario1.setDiaSemana(Horario.DiaSemana.LUNES);
+	    horario1.setHoraInicio(LocalTime.parse("08:00:00"));
+	    horario1.setHoraFin(LocalTime.parse("12:00:00"));
+	    horario1.setCodigo("2f154");
+	    horarios.add(horario1);
+
+	    HorarioRequestDto horario2 = new HorarioRequestDto();
+	    horario2.setDiaSemana(Horario.DiaSemana.MARTES);
+	    horario2.setHoraInicio(LocalTime.parse("11:00:30"));
+	    horario2.setHoraFin(LocalTime.parse("16:00:00"));
+	    horario2.setCodigo("ec05d");
+	    horarios.add(horario2);
+
+	    dto.setHorarioAtencion(horarios);
+
+	    UbicacionRequestDto ubicacion = new UbicacionRequestDto();
+	    ubicacion.setCiudad("San Juan");
+	    ubicacion.setProvincia("San Juan");
+	    ubicacion.setCalle("Laprida");
+	    ubicacion.setAltura(1234);
+	    ubicacion.setCodigo("63b75");
+
+	    dto.setUbicacion(ubicacion);
+	    
+	    Date fechaNacimiento = new Date(90, 0, 1);
+	    MedicoRequestDto medicoDto = new MedicoRequestDto();
+	    medicoDto.setNombre("Juan");
+	    medicoDto.setApellido("Perez");
+	    medicoDto.setTelefono("123456789");
+	    medicoDto.setEmail("juan@example.com");
+	    medicoDto.setDni(12345678); 
+	    medicoDto.setCuil("20-12345678-0");
+	    medicoDto.setFechaNacimiento(fechaNacimiento);
+	    medicoDto.setEspecialidad("Pediatría");
+
+	    dto.setMedico(medicoDto);
+
+	    return dto;
+	}
+	
+	@Test
+    @Transactional
+    void DeleteConsultorioTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(false);
+
+        PanacheQuery<Consultorio> mockedQuery = Mockito.mock(PanacheQuery.class);
+
+        when(consultorioRepository.find("codigo", codigo)).thenReturn(mockedQuery);
+        when(mockedQuery.firstResultOptional()).thenReturn(Optional.of(consultorio));
+
+        boolean result = consultorioService.deleteConsultorio(codigo);
+
+        assertTrue(result);
+        assertTrue(consultorio.isEstaEliminado());
+    }
+
+	@Test
+    @Transactional
+    void RestoreConsultorioDeletedTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(false);
+
+        PanacheQuery<Consultorio> mockedQuery = Mockito.mock(PanacheQuery.class);
+
+        when(consultorioRepository.find("codigo", codigo)).thenReturn(mockedQuery);
+        when(mockedQuery.firstResultOptional()).thenReturn(Optional.of(consultorio));
+
+        Response response = consultorioService.restoreConsultorio(codigo);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals("El consultorio no está eliminado.", response.getEntity());
+    }
 
 }

@@ -16,8 +16,10 @@ import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
 
 @ApplicationScoped
+@AllArgsConstructor
 public class ConsultorioFactory {
     
 	@Inject
@@ -47,11 +49,11 @@ public class ConsultorioFactory {
     		 medicoId = consultorio.getMedico().getId();
     	}
     	
-        if(!consultorio.getHorarioAtencion().isEmpty()) {
-        	horariosDto = consultorio.getHorarioAtencion().stream()
-                    .map(HorarioFactory::toDto)
-                    .collect(Collectors.toList());
-        }
+    	 if (consultorio.getHorarioAtencion() != null && !consultorio.getHorarioAtencion().isEmpty()) {
+    	        horariosDto = consultorio.getHorarioAtencion().stream()
+    	                .map(HorarioFactory::toDto)
+    	                .collect(Collectors.toList());
+    	    }
 
         UbicacionResponseDto ubicacionDto = UbicacionFactory.toDto(consultorio.getUbicacion());
 
