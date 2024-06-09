@@ -54,8 +54,8 @@ public class UbicacionServiceTest {
     @Test
     public void getAllUbicacionesTest() {
         List<Ubicacion> ubicaciones = List.of(
-                new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U001"),
-                new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U002"));
+                new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U0015"),
+                new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U0025"));
         when(ubicacionRepository.listAll()).thenReturn(ubicaciones);
 
         List<UbicacionResponseDto> result = ubicacionService.getAllUbicaciones();
@@ -68,8 +68,8 @@ public class UbicacionServiceTest {
     @Test
     public void getAllUbicacionesDeletedTest() {
         List<Ubicacion> ubicaciones = List.of(
-                new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, true, "U001"),
-                new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U002"));
+                new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, true, "U0015"),
+                new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U0025"));
         when(ubicacionRepository.listAll()).thenReturn(ubicaciones);
 
         List<UbicacionResponseDto> result = ubicacionService.getAllUbicacionesDeleted();
@@ -81,21 +81,21 @@ public class UbicacionServiceTest {
 
     @Test
     public void getUbicacionByCodigoTest() {
-        Ubicacion ubicacion = new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U001");
+        Ubicacion ubicacion = new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U0015");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(ubicacion));
-        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+        when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
         UbicacionResponseDto result = ubicacionService.getUbicacionByCodigo("U001");
 
         assertNotNull(result);
         assertEquals("CiudadA", result.getCiudad());
-        verify(ubicacionRepository).find("codigo", "U001");
+        verify(ubicacionRepository).find("codigo", "U0015");
     }
 
     @Test
     public void createUbicacionTest() {
-        String codigo = UUID.randomUUID().toString().substring(0, 10);
+        String codigo = UUID.randomUUID().toString().substring(0, 5);
         UbicacionRequestDto requestDto = new UbicacionRequestDto("CiudadA", "ProvinciaA", "DireccionA", 123, codigo);
         Ubicacion ubicacion = new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, codigo);
         doNothing().when(ubicacionRepository).persist(any(Ubicacion.class));
@@ -110,7 +110,7 @@ public class UbicacionServiceTest {
 
     @Test
     public void updateUbicacionTest() {
-		String codigo = UUID.randomUUID().toString().substring(0, 10);
+		String codigo = UUID.randomUUID().toString().substring(0, 5);
 	    UbicacionRequestDto requestDto = new UbicacionRequestDto("CiudadA", "ProvinciaA", "DireccionA", 123, codigo);
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, codigo);
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
@@ -126,7 +126,7 @@ public class UbicacionServiceTest {
 
     @Test
     public void deleteUbicacionTest() {
-        Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U001");
+        Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U0015");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
         when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
@@ -159,7 +159,7 @@ public class UbicacionServiceTest {
     	when(ubicacionRepository.find(any(String.class), any(Object[].class))).thenReturn(mockQuery);
     	when(mockQuery.firstResultOptional()).thenReturn(Optional.of(ubicacion));
 
-    	Response result = ubicacionService.deleteUbicacion("U001");
+    	Response result = ubicacionService.deleteUbicacion("U0015");
 
     	assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatus());
     	verify(ubicacionRepository, never()).persist(any(Ubicacion.class));
@@ -169,10 +169,10 @@ public class UbicacionServiceTest {
 
     @Test
     public void restoreUbicacionTest() {
-        Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U001");
+        Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U0015");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
-        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+        when(ubicacionRepository.find("codigo", "U0015")).thenReturn(mockQuery);
 
         Response result = ubicacionService.restoreUbicacion("U001");
 

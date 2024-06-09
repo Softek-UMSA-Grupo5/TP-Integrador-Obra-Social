@@ -50,19 +50,17 @@ public class ConsultorioServiceTest {
 
     @Test
     public void testGetAllConsultorios() {
-        // Crear una ubicación mock
         Ubicacion ubicacion = new Ubicacion();
         ubicacion.setCodigo("UB1234");
 
-        // Crear consultorios mock con ubicaciones no nulas
         Consultorio consultorio1 = new Consultorio();
         consultorio1.setEstaEliminado(false);
-        consultorio1.setHorarioAtencion(new ArrayList<>()); // Evitar NullPointerException
+        consultorio1.setHorarioAtencion(new ArrayList<>()); 
         consultorio1.setUbicacion(ubicacion);
 
         Consultorio consultorio2 = new Consultorio();
         consultorio2.setEstaEliminado(false);
-        consultorio2.setHorarioAtencion(new ArrayList<>()); // Evitar NullPointerException
+        consultorio2.setHorarioAtencion(new ArrayList<>()); 
         consultorio2.setUbicacion(ubicacion);
 
         List<Consultorio> consultorios = Arrays.asList(consultorio1, consultorio2);
@@ -76,28 +74,21 @@ public class ConsultorioServiceTest {
     
     @Test
     public void testGetConsultorioByCodigo_Success() {
-        // Arrange
         String codigo = "C1234";
         Consultorio consultorio = new Consultorio();
         consultorio.setCodigo(codigo);
 
-        // Creamos un mock de PanacheQuery
         PanacheQuery<Consultorio> panacheQueryMock = mock(PanacheQuery.class);
 
-        // Configuramos el mock del repositorio para que devuelva el mock de PanacheQuery
         when(consultorioRepositoryMock.find(anyString(), any(Object[].class))).thenReturn(panacheQueryMock);
 
-        // Configuramos el mock de PanacheQuery para que devuelva un Optional con el consultorio
         Optional<Consultorio> optionalConsultorio = Optional.of(consultorio);
         when(panacheQueryMock.firstResultOptional()).thenReturn(optionalConsultorio);
 
-        // Act
         ConsultorioResponseDto response = consultorioService.getConsultorioByCodigo(codigo);
 
-        // Assert
         assertNotNull(response);
         assertEquals(codigo, response.getCodigo());
-        // Verificamos que el método find del repositorio haya sido invocado con los argumentos esperados
         verify(consultorioRepositoryMock).find("codigo", new Object[]{codigo});
     }
 
@@ -119,11 +110,9 @@ public class ConsultorioServiceTest {
 
     @Test
     public void testGetConsultorioByCodigoServiceExceptionTest() {
-        // Arrange
         String codigo = "C1234";
         when(consultorioRepository.find("codigo", codigo)).thenThrow(new RuntimeException());
 
-        // Act & Assert
         assertThrows(ServiceException.class, () -> consultorioService.getConsultorioByCodigo(codigo));
         verify(consultorioRepository, times(1)).find("codigo", codigo);
     }
