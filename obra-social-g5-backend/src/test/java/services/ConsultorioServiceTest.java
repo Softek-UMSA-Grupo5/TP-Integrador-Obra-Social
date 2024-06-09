@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,26 +18,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.softek.g5.entities.consultorio.dto.*;
 import org.softek.g5.entities.consultorio.Consultorio;
-import org.softek.g5.entities.horario.Horario;
-import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
-import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
-import org.softek.g5.repositories.HorarioRepository;
-import org.softek.g5.repositories.MedicoRepository;
-import org.softek.g5.repositories.UbicacionRepository;
 import org.softek.g5.services.ConsultorioService;
-import org.softek.g5.services.HorarioService;
-import org.softek.g5.services.MedicoService;
-import org.softek.g5.services.UbicacionService;
 
-import com.google.inject.matcher.Matchers;
-
-import jakarta.ws.rs.core.Response;
-import jakarta.inject.Inject;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.test.junit.QuarkusTest;
-import org.softek.g5.repositories.ConsultorioRepository;
 
 
 @QuarkusTest
