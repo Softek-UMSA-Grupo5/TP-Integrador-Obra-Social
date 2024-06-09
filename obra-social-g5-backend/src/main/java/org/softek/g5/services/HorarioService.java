@@ -9,7 +9,8 @@ import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-import org.softek.g5.exceptions.entitiesCustomException.HorarioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioNotFoundException;
+
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 
@@ -64,6 +65,8 @@ public class HorarioService {
     
     @Transactional
     public void createHorario(HorarioRequestDto dto, UbicacionRequestDto ubicacionConsultorio) {
+
+
         try {
             Horario horario = HorarioFactory.toEntity(dto);
             horario.setConsultorio(consultorioRepository.findByUbicacion(ubicacionConsultorio.getCiudad()
@@ -71,7 +74,9 @@ public class HorarioService {
             		, ubicacionConsultorio.getCalle()
             		, ubicacionConsultorio.getAltura()));
             horarioRepository.persist(horario);
+
             //return Response.ok(HorarioFactory.toDto(horario)).build();
+
         } catch (Exception e) {
             throw new ServiceException("Error al crear el horario: ", e);
         }
@@ -79,21 +84,17 @@ public class HorarioService {
    
     @Transactional
     public HorarioResponseDto updateHorario(String codigo, @Valid HorarioRequestDto dto) {
-        try {
-            Horario horario = horarioRepository.find("codigo", codigo)
-                    .firstResultOptional()
-                    .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
+        Horario horario = horarioRepository.find("codigo", codigo)
+                .firstResultOptional()
+                .orElseThrow(() -> new HorarioNotFoundException("Horario no encontrado con código: " + codigo));
 
-            if (horario.isEstaEliminado()) {
-                throw new HorarioNotFoundException("Horario no encontrado con código: " + codigo);
-            }
-
-            HorarioFactory.updateEntity(horario, dto);
-            horarioRepository.persist(horario);
-            return HorarioFactory.toDto(horario);
-        } catch (Exception e) {
-            throw new ServiceException("Error al actualizar el horario", e);
+        if (horario.isEstaEliminado()) {
+            throw new HorarioNotFoundException("Horario no encontrado con código: " + codigo);
         }
+
+        HorarioFactory.updateEntity(horario, dto);
+        horarioRepository.persist(horario);
+        return HorarioFactory.toDto(horario);
     }
 
     @Transactional
@@ -105,7 +106,7 @@ public class HorarioService {
 
             horario.setEstaEliminado(true);
             horarioRepository.persist(horario);
-            return Response.ok("Horario eliminado con éxito.").build();
+            return Response.status(Response.Status.NO_CONTENT).build();
         } catch (Exception e) {
             throw new ServiceException("Error al eliminar el horario", e);
         }
@@ -128,5 +129,10 @@ public class HorarioService {
         } catch (Exception e) {
             throw new ServiceException("Error al restaurar el horario", e);
         }
+    }
+    public HorarioResponseDto findByCodigo(String codigo) {
+    	Horario horario = (Horario) horarioRepository.find("codigo", codigo);
+    	HorarioResponseDto dto = HorarioFactory.toDto(horario);
+    	return dto;
     }
 }

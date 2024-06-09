@@ -15,39 +15,51 @@ import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
+
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-import org.softek.g5.exceptions.entitiesCustomException.ConsultorioNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.medico.MedicoNotFoundException;
+
+import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioSuperpuestoException;
+import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.repositories.UbicacionRepository;
+import org.softek.g5.validation.entitiesValidation.HorarioValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @ApplicationScoped
+@AllArgsConstructor
 public class ConsultorioService {
     @Inject
-    ConsultorioRepository consultorioRepository;
+    private final ConsultorioRepository consultorioRepository;
     @Inject
-    UbicacionRepository ubicacionRepository;
+	private final UbicacionRepository ubicacionRepository;
     @Inject
-    UbicacionService ubicacionService;
+    private final UbicacionService ubicacionService;
     @Inject
-    HorarioRepository horarioRepository;
+    private final HorarioRepository horarioRepository;
     @Inject
-    HorarioService horarioService;
+    private final HorarioService horarioService;
     @Inject
-    MedicoService medicoService;
+    private final MedicoService medicoService;
     @Inject
-    MedicoFactory medicoFactory;
+    private final MedicoFactory medicoFactory;
     @Inject
-    MedicoRepository medicoRepository;
+    private final MedicoRepository medicoRepository;
+    @Inject
+    private final HorarioValidator horarioValidator;
+    @Inject
+    private final ConsultorioFactory consultorioFactory;
+
 
     @Transactional
     public List<ConsultorioResponseDto> getAllConsultorios() {
@@ -63,12 +75,17 @@ public class ConsultorioService {
     }
 
     public ConsultorioResponseDto getConsultorioByCodigo(String codigo) {
-        try {
-            return consultorioRepository.find("codigo", codigo)
-                    .firstResultOptional()
-                    .filter(consultorio -> !consultorio.isEstaEliminado())
-                    .map(ConsultorioFactory::toDto)
-                    .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado"));
+    	try {
+            Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
+            if (optionalConsultorio.isPresent()) {
+                Consultorio consultorio = optionalConsultorio.get();
+                if (consultorio.isEstaEliminado()) {
+                    throw new ConsultorioNotFoundException("Consultorio eliminado encontrado con código: " + codigo);
+                }
+                return ConsultorioFactory.toDto(consultorio);
+            } else {
+                throw new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo);
+            }
         } catch (Exception e) {
             throw new ServiceException("Error al obtener el consultorio por código", e);
         }
@@ -88,7 +105,13 @@ public class ConsultorioService {
 
     @Transactional
     public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) {
-    		//Falta verificar que los horarios no se choquen al crear un consultorio
+    		List<HorarioRequestDto> horarios = dto.getHorarioAtencion();
+
+    	    if (!HorarioValidator.validateHorarios(horarios)) {
+    	        throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+    	    }
+    	    
+
             Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
             Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
@@ -123,10 +146,9 @@ public class ConsultorioService {
     }
 
     @Transactional
-    //public void updateConsultorio(String codigo, ConsultorioRequestDto dto) {
     public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) {
-        //try {
-            //Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
+        try {
+            
         	Consultorio consultorio = consultorioRepository.findByUbicacion(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());
         	
             if (consultorio != null) {
@@ -137,16 +159,22 @@ public class ConsultorioService {
                 }
                 consultorio.setUbicacion(ubicacion);
                 
-                //Prueba
+
+                
                 Medico medico = medicoRepository.findByDniMedico(dniMedico);
                 if (medico == null) {
                     throw new MedicoNotFoundException("Medico no encontrado");
                 }
                 consultorio.setMedico(medico);
-                //
+                
+
                 
                 consultorio.getHorarioAtencion().clear();
                 consultorioRepository.flush();
+                
+                if (!HorarioValidator.validateHorarios(dto.getHorarioAtencion())) {
+                    throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+                }
 
                 List<Horario> nuevosHorarios = dto.getHorarioAtencion().stream()
                         .map(HorarioFactory::toEntity)
@@ -158,9 +186,9 @@ public class ConsultorioService {
             } else {
                 throw new ConsultorioNotFoundException("Consultorio no encontrado");
             }
-        /*} catch (Exception e) {
+        } catch (Exception e) {
         	throw new ServiceException("Error al actualizar el consultorio", e);
-        }*/
+        }
     }
 
     @Transactional

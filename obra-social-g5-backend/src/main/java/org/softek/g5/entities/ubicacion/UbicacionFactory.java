@@ -18,14 +18,19 @@ public class UbicacionFactory {
     }
     
      public static UbicacionResponseDto toDto(Ubicacion ubicacion) {
-            return UbicacionResponseDto.builder()
-                .codigo(ubicacion.getCodigo())
-                .ciudad(ubicacion.getCiudad())
-                .provincia(ubicacion.getProvincia())
-                .calle(ubicacion.getCalle())
-                .altura(ubicacion.getAltura())
-                .estaEliminado(ubicacion.isEstaEliminado())
-                .build();
+    	 if (ubicacion == null) {
+    	        return null;
+    	    }
+    	 	
+        return UbicacionResponseDto.builder()
+            .codigo(ubicacion.getCodigo())
+            .ciudad(ubicacion.getCiudad())
+            .provincia(ubicacion.getProvincia())
+            .calle(ubicacion.getCalle())
+            .altura(ubicacion.getAltura())
+            .estaEliminado(ubicacion.isEstaEliminado())
+            .build();
+
         }
      
      public static void updateEntity(Ubicacion ubicacion, UbicacionRequestDto dto) {

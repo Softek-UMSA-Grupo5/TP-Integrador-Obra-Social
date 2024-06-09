@@ -8,8 +8,9 @@ import org.softek.g5.entities.ubicacion.Ubicacion;
 import org.softek.g5.entities.ubicacion.UbicacionFactory;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
-import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.repositories.UbicacionRepository;
+import org.softek.g5.validation.entitiesValidation.UbicacionValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -60,9 +61,9 @@ public class UbicacionService {
 
     @Transactional
     public UbicacionResponseDto createUbicacion(@Valid UbicacionRequestDto dto) {
-    	if (dto == null || dto.getCiudad().isEmpty() || dto.getProvincia().isEmpty() || dto.getCalle().isEmpty() || dto.getAltura() <= 0) {
-    	        throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no pueden ser nulos o estar en blanco");
-    	    }
+    	 if (!UbicacionValidator.validateUbicacionRequestDto(dto)) {
+             throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no son válidos");
+         }
     	try {
             Ubicacion ubicacion = UbicacionFactory.toEntity(dto);
             ubicacion.setEstaEliminado(false);
@@ -75,6 +76,9 @@ public class UbicacionService {
 
     @Transactional
     public UbicacionResponseDto updateUbicacion(String codigo, @Valid UbicacionRequestDto dto) {
+    	 if (!UbicacionValidator.validateUbicacionRequestDto(dto)) {
+             throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no son válidos");
+         }
         try {
             Ubicacion ubicacion = ubicacionRepository.find("codigo", codigo)
                     .firstResultOptional()
@@ -98,10 +102,20 @@ public class UbicacionService {
             Ubicacion ubicacion = ubicacionRepository.find("codigo", codigo)
                     .firstResultOptional()
                     .orElseThrow(() -> new UbicacionNotFoundException("Ubicación no encontrada con código: " + codigo));
+            
+            if (ubicacion.isEstaEliminado()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("La ubicación ya está marcada como eliminada: " + codigo)
+                        .build();
+            }
 
             ubicacion.setEstaEliminado(true);
             ubicacionRepository.persist(ubicacion);
             return Response.ok("Ubicación eliminada con éxito.").build();
+        } catch (UbicacionNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Ubicación no encontrada con código: " + codigo)
+                    .build();
         } catch (Exception e) {
             throw new ServiceException("Error al eliminar la ubicación", e);
         }

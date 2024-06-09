@@ -1,6 +1,8 @@
 package org.softek.g5.exceptions;
 
 public class EmptyTableException extends RuntimeException{
+	
+	
 	public EmptyTableException() {
         super();
     }

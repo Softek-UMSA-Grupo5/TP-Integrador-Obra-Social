@@ -2,6 +2,7 @@ package org.softek.g5.validation;
 
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,6 +59,7 @@ public class DataValidator<T> {
     	return validate(value, v -> v != null && (v == true || v == false));
     }
     
+
     public static boolean ValidateDate(Date date) {
         if (date == null) {
             return false;
@@ -73,6 +75,10 @@ public class DataValidator<T> {
     
     public static boolean validateFields(Boolean value) {
     	return validate(value, v -> v != null && (v == true || v == false));
+
+    public static boolean validateDate(LocalDate date) {
+        return validate(date, d -> d != null && !d.isBefore(LocalDate.now()));
+
     }
     
     public static <T> void validateDtoFields(T dto) {
