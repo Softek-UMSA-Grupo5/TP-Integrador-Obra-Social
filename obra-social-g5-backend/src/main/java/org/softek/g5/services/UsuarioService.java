@@ -63,7 +63,7 @@ public class UsuarioService {
 			DataValidator.validateDtoFields(dto);
 
 			String passwordEncript = passwordEncoder.encode(dto.getPassword());
-			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, UsuarioRolesEnum.USER, false);
+			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, dto.getEmail(), UsuarioRolesEnum.USER, false);
 			usuario.persist();
 		}
 

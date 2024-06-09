@@ -25,6 +25,7 @@ public class Usuario extends PanacheEntityBase{
 	
 	private String username;
 	private String password;
+	private String email;
 	private UsuarioRolesEnum roles;
 	private Boolean estaEliminado;
 	
