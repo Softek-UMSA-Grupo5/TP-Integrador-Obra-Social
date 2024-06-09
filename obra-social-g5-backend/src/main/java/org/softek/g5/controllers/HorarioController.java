@@ -6,9 +6,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
-
-import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -23,12 +20,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
-import lombok.AllArgsConstructor;
 
 @Path("/horarios")
 @Blocking
-@AllArgsConstructor
 @Tag(name = "HorarioController", description = "Enpoints del servicio horarios")
 public class HorarioController {
 	@Inject
@@ -61,6 +55,18 @@ public class HorarioController {
 		return Response.ok(dto).build();
 	}
 
+
+	
+//    @POST
+//    @Transactional
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Operation(summary = "Crea horario", description ="Se creará un horario")
+//    public Response createHorario(@Valid HorarioRequestDto dto
+//    		, @Valid UbicacionRequestDto ubicacionConsultorio) {
+//        horarioService.createHorario(dto, ubicacionConsultorio);
+//        return Response.ok().build();
+//    }
+
 	@PUT
     @Path("/{codigo}")
     @Transactional
@@ -73,19 +79,6 @@ public class HorarioController {
         return Response.ok(updatedDto).build();
     }
 	
-
-    /*@POST
-    @Transactional
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Crea horario", description ="Se creará un horario")
-    public Response createHorario(@Valid HorarioRequestDto dto
-    		, @Valid UbicacionRequestDto ubicacionConsultorio) {
-        horarioService.createHorario(dto, ubicacionConsultorio);
-        return Response.ok().build();
-    }*/
-
-
-
 	@PUT
 	@Path("/restore/{codigo}")
 	@Transactional

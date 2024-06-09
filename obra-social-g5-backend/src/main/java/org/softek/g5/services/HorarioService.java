@@ -9,7 +9,7 @@ import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-import org.softek.g5.exceptions.entitiesCustomException.HorarioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 
@@ -18,7 +18,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 
 @ApplicationScoped
 public class HorarioService {
@@ -64,8 +63,6 @@ public class HorarioService {
     }
     
     @Transactional
-
-
     public void createHorario(HorarioRequestDto dto, UbicacionRequestDto ubicacionConsultorio) {
 
         try {

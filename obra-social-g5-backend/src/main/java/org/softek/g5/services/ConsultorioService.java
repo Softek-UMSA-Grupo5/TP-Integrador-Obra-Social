@@ -17,10 +17,12 @@ import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 import org.softek.g5.exceptions.entitiesCustomException.ConsultorioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioSuperpuestoException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.repositories.UbicacionRepository;
+import org.softek.g5.validation.entitiesValidation.HorarioValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -86,7 +88,11 @@ public class ConsultorioService {
 
     @Transactional
     public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) {
-    		//Falta verificar que los horarios no se choquen al crear un consultorio
+    		List<HorarioRequestDto> horarios = dto.getHorarioAtencion();
+
+    	    if (!HorarioValidator.validateHorarios(horarios)) {
+    	        throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+    	    }
             Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
             Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
@@ -133,8 +139,13 @@ public class ConsultorioService {
                 }
                 consultorio.setUbicacion(ubicacion);
                 
+                
                 consultorio.getHorarioAtencion().clear();
                 consultorioRepository.flush();
+                
+                if (!HorarioValidator.validateHorarios(dto.getHorarioAtencion())) {
+                    throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+                }
 
                 List<Horario> nuevosHorarios = dto.getHorarioAtencion().stream()
                         .map(HorarioFactory::toEntity)

@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions.entitiesCustomException;
+package org.softek.g5.exceptions.entitiesCustomException.horario;
 
 
 public class HorarioNotFoundException extends RuntimeException {
