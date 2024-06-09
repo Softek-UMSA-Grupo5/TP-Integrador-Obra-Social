@@ -51,7 +51,7 @@ public class Horario extends PanacheEntityBase{
 	private LocalTime horaFin;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "consultorio_i1d")
+    @JoinColumn(name = "consultorio_id")
     private Consultorio consultorio;
 	
 	private boolean estaEliminado;
