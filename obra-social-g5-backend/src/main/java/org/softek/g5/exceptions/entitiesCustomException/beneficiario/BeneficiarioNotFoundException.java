@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions.entitiesCustomException;
+package org.softek.g5.exceptions.entitiesCustomException.beneficiario;
 
 public class BeneficiarioNotFoundException extends RuntimeException{
 	public BeneficiarioNotFoundException() {

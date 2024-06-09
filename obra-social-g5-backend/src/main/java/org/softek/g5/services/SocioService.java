@@ -12,9 +12,13 @@ import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
 import org.softek.g5.exceptions.EmptyTableException;
-import org.softek.g5.exceptions.entitiesCustomException.SocioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.socio.InvalidSocioData;
+import org.softek.g5.exceptions.entitiesCustomException.socio.SocioNotFoundException;
 import org.softek.g5.repositories.BeneficiarioRepository;
 import org.softek.g5.repositories.SocioRepository;
+import org.softek.g5.validation.DataValidator;
+import org.softek.g5.validation.entitiesValidation.SocioValidator;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -56,6 +60,11 @@ public class SocioService {
 	@Transactional
 	public SocioResponseDto persistSocio(SocioRequestDto dto) {
 		SocioResponseDto response = new SocioResponseDto();
+		
+		DataValidator.validateDtoFields(dto);
+		if(!SocioValidator.validateRequestDto(dto)) {
+			throw new InvalidSocioData("Los datos enviados de socio son erróneos");
+		}
 
 		Socio socio = socioFactory.createEntityFromDto(dto);
 		Optional<Socio> optionalSocio = socioRepository.findByDni(socio.getDni());
@@ -77,6 +86,12 @@ public class SocioService {
 	public SocioResponseDto updateSocio(Long id, SocioRequestDto dto) {
 		Optional<Socio> optionalSocio = Optional.of(socioRepository.findById(id));
 		if (optionalSocio.isPresent()) {
+			
+			DataValidator.validateDtoFields(dto);
+			if(!SocioValidator.validateRequestDto(dto)) {
+				throw new InvalidSocioData("Los datos enviados de socio son erróneos");
+			}
+			
 			Socio socio = optionalSocio.get();
 			socio.setId(optionalSocio.get().getId());
 			socio.setApellido(dto.getApellido());

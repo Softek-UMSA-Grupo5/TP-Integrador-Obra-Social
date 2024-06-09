@@ -29,7 +29,7 @@ import lombok.Setter;
 public class Socio extends Persona{
 	@Column(name="num_afiliado")
 	@NotNull
-	private int nroAfiliado;
+	private String nroAfiliado;
 	
 	@JsonIgnore
     @OneToMany(mappedBy="socio", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -41,7 +41,8 @@ public class Socio extends Persona{
 	
 	@Builder
 	public Socio(Long id, String nombre, String apellido, String telefono, String email, int dni, String cuil,
-			Date fechaNacimiento, Boolean estaEliminado, @NotNull int nroAfiliado, List<Beneficiario> beneficiarios, List<TurnoMedico> turnos) {
+			Date fechaNacimiento, Boolean estaEliminado, @NotNull String nroAfiliado, List<Beneficiario> beneficiarios,
+			List<TurnoMedico> turnos) {
 		super(id, nombre, apellido, telefono, email, dni, cuil, fechaNacimiento, estaEliminado);
 		this.nroAfiliado = nroAfiliado;
 		this.beneficiarios = beneficiarios;

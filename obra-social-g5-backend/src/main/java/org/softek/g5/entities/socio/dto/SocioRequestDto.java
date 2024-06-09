@@ -24,7 +24,7 @@ public class SocioRequestDto {
 	private int dni;
 	private String cuil;
 	private Date fechaNacimiento;
-	private int nroAfiliado;
+	private String nroAfiliado;
 	private List<BeneficiarioRequestDto> beneficiarios;
 	private List<TurnoMedicoRequestDto> turnos;
 }

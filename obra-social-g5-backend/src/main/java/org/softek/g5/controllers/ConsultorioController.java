@@ -64,14 +64,25 @@ public class ConsultorioController {
         return Response.status(Response.Status.CREATED).entity(createdDto).build();
     }
 	
-    @PUT
+    /*@PUT
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
     public Response updateConsultorio(@PathParam("codigo") String codigo, @Valid ConsultorioRequestDto dto) {
         consultorioService.updateConsultorio(codigo, dto);
         return Response.noContent().build();
+    }*/
+    
+    //PRUEBA
+    @PUT
+    @Path("/{dniMedico}")
+    @Transactional
+    @Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
+    public Response updateConsultorio(@PathParam("dniMedico") int dniMedico, @Valid ConsultorioRequestDto dto) {
+        consultorioService.updateConsultorio(dniMedico, dto);
+        return Response.noContent().build();
     }
+    //
     
     @DELETE
     @Path("/{codigo}")

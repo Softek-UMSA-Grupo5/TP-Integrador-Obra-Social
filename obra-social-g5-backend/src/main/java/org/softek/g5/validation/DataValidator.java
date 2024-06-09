@@ -4,6 +4,8 @@ package org.softek.g5.validation;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -57,8 +59,26 @@ public class DataValidator<T> {
     	return validate(value, v -> v != null && (v == true || v == false));
     }
     
+
+    public static boolean ValidateDate(Date date) {
+        if (date == null) {
+            return false;
+        }
+        Calendar minDate = Calendar.getInstance();
+        minDate.set(1915, Calendar.JANUARY, 1, 0, 0, 0);
+        Calendar maxDate = Calendar.getInstance();
+        if (date.before(minDate.getTime()) || date.after(maxDate.getTime())) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean validateFields(Boolean value) {
+    	return validate(value, v -> v != null && (v == true || v == false));
+
     public static boolean validateDate(LocalDate date) {
         return validate(date, d -> d != null && !d.isBefore(LocalDate.now()));
+
     }
     
     public static <T> void validateDtoFields(T dto) {

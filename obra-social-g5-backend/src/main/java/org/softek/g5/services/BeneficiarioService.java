@@ -3,16 +3,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.exceptions.EmptyTableException;
-import org.softek.g5.exceptions.entitiesCustomException.BeneficiarioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.beneficiario.BeneficiarioNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.beneficiario.InvalidBeneficiarioData;
 import org.softek.g5.repositories.BeneficiarioRepository;
 import org.softek.g5.repositories.SocioRepository;
+import org.softek.g5.validation.DataValidator;
+import org.softek.g5.validation.entitiesValidation.BeneficiarioValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -48,6 +50,12 @@ public class BeneficiarioService {
 	public Collection<BeneficiarioResponseDto> persistBeneficiario(int dniSocio, List<BeneficiarioRequestDto> dtos) {
 		Collection<BeneficiarioResponseDto> response = new ArrayList<>();	
 		for (BeneficiarioRequestDto dto : dtos) {
+			
+			DataValidator.validateDtoFields(dto);
+			if(!BeneficiarioValidator.validateRequestDto(dto)) {
+				throw new InvalidBeneficiarioData("Los datos enviados de beneficiario son erroneos");
+			}
+			
 			Beneficiario beneficiario = beneficiarioFactory.createEntityFromDto(dto);
 			Socio socio = socioRepository.findByDni(dniSocio).get();
 			if(socio.getEstaEliminado()==true) {
@@ -69,8 +77,14 @@ public class BeneficiarioService {
 	public BeneficiarioResponseDto updateBeneficiario(int dniBeneficiario, Long idSocio, BeneficiarioRequestDto dto) {
 		Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository.findByDniyIdSocio(dniBeneficiario, idSocio);
 		if (optionalBeneficiario.isPresent()) {
+			
+			DataValidator.validateDtoFields(dto);
+			if(!BeneficiarioValidator.validateRequestDto(dto)) {
+				throw new InvalidBeneficiarioData("Los datos enviados de beneficiario son erroneos");
+			}
+			
 			Beneficiario beneficiario = optionalBeneficiario.get();
-				
+			beneficiario.setId(optionalBeneficiario.get().getId());//REVISAR
 			beneficiario.setNombre(dto.getNombre());
 			beneficiario.setApellido(dto.getApellido());
 			beneficiario.setTelefono(dto.getTelefono());
@@ -92,5 +106,4 @@ public class BeneficiarioService {
 			throw new BeneficiarioNotFoundException("Beneficiario no encontrado");
 		}
 	}
-
 }

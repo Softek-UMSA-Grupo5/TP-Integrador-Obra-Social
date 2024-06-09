@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -33,6 +34,7 @@ public class MedicoController {
 	MedicoService medicoService;
 	
 	@GET
+	//@RolesAllowed("USER")
 	@Operation(summary = "Obtener todos los médicos especialistas", description ="Se obtendrá una lista de todos los médicos especialistas")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<MedicoResponseDto> getAll(){
@@ -40,6 +42,7 @@ public class MedicoController {
 	}
 	
 	@POST
+	//@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un médico especialista", description ="Se creará un médico especialista")
@@ -50,6 +53,7 @@ public class MedicoController {
 	}
 	
 	@PUT
+	//@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un médico especialista", description ="Se actualizará un médico especialista")
 	@Transactional
@@ -59,6 +63,7 @@ public class MedicoController {
 	}
 	
 	@DELETE
+	//@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un médico especialista", description ="Se eliminará un médico especialista")
 	@Transactional
