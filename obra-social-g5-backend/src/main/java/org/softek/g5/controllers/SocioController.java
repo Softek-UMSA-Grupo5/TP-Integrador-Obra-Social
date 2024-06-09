@@ -9,6 +9,7 @@ import org.softek.g5.entities.socio.dto.SocioResponseDto;
 import org.softek.g5.services.SocioService;
 
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class SocioController {
 	SocioService socioService;
 	
 	@GET
+	//@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
 	public Collection<SocioResponseDto> getAll(){
@@ -41,6 +43,7 @@ public class SocioController {
 	}
 	
 	@POST
+	//@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
@@ -51,6 +54,7 @@ public class SocioController {
 	}
 	
 	@PUT
+	//@RolesAllowed({"USER", "ADMIN"})
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un socio", description ="Se actualizará un socio")
 	@Transactional
@@ -60,6 +64,7 @@ public class SocioController {
 	}
 	
 	@DELETE
+	//@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un socio", description ="Se eliminará un socio")
 	@Transactional

@@ -15,8 +15,10 @@ import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.exceptions.entitiesCustomException.ConsultorioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.medico.MedicoNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.repositories.MedicoRepository;
@@ -121,17 +123,28 @@ public class ConsultorioService {
     }
 
     @Transactional
-    public void updateConsultorio(String codigo, ConsultorioRequestDto dto) {
+    //public void updateConsultorio(String codigo, ConsultorioRequestDto dto) {
+    public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) {
         try {
-            Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
+            //Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
+        	Optional<Consultorio> optionalConsultorio = Optional.of(consultorioRepository.findByUbicacion(dto.getUbicacion()));
+        	
             if (optionalConsultorio.isPresent()) {
                 Consultorio consultorio = optionalConsultorio.get();
-                Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());
                 
+                Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());           
                 if (ubicacion == null) {
                     throw new UbicacionNotFoundException("Ubicación no válida: " + dto.getUbicacion());
                 }
                 consultorio.setUbicacion(ubicacion);
+                
+                //Prueba
+                Medico medico = medicoRepository.findByDniMedico(dniMedico);
+                if (medico == null) {
+                    throw new MedicoNotFoundException("Medico no encontrado");
+                }
+                consultorio.setMedico(medico);
+                //
                 
                 consultorio.getHorarioAtencion().clear();
                 consultorioRepository.flush();
@@ -144,10 +157,10 @@ public class ConsultorioService {
 
                 consultorioRepository.persistAndFlush(consultorio);
             } else {
-                throw new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo);
+                throw new ConsultorioNotFoundException("Consultorio no encontrado");
             }
         } catch (Exception e) {
-            throw new ServiceException("Error al actualizar el consultorio", e);
+        	throw new ServiceException("Error al actualizar el consultorio", e);
         }
     }
 

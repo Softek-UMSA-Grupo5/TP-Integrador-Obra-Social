@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.softek.g5.entities.consultorio.Consultorio;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.entities.ubicacion.Ubicacion;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,6 +20,13 @@ public class ConsultorioRepository implements PanacheRepository<Consultorio>{
 	 public Consultorio findByUbicacion(Ubicacion ubicacion) {
 	        return find("ubicacion", ubicacion).firstResult();
 	    }
+	 
+	 //PRUEBA
+	 public Consultorio findByUbicacion(UbicacionRequestDto ubicacionDto) {
+	        return find("ubicacion", ubicacionDto).firstResult();
+	    }
+	 //
+	 
 	 public Optional<Consultorio> findByCodigo(String codigo) {
 	        return find("codigo", codigo).firstResultOptional();
 	    }

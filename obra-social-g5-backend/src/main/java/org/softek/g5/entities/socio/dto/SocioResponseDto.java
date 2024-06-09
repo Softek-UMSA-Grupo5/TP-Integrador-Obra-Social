@@ -25,7 +25,7 @@ public class SocioResponseDto {
 	private int dni;
 	private String cuil;
 	private Date fechaNacimiento;
-	private int nroAfiliado;
+	private String nroAfiliado;
 	protected Boolean estaEliminado;
 	private List<BeneficiarioResponseDto> beneficiarios;
 	private List<TurnoMedicoResponseDto> turnos;

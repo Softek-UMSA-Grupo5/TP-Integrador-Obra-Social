@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions.entitiesCustomException;
+package org.softek.g5.exceptions.entitiesCustomException.socio;
 
 public class SocioNotFoundException extends RuntimeException{
 	public SocioNotFoundException() {
