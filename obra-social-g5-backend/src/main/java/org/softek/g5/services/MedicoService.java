@@ -58,32 +58,31 @@ public class MedicoService {
 		for (MedicoRequestDto dto : dtos) {
 			
 			DataValidator.validateDtoFields(dto);
-			if(!MedicoValidator.validateRequestDto(dto)) {
+			/*if(!MedicoValidator.validateRequestDto(dto)) {
 				throw new InvalidMedicoData("Los datos enviados de médico son erróneos");
-			}
+			}*/
 			
 			Medico medico = medicoFactory.createEntityFromDto(dto);
+			
 			Optional<Medico> optionalMedico = medicoRepository.findByDni(medico.getDni());
 			
 			if(optionalMedico.isPresent()) {
 				throw new RuntimeException("Este medico ya existe");
 			}
+
+			this.medicoRepository.persist(medico);
+			
 			
 			if(dto.getConsultorios() != null) {
 				if(!dto.getConsultorios().isEmpty()) {
-					List<Consultorio> consultorios = new ArrayList<>();
 					for(ConsultorioRequestDto d : dto.getConsultorios()) {
-						Consultorio c = consultorioRepository.findByUbicacion(d.getUbicacion().getCiudad()
-								, d.getUbicacion().getProvincia()
-								, d.getUbicacion().getCalle()
-								, d.getUbicacion().getAltura());
-						c.setMedico(medico);
-						consultorios.add(c);
+					
+						consultorioService.updateConsultorio(medico.getDni(), d);
+						
 					}
-					medico.setConsultorios(consultorios);
 				}
 			}		
-			this.medicoRepository.persist(medico);
+			
 			response.add(medicoFactory.createResponseFromEntity(medico));
 		}
 		return response;

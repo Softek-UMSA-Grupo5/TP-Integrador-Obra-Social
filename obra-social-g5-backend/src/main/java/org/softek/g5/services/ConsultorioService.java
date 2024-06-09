@@ -125,12 +125,11 @@ public class ConsultorioService {
     @Transactional
     //public void updateConsultorio(String codigo, ConsultorioRequestDto dto) {
     public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) {
-        try {
+        //try {
             //Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
-        	Optional<Consultorio> optionalConsultorio = Optional.of(consultorioRepository.findByUbicacion(dto.getUbicacion()));
+        	Consultorio consultorio = consultorioRepository.findByUbicacion(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());
         	
-            if (optionalConsultorio.isPresent()) {
-                Consultorio consultorio = optionalConsultorio.get();
+            if (consultorio != null) {
                 
                 Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());           
                 if (ubicacion == null) {
@@ -159,9 +158,9 @@ public class ConsultorioService {
             } else {
                 throw new ConsultorioNotFoundException("Consultorio no encontrado");
             }
-        } catch (Exception e) {
+        /*} catch (Exception e) {
         	throw new ServiceException("Error al actualizar el consultorio", e);
-        }
+        }*/
     }
 
     @Transactional
