@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions.entitiesCustomException;
+package org.softek.g5.exceptions.entitiesCustomException.consultorio;
 
 public class ConsultorioNotFoundException extends RuntimeException{
 	public ConsultorioNotFoundException() {

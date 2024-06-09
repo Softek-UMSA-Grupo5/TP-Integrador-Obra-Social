@@ -23,4 +23,5 @@ public class HorarioRequestDto {
     private Horario.DiaSemana diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
+    private String codigo;
 }
