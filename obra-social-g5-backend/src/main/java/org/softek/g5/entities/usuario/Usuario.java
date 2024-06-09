@@ -1,8 +1,5 @@
 package org.softek.g5.entities.usuario;
 
-import java.util.Set;
-
-
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,5 +26,6 @@ public class Usuario extends PanacheEntityBase{
 	private String username;
 	private String password;
 	private UsuarioRolesEnum roles;
+	private Boolean estaEliminado;
 	
 }

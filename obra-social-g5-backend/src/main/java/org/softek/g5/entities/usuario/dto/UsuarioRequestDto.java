@@ -1,6 +1,7 @@
 package org.softek.g5.entities.usuario.dto;
 
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,9 @@ import lombok.Setter;
 @Builder
 public class UsuarioRequestDto {
 
+	@NotNull
 	private String username;
+	@NotNull
 	private String password;
 	
 }
