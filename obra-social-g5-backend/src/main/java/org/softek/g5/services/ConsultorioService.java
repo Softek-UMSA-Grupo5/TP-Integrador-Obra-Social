@@ -15,9 +15,9 @@ import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.ubicacion.Ubicacion;
-import org.softek.g5.exceptions.entitiesCustomException.ConsultorioNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioSuperpuestoException;
+import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.repositories.MedicoRepository;
@@ -63,12 +63,17 @@ public class ConsultorioService {
     }
 
     public ConsultorioResponseDto getConsultorioByCodigo(String codigo) {
-        try {
-            return consultorioRepository.find("codigo", codigo)
-                    .firstResultOptional()
-                    .filter(consultorio -> !consultorio.isEstaEliminado())
-                    .map(ConsultorioFactory::toDto)
-                    .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado"));
+    	try {
+            Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
+            if (optionalConsultorio.isPresent()) {
+                Consultorio consultorio = optionalConsultorio.get();
+                if (consultorio.isEstaEliminado()) {
+                    throw new ConsultorioNotFoundException("Consultorio eliminado encontrado con código: " + codigo);
+                }
+                return ConsultorioFactory.toDto(consultorio);
+            } else {
+                throw new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo);
+            }
         } catch (Exception e) {
             throw new ServiceException("Error al obtener el consultorio por código", e);
         }

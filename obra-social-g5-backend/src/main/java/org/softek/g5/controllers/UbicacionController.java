@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
-import org.softek.g5.exceptions.entitiesCustomException.UbicacionNotFoundException;
+import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.services.UbicacionService;
 
 import io.smallrye.common.annotation.Blocking;

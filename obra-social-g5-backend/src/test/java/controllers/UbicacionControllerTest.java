@@ -27,6 +27,7 @@ public class UbicacionControllerTest {
 		ubicacionDto.setCodigo("U0022");
 		ubicacionDto.setCiudad("Ciudad1");
 		ubicacionDto.setProvincia("Provincia1");
+		ubicacionDto.setCalle("CallePrueba");
 		ubicacionDto.setAltura(123);
 
 		try {
@@ -38,34 +39,34 @@ public class UbicacionControllerTest {
 		}
 	}
 
-//	@Test
-//	public void testGetAllUbicacionesEndpoint() {
-//		given().when().get("/ubicaciones").then().statusCode(200).body("", hasSize(greaterThan(0)));
-//	}
-//
-//	@Test
-//	public void testGetUbicacionByCodigoEndpoint() {
-//		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).when().get("/ubicaciones/{codigo}").then()
-//				.statusCode(200).body("ciudad", equalTo("Ciudad1"));
-//	}
-//
-//	@Test
-//	public void testCreateUbicacionEndpoint() {
-//		given().contentType("application/json").body(
-//				"{\"ciudad\":\"CiudadB\", \"provincia\":\"ProvinciaB\", \"direccion\":\"DireccionB\", \"altura\":456}")
-//				.when().post("/ubicaciones").then().statusCode(201).body("ciudad", equalTo("CiudadB"));
-//	}
-//
-//	@Test
-//	public void testUpdateUbicacionEndpoint() {
-//		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).contentType("application/json").body(
-//				"{\"ciudad\":\"CiudadC\", \"provincia\":\"ProvinciaC\", \"direccion\":\"DireccionC\", \"altura\":789}")
-//				.when().put("/ubicaciones/{codigo}").then().statusCode(200).body("ciudad", equalTo("CiudadC"));
-//	}
-//
-//	@Test
-//	public void testDeleteUbicacionEndpoint() {
-//		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).when().delete("/ubicaciones/{codigo}").then()
-//				.statusCode(200);
-//	}
+	@Test
+	public void testGetAllUbicacionesEndpoint() {
+		given().when().get("/ubicaciones").then().statusCode(200).body("", hasSize(greaterThan(0)));
+	}
+
+	@Test
+	public void testGetUbicacionByCodigoEndpoint() {
+		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).when().get("/ubicaciones/{codigo}").then()
+				.statusCode(200).body("ciudad", equalTo("Ciudad1"));
+	}
+
+	@Test
+	public void testCreateUbicacionEndpoint() {
+		given().contentType("application/json").body(
+				"{\"ciudad\":\"CiudadB\", \"provincia\":\"ProvinciaB\", \"calle\":\"DireccionB\", \"altura\":456}")
+				.when().post("/ubicaciones").then().statusCode(201).body("ciudad", equalTo("CiudadB"));
+	}
+
+	@Test
+	public void testUpdateUbicacionEndpoint() {
+		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).contentType("application/json").body(
+				"{\"ciudad\":\"CiudadC\", \"provincia\":\"ProvinciaC\", \"calle\":\"DireccionC\", \"altura\":789}")
+				.when().put("/ubicaciones/{codigo}").then().statusCode(200).body("ciudad", equalTo("CiudadC"));
+	}
+
+	@Test
+	public void testDeleteUbicacionEndpoint() {
+		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).when().delete("/ubicaciones/{codigo}").then()
+				.statusCode(200);
+	}
 }

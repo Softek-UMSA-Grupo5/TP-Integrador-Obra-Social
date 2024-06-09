@@ -13,16 +13,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.softek.g5.entities.consultorio.Consultorio;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
-
+import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.services.HorarioService;
+
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.test.junit.QuarkusTest;
@@ -46,10 +48,18 @@ public class HorarioServiceTest {
         MockitoAnnotations.openMocks(this);
         when(consultorioRepository.findByUbicacion(anyString(), anyString(), anyString(), anyInt()))
         .thenReturn(new Consultorio());
+        
+    }
+    
+    @Test
+    public void dependenciesInjectionTest() {
+        assertNotNull(horarioRepository);
+        assertNotNull(consultorioRepository);
+        assertNotNull(horarioService);
     }
 
     @Test
-    public void getAllHorarios_ShouldReturnListOfHorarios() {
+    public void getAllHorariosTest() {
 
     	List<Horario> horarios = new ArrayList<>();
     	horarios.add(new Horario(1L,Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), null, false, "H0015"));
@@ -67,7 +77,7 @@ public class HorarioServiceTest {
     }
 
     @Test
-    public void getAllHorariosDeleted_ShouldReturnListOfDeletedHorarios() {
+    public void getAllHorariosDeletedTest() {
 
 
         List<Horario> horariosEliminados = Arrays.asList(
@@ -82,7 +92,7 @@ public class HorarioServiceTest {
     }
 
     @Test
-    public void getHorarioByCodigo_ShouldReturnHorario() {
+    public void getHorarioByCodigoTest() {
 
         Horario horario = new Horario(4L, Horario.DiaSemana.JUEVES, LocalTime.of(9, 0), LocalTime.of(17, 0), null, false, "H0045");
 
@@ -98,7 +108,7 @@ public class HorarioServiceTest {
 
 
     @Test
-    public void createHorario_ShouldCreateHorario() {
+    public void createHorarioTest() {
 
         // Arrange
         HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), "GENERATED_CODE");
@@ -109,17 +119,15 @@ public class HorarioServiceTest {
                                 .altura(123)
                                 .build();
         
-        // Act
         assertDoesNotThrow(() -> horarioService.createHorario(requestDto, ubicacionDto));
         
 
-        // Assert
         verify(horarioRepository, times(1)).persist(any(Horario.class));
     }
 
 
     @Test
-    public void updateHorario_ShouldUpdateHorario() {
+    public void updateHorarioTest() {
         HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), "GENERATED_CODE");
 
         Horario existingHorario = new Horario(1L, Horario.DiaSemana.MARTES, LocalTime.of(10, 0), LocalTime.of(18, 0), null, false, "H0015");
@@ -138,7 +146,7 @@ public class HorarioServiceTest {
     }
 
     @Test
-    public void deleteHorario_ShouldDeleteHorario() {
+    public void deleteHorarioTest() {
 
         Horario existingHorario = new Horario(1L, Horario.DiaSemana.MARTES, LocalTime.of(10, 0), LocalTime.of(18, 0), null, false, "H0015");
 
@@ -155,7 +163,7 @@ public class HorarioServiceTest {
     }
 
     @Test
-    public void restoreHorario_ShouldRestoreHorario() {
+    public void restoreHorarioTest() {
 
                 Horario existingHorario = new Horario(1L, Horario.DiaSemana.MARTES, LocalTime.of(10, 0), LocalTime.of(18, 0), null, true, "H0015");
 
@@ -169,5 +177,38 @@ public class HorarioServiceTest {
         assertEquals(200, result.getStatus());
         verify(horarioRepository).persist(any(Horario.class));
     }
+    
+    @Test
+    public void createHorarioMinimumValuesTest() {
+        HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.MIN, LocalTime.MIN, "GENERATED_CODE");
+        UbicacionRequestDto ubicacionDto = UbicacionRequestDto.builder()
+                                .ciudad("ciudad")
+                                .provincia("provincia")
+                                .calle("calle")
+                                .altura(1)
+                                .build();
+
+        assertDoesNotThrow(() -> horarioService.createHorario(requestDto, ubicacionDto));
+
+        verify(horarioRepository, times(1)).persist(any(Horario.class));
+    }
+    
+
+
+    @Test
+    public void getAllHorariosCallListAllFromRepositoryTest() {
+        List<Horario> horarios = Arrays.asList(
+            new Horario(1L,Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), null, false, "H0015"),
+            new Horario(2L, Horario.DiaSemana.MARTES, LocalTime.of(9,0), LocalTime.of(17,0), null, false, "H0025")
+        );
+
+        when(horarioRepository.listAll()).thenReturn(horarios);
+
+        List<HorarioResponseDto> result = horarioService.getAllHorarios();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
 
 }

@@ -2,16 +2,21 @@ package services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,9 +48,15 @@ public class UbicacionServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+    
+    @Test
+    public void dependenciesInjectionTest() {
+        assertNotNull(ubicacionService);
+        assertNotNull(ubicacionRepository);
+    }
 
     @Test
-    public void getAllUbicaciones_ShouldReturnListOfUbicaciones() {
+    public void getAllUbicacionesTest() {
         List<Ubicacion> ubicaciones = List.of(
                 new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U001"),
                 new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U002"));
@@ -59,7 +70,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void getAllUbicacionesDeleted_ShouldReturnListOfDeletedUbicaciones() {
+    public void getAllUbicacionesDeletedTest() {
         List<Ubicacion> ubicaciones = List.of(
                 new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, true, "U001"),
                 new Ubicacion(2L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U002"));
@@ -73,7 +84,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void getUbicacionByCodigo_ShouldReturnUbicacion() {
+    public void getUbicacionByCodigoTest() {
         Ubicacion ubicacion = new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, "U001");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(ubicacion));
@@ -87,7 +98,7 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void createUbicacion_ShouldCreateUbicacion() {
+    public void createUbicacionTest() {
         String codigo = UUID.randomUUID().toString().substring(0, 10);
         UbicacionRequestDto requestDto = new UbicacionRequestDto("CiudadA", "ProvinciaA", "DireccionA", 123, codigo);
         Ubicacion ubicacion = new Ubicacion(1L, "CiudadA", "ProvinciaA", "DireccionA", 123, false, codigo);
@@ -102,7 +113,7 @@ public class UbicacionServiceTest {
 
 
     @Test
-    public void updateUbicacion_ShouldUpdateUbicacion() {
+    public void updateUbicacionTest() {
 		String codigo = UUID.randomUUID().toString().substring(0, 10);
 	    UbicacionRequestDto requestDto = new UbicacionRequestDto("CiudadA", "ProvinciaA", "DireccionA", 123, codigo);
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, codigo);
@@ -118,24 +129,50 @@ public class UbicacionServiceTest {
     }
 
     @Test
-    public void deleteUbicacion_ShouldDeleteUbicacion() {
-        // Arrange
+    public void deleteUbicacionTest() {
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, false, "U001");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
         when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
 
-        // Act
         Response result = ubicacionService.deleteUbicacion("U001");
 
-        // Assert
         assertNotNull(result);
         assertEquals(200, result.getStatus());
         verify(ubicacionRepository).persist(any(Ubicacion.class));
     }
+    
+    @Test
+    public void deleteUbicacionReturn404IfUbicacionNotFoundTest() {
+        PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
+        when(mockQuery.firstResultOptional()).thenReturn(Optional.empty());
+        when(ubicacionRepository.find("codigo", "U001")).thenReturn(mockQuery);
+
+        Response result = ubicacionService.deleteUbicacion("U001");
+
+        assertNotNull(result);
+        assertEquals(404, result.getStatus());
+        verify(ubicacionRepository, never()).persist(any(Ubicacion.class));
+    }
+    
+    @Test
+    public void notDeleteAlreadyDeletedUbicacionTest() {
+    	Ubicacion ubicacion = new Ubicacion();
+    	ubicacion.setEstaEliminado(true);
+    	PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
+    	when(ubicacionRepository.find(any(String.class), any(Object[].class))).thenReturn(mockQuery);
+    	when(mockQuery.firstResultOptional()).thenReturn(Optional.of(ubicacion));
+
+    	Response result = ubicacionService.deleteUbicacion("U001");
+
+    	assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatus());
+    	verify(ubicacionRepository, never()).persist(any(Ubicacion.class));
+
+    }
+
 
     @Test
-    public void restoreUbicacion_ShouldRestoreUbicacion() {
+    public void restoreUbicacionTest() {
         Ubicacion existingUbicacion = new Ubicacion(1L, "CiudadB", "ProvinciaB", "DireccionB", 456, true, "U001");
         PanacheQuery<Ubicacion> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingUbicacion));
