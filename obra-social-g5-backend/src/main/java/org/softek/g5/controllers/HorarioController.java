@@ -10,6 +10,7 @@ import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ public class HorarioController {
 	HorarioService horarioService;
 
 	@GET
+	@RolesAllowed({"USER", "ADMIN"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horarios", description = "Se obtendrá una lista de horarios")
 	public List<HorarioResponseDto> getAllHorarios() {
@@ -37,6 +39,7 @@ public class HorarioController {
 	}
 
 	@GET
+	@RolesAllowed({"ADMIN"})
 	@Path("/eliminados")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horarios eliminados", description = "Se obtendrá una Lista de horarios eliminados por soft delete")
@@ -45,6 +48,7 @@ public class HorarioController {
 	}
 
 	@GET
+	@RolesAllowed({"ADMIN"})
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horario", description = "Se obtendrá un horario en particular")
@@ -56,20 +60,8 @@ public class HorarioController {
 		return Response.ok(dto).build();
 	}
 
-
-	
-//    @POST
-//    @Transactional
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Operation(summary = "Crea horario", description ="Se creará un horario")
-//    public Response createHorario(@Valid HorarioRequestDto dto
-//    		, @Valid UbicacionRequestDto ubicacionConsultorio) {
-//        horarioService.createHorario(dto, ubicacionConsultorio);
-//        return Response.ok().build();
-//    }
-
-
 	@PUT
+	@RolesAllowed({"ADMIN"})
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Actualiza horario", description ="Se actualizará un horario en particular")
@@ -82,6 +74,7 @@ public class HorarioController {
     }
 	
 	@PUT
+	@RolesAllowed({"ADMIN"})
 	@Path("/restore/{codigo}")
 	@Transactional
 	@Operation(summary = "Restaurar horario", description = "Se restaurará un horario eliminado en particular")
@@ -90,6 +83,7 @@ public class HorarioController {
 	}
 
 	@DELETE
+	@RolesAllowed({"ADMIN"})
 	@Path("/{codigo}")
 	@Transactional
 	@Operation(summary = "Borrar horario", description = "Se borrará un horario por soft delete")
