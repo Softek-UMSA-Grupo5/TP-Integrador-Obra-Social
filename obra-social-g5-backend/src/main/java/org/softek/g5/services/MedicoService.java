@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.softek.g5.entities.consultorio.Consultorio;
 import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
@@ -16,7 +15,6 @@ import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.validation.DataValidator;
 import org.softek.g5.validation.entitiesValidation.MedicoValidator;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -58,9 +56,9 @@ public class MedicoService {
 		for (MedicoRequestDto dto : dtos) {
 			
 			DataValidator.validateDtoFields(dto);
-			/*if(!MedicoValidator.validateRequestDto(dto)) {
+			if(!MedicoValidator.validateRequestDto(dto)) {
 				throw new InvalidMedicoData("Los datos enviados de médico son erróneos");
-			}*/
+			}
 			
 			Medico medico = medicoFactory.createEntityFromDto(dto);
 			
@@ -99,7 +97,7 @@ public class MedicoService {
 			}
         	
             Medico medico = optionalMedico.get();
-            medico.setId(optionalMedico.get().getId());		//REVISAR
+            medico.setId(optionalMedico.get().getId());		
             medico.setNombre(dto.getNombre());
             medico.setApellido(dto.getApellido());
             medico.setTelefono(dto.getTelefono());
@@ -109,7 +107,7 @@ public class MedicoService {
             medico.setCuil(dto.getCuil());
             medico.setEspecialidad(dto.getEspecialidad());
             for(ConsultorioRequestDto d : dto.getConsultorios()){
-            	consultorioService.updateConsultorio(medico.getDni(), d);	//REVISAR
+            	consultorioService.updateConsultorio(medico.getDni(), d);	
             }
             
             return this.medicoFactory.createResponseFromEntity(medico);

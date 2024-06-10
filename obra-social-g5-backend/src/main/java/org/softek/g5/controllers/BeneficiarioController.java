@@ -1,15 +1,14 @@
 package org.softek.g5.controllers;
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.services.BeneficiarioService;
-
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,7 +33,7 @@ public class BeneficiarioController {
 	BeneficiarioService beneficiarioService;
 	
 	@GET
-	//@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"USER", "ADMIN"})
 	@Operation(summary = "Obtener todos los beneficiarios", description ="Se obtendrá una lista de todos los beneficiarios")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<BeneficiarioResponseDto> getAll() {
@@ -42,7 +41,7 @@ public class BeneficiarioController {
 	}
 
 	@POST
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed({"USER", "ADMIN"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un beneficiario", description ="Se creará un beneficiario")
@@ -55,7 +54,7 @@ public class BeneficiarioController {
 	}
 
 	@PUT
-	//@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"USER", "ADMIN"})
 	@Operation(summary = "Actualizar un beneficiario", description ="Se actualizará un beneficiario")
 	@Transactional
 	@Path("/{dni}")
@@ -67,7 +66,7 @@ public class BeneficiarioController {
 	}
 
 	@DELETE
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Operation(summary = "Eliminar un beneficiario", description ="Se eliminará un beneficiario")
 	@Transactional
 	@Path("/{id}")

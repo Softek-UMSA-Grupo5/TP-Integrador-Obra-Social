@@ -35,7 +35,7 @@ public class SocioController {
 	SocioService socioService;
 	
 	@GET
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
 	public Collection<SocioResponseDto> getAll(){
@@ -43,7 +43,7 @@ public class SocioController {
 	}
 	
 	@POST
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
@@ -54,7 +54,7 @@ public class SocioController {
 	}
 	
 	@PUT
-	//@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"USER", "ADMIN"})
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un socio", description ="Se actualizará un socio")
 	@Transactional
@@ -64,7 +64,7 @@ public class SocioController {
 	}
 	
 	@DELETE
-	//@RolesAllowed("ADMIN")
+	@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un socio", description ="Se eliminará un socio")
 	@Transactional
