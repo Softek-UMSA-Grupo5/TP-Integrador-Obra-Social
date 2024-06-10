@@ -10,6 +10,7 @@ import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFo
 import org.softek.g5.services.UbicacionService;
 
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -33,6 +34,7 @@ public class UbicacionController {
     private final UbicacionService ubicacionService;
 
     @GET
+	@RolesAllowed({"USER", "ADMIN"})
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicaciones", description ="Se obtendrá una lista de ubicaciones")
     public List<UbicacionResponseDto> getAllUbicaciones() {
@@ -40,6 +42,7 @@ public class UbicacionController {
     }
     
     @GET
+	@RolesAllowed({"ADMIN"})
     @Path("/eliminados")
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ucicacion eliminadas", description = "Se obtendrá una lista con las ubicaciones eliminadas")
@@ -49,6 +52,7 @@ public class UbicacionController {
     
     
     @GET
+	@RolesAllowed({"ADMIN"})
     @Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicación", description ="Se obtendrá una ubicación en particular")
@@ -61,6 +65,7 @@ public class UbicacionController {
     }
 
     @POST
+	@RolesAllowed({"ADMIN"})
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear ubicación", description ="Se creará una ubicación en particular")
@@ -70,6 +75,7 @@ public class UbicacionController {
     }
 
     @PUT
+	@RolesAllowed({"ADMIN"})
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Actualizar ubicación", description ="Se actualizará una ubicación en particular")
@@ -83,6 +89,7 @@ public class UbicacionController {
     }
 
     @PUT
+	@RolesAllowed({"ADMIN"})
     @Path("/restore/{codigo}")
     @Transactional
     @Operation(summary = "Restaurar ubicación", description ="Se restaurará una ubicación en particular")
@@ -91,6 +98,7 @@ public class UbicacionController {
     }
 
     @DELETE
+	@RolesAllowed({"ADMIN"})
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Eliminar ubicación", description ="Se eliminará una ubicación por soft delete")
