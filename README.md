@@ -13,6 +13,9 @@ Bienvenido a la aplicación Obra Social G5, una solución integral para la gesti
 
 ![UML de la aplicación de Obra Social](UML-ObraSocial.jpeg)
 
+## Pruebas Unitarias
+![Descripción de la imagen](pic-full-090624-2058.png)
+
 ## Tecnologías Utilizadas
 
 - **Backend:**
