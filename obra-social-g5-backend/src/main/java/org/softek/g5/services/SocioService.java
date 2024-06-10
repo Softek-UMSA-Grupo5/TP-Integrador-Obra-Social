@@ -110,8 +110,6 @@ public class SocioService {
 			throw new SocioNotFoundException("Socio no encontrado");
 		}
 	}
-	
-	//Añadir método para asociar un turno médico al socio
 
 	@Transactional
 	public void deleteSocio(Long id) {
