@@ -9,7 +9,7 @@ import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.entities.socio.Socio;
-import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.beneficiario.BeneficiarioNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.beneficiario.InvalidBeneficiarioData;
 import org.softek.g5.repositories.BeneficiarioRepository;

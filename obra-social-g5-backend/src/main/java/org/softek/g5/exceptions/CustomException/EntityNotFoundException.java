@@ -1,4 +1,4 @@
-package org.softek.g5.exceptions;
+package org.softek.g5.exceptions.CustomException;
 
 public class EntityNotFoundException extends RuntimeException{
 

@@ -7,7 +7,7 @@ import org.softek.g5.entities.usuario.Usuario;
 import org.softek.g5.entities.usuario.UsuarioRolesEnum;
 import org.softek.g5.entities.usuario.dto.UsuarioRequestDto;
 import org.softek.g5.entities.usuario.dto.UsuarioResponseDto;
-import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.repositories.UsuarioRepository;
 import org.softek.g5.security.PBKDF2Encoder;
 import org.softek.g5.security.TokenUtils;

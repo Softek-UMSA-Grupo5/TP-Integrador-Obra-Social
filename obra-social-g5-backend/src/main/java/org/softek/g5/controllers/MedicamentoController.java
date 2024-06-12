@@ -8,7 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
-import org.softek.g5.exceptions.CustomServerException;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.MedicamentoService;
 
 import io.smallrye.common.annotation.Blocking;

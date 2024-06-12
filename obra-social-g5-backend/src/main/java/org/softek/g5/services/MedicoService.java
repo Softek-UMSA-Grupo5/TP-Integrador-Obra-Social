@@ -9,7 +9,7 @@ import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
 import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.medico.dto.MedicoResponseDto;
-import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.medico.InvalidMedicoData;
 import org.softek.g5.exceptions.entitiesCustomException.medico.MedicoNotFoundException;
 import org.softek.g5.repositories.ConsultorioRepository;

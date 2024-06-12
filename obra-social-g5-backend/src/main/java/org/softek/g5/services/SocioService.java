@@ -12,7 +12,7 @@ import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
-import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.socio.InvalidSocioData;
 import org.softek.g5.exceptions.entitiesCustomException.socio.SocioNotFoundException;
 import org.softek.g5.repositories.BeneficiarioRepository;
