@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
@@ -11,7 +12,7 @@ import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
-import org.softek.g5.exceptions.EmptyTableException;
+import org.softek.g5.exceptions.EntityNotFoundException;
 import org.softek.g5.exceptions.entitiesCustomException.socio.InvalidSocioData;
 import org.softek.g5.exceptions.entitiesCustomException.socio.SocioNotFoundException;
 import org.softek.g5.repositories.BeneficiarioRepository;
@@ -52,7 +53,7 @@ public class SocioService {
 		}
 
 		if (dtos.isEmpty()) {
-			throw new EmptyTableException("No hay registros de Socio");
+			throw new EntityNotFoundException("No hay registros de Socio");
 		}
 		return dtos;
 	}

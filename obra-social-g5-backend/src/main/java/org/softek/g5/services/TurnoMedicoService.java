@@ -15,9 +15,9 @@ import org.softek.g5.entities.turnoMedico.TurnoMedicoEstadoEnum;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
-import org.softek.g5.exceptions.EmptyTableException;
+import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.InvalidDataRequest;
 import org.softek.g5.exceptions.entitiesCustomException.TurnoMedicoNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedicamentoData;
 import org.softek.g5.repositories.MedicoRepository;
 import org.softek.g5.repositories.SocioRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
@@ -64,7 +64,7 @@ public class TurnoMedicoService {
         }
 
         if (dtos.isEmpty()) {
-            throw new EmptyTableException("No hay registros de turnoMedico");
+            throw new EntityNotFoundException("No hay registros de turnoMedico");
         }
 
         return dtos;
@@ -78,7 +78,7 @@ public class TurnoMedicoService {
         	DataValidator.validateDtoFields(dto);
 
 			if (!TurnoMedicoValidator.validateRequestDto(dto)) {
-				throw new InvalidMedicamentoData("Los datos de turno medico enviados son erroneos");
+				throw new InvalidDataRequest("Los datos de turno medico enviados son erroneos");
 			}
         	
             TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);
@@ -108,7 +108,7 @@ public class TurnoMedicoService {
         	DataValidator.validateDtoFields(dto);
 
 			if (!TurnoMedicoValidator.validateRequestDto(dto)) {
-				throw new InvalidMedicamentoData("Los datos de turno medico enviados son erroneos");
+				throw new InvalidDataRequest("Los datos de turno medico enviados son erroneos");
 			}
         	
             TurnoMedico turnoMedico = optionalturnoMedico.get();

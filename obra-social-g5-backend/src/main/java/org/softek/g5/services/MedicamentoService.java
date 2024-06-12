@@ -10,9 +10,9 @@ import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
-import org.softek.g5.exceptions.EmptyTableException;
-import org.softek.g5.exceptions.entitiesCustomException.medicamento.InvalidMedicamentoData;
-import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoNotFoundException;
+import org.softek.g5.exceptions.CustomServerException;
+import org.softek.g5.exceptions.EntityNotFoundException;
+import org.softek.g5.exceptions.InvalidDataRequest;
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
 import org.softek.g5.validation.DataValidator;
@@ -37,12 +37,12 @@ public class MedicamentoService {
 	RecetaMedicaRepository recetaMedicaRepository;
 
 	@Transactional
-	public List<MedicamentoResponseDto> getMedicamentos() throws Exception {
+	public List<MedicamentoResponseDto> getMedicamentos() throws CustomServerException {
 		try {
 			Collection<Medicamento> medicamentos = medicamentoRepository.listAll();
 
 			if (medicamentos.isEmpty()) {
-				throw new EmptyTableException("No hay registros de medicamentos");
+				throw new EntityNotFoundException("No hay registros de medicamentos");
 			}
 
 			List<MedicamentoResponseDto> dtos = new ArrayList<>();
@@ -52,14 +52,14 @@ public class MedicamentoService {
 			}
 
 			return dtos;
-		} catch (Exception e) {
-			throw new Exception("Error al obtener los medicamentos");
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los medicamentos");
 		}
 	}
 
 	@Transactional
 	public Collection<MedicamentoResponseDto> persistMedicamento(String codigoReceta, List<MedicamentoRequestDto> dtos)
-			throws Exception {
+			throws CustomServerException {
 
 		try {
 
@@ -70,7 +70,7 @@ public class MedicamentoService {
 				DataValidator.validateDtoFields(dto);
 
 				if (!MedicamentoValidator.validateRequestDto(dto)) {
-					throw new InvalidMedicamentoData("Los datos de medicamento enviados son erroneos");
+					throw new InvalidDataRequest("Los datos de medicamento enviados son erroneos");
 				}
 
 				Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
@@ -92,15 +92,15 @@ public class MedicamentoService {
 
 			return response;
 
-		} catch (Exception e) {
-			throw new Exception("Error al crear los medicamentos");
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al crear los medicamentos");
 		}
 
 	}
 
 	@Transactional
 	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta, MedicamentoRequestDto dto)
-			throws Exception {
+			throws CustomServerException {
 
 		try {
 
@@ -111,7 +111,7 @@ public class MedicamentoService {
 
 				DataValidator.validateDtoFields(dto);
 				if (!MedicamentoValidator.validateRequestDto(dto)) {
-					throw new InvalidMedicamentoData("Los datos de medicamento enviados son erróneos");
+					throw new InvalidDataRequest("Los datos de medicamento enviados son erróneos");
 				}
 
 				Medicamento medicamento = optionalMedicamento.get();
@@ -127,28 +127,28 @@ public class MedicamentoService {
 
 				return this.medicamentoFactory.createResponseFromEntity(medicamento);
 			} else {
-				throw new MedicamentoNotFoundException("Medicamento no encontrado");
+				throw new EntityNotFoundException("Medicamento no encontrado");
 			}
 
-		} catch (Exception e) {
-			throw new Exception("Error al actualizar los medicamentos");
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al actualizar los medicamentos");
 		}
 
 	}
 
 	@Transactional
-	public void deleteMedicamento(String codigoMedicamento, Long idReceta) throws Exception {
+	public void deleteMedicamento(String codigoMedicamento, Long idReceta) throws CustomServerException {
 		
 		try {
 			
 			int updatedRows = this.medicamentoRepository
 					.update("estaEliminado = true WHERE codigo = ?1 and recetaMedica.id = ?2", codigoMedicamento, idReceta);
 			if (updatedRows == 0) {
-				throw new MedicamentoNotFoundException("Medicamento no encontrado");
+				throw new EntityNotFoundException("Medicamento no encontrado");
 			}
 			
-		}catch(Exception e) {
-			throw new Exception("Error al eliminar un medicamento");
+		}catch(CustomServerException e) {
+			throw new CustomServerException("Error al eliminar un medicamento");
 		}
 		
 	}

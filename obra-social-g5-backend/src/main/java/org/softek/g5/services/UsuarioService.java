@@ -7,7 +7,7 @@ import org.softek.g5.entities.usuario.Usuario;
 import org.softek.g5.entities.usuario.UsuarioRolesEnum;
 import org.softek.g5.entities.usuario.dto.UsuarioRequestDto;
 import org.softek.g5.entities.usuario.dto.UsuarioResponseDto;
-import org.softek.g5.exceptions.entitiesCustomException.medicamento.MedicamentoNotFoundException;
+import org.softek.g5.exceptions.EntityNotFoundException;
 import org.softek.g5.repositories.UsuarioRepository;
 import org.softek.g5.security.PBKDF2Encoder;
 import org.softek.g5.security.TokenUtils;
@@ -76,7 +76,7 @@ public class UsuarioService {
 			int updatedRows = this.usuarioRepository.update(
 					"estaEliminado = true WHERE username = ?1 and password = ?2", dto.getUsername(), passwordEncript);
 			if (updatedRows == 0) {
-				throw new MedicamentoNotFoundException("Usuario no encontrado");
+				throw new EntityNotFoundException("Usuario no encontrado");
 			}
 
 		} catch (Exception e) {

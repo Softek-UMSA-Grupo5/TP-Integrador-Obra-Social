@@ -12,7 +12,7 @@ import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
-import org.softek.g5.exceptions.EmptyTableException;
+import org.softek.g5.exceptions.EntityNotFoundException;
 import org.softek.g5.exceptions.InvalidDataRequest;
 import org.softek.g5.exceptions.entitiesCustomException.recetaMedica.RecetaMedicaNotFoundException;
 import org.softek.g5.repositories.RecetaMedicaRepository;
@@ -54,7 +54,7 @@ public class RecetaMedicaService {
 		}
 
 		if (dtos.isEmpty()) {
-			throw new EmptyTableException("No hay registros de RecetaMedica");
+			throw new EntityNotFoundException("No hay registros de RecetaMedica");
 		}
 
 		return dtos;

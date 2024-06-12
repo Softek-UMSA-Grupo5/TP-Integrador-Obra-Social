@@ -7,7 +7,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
-import org.softek.g5.exceptions.CustomHttpException;
 import org.softek.g5.services.RecetaMedicaService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -45,12 +44,8 @@ public class RecetaMedicaController {
 	    @APIResponse(responseCode = "500", description = "Error al obtener las recetas médicas")
 	})
 	public Response getAll() {
-	    try {
 	        Collection<RecetaMedicaResponseDto> recetas = this.RecetaMedicaService.getRecetaMedica();
 	        return Response.ok(recetas).build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al obtener las recetas médicas", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@POST
@@ -64,13 +59,9 @@ public class RecetaMedicaController {
 	})
 	@Transactional
 	public Response addRecetaMedica(@Valid RecetaMedicaRequestDto dto,
-	                                @Valid @QueryParam("codigoTurno") String codigoTurno) {
-	    try {
+	                                @Valid @QueryParam("codigoTurno") String codigoTurno) throws Exception {
 	        RecetaMedicaResponseDto response = this.RecetaMedicaService.persistRecetaMedica(codigoTurno, dto);
 	        return Response.status(Response.Status.CREATED).entity(response).build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al añadir y persistir la receta médica", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@PUT
@@ -83,13 +74,9 @@ public class RecetaMedicaController {
 	    @APIResponse(responseCode = "200", description = "Receta médica actualizada"),
 	    @APIResponse(responseCode = "500", description = "Error al actualizar la receta médica")
 	})
-	public Response update(@PathParam("codigo") String codigo, @Valid RecetaMedicaRequestDto dto) {
-	    try {
+	public Response update(@PathParam("codigo") String codigo, @Valid RecetaMedicaRequestDto dto) throws Exception {
 	        RecetaMedicaService.updateRecetaMedica(codigo, dto);
 	        return Response.ok().build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al actualizar la receta médica", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@DELETE
@@ -101,12 +88,8 @@ public class RecetaMedicaController {
 	    @APIResponse(responseCode = "500", description = "Error al eliminar la receta médica")
 	})
 	public Response delete(@PathParam("codigo") String codigo) {
-	    try {
 	        this.RecetaMedicaService.deleteRecetaMedica(codigo);
 	        return Response.ok().build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al eliminar la receta médica", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 	
 }

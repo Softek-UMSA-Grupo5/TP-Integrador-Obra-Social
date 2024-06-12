@@ -9,7 +9,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
-import org.softek.g5.exceptions.CustomHttpException;
 import org.softek.g5.services.TurnoMedicoService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -46,12 +45,8 @@ public class TurnoMedicoController {
 	    @APIResponse(responseCode = "500", description = "Error al obtener los turnos médicos")
 	})
 	public Response getAllTurnoMedico() {
-	    try {
 	        Collection<TurnoMedicoResponseDto> turnos = this.TurnoMedicoService.getTurnoMedico();
 	        return Response.ok(turnos).build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al obtener los turnos médicos", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@POST
@@ -65,12 +60,8 @@ public class TurnoMedicoController {
 	})
 	@Transactional
 	public Response addTurnoMedico(@Valid List<TurnoMedicoRequestDto> dtos) {
-	    try {
 	        Collection<TurnoMedicoResponseDto> response = this.TurnoMedicoService.persistTurnoMedico(dtos);
 	        return Response.status(Response.Status.CREATED).entity(response).build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al añadir y persistir los turnos médicos", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@PUT
@@ -84,12 +75,8 @@ public class TurnoMedicoController {
 	    @APIResponse(responseCode = "500", description = "Error al actualizar el turno médico")
 	})
 	public Response update(@Parameter(required = true, description = "Código del turno médico") @PathParam("codigo") String codigo, @Valid TurnoMedicoRequestDto dto) {
-	    try {
 	        TurnoMedicoService.updateTurnoMedico(codigo, dto);
 	        return Response.ok().build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al actualizar el turno médico", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 
 	@DELETE
@@ -101,12 +88,8 @@ public class TurnoMedicoController {
 	    @APIResponse(responseCode = "500", description = "Error al eliminar el turno médico")
 	})
 	public Response delete(@Parameter(required = true, description = "Código del turno médico") @PathParam("codigo") String codigo) {
-	    try {
 	        this.TurnoMedicoService.deleteTurnoMedico(codigo);
 	        return Response.ok().build();
-	    } catch (Exception e) {
-	        throw new CustomHttpException("Error al eliminar el turno médico", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-	    }
 	}
 	
 }
