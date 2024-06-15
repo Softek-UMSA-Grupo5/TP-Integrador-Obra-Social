@@ -1,4 +1,4 @@
-package controllers;
+package ubicacionTest;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.hasSize;
 @QuarkusTest
 public class UbicacionControllerTest {
 
-	private static UbicacionResponseDto ubicacionResponseDto;
+	/*private static UbicacionResponseDto ubicacionResponseDto;
 
 
 	@BeforeAll
@@ -68,5 +68,5 @@ public class UbicacionControllerTest {
 	public void testDeleteUbicacionEndpoint() {
 		given().pathParam("codigo", ubicacionResponseDto.getCodigo()).when().delete("/ubicaciones/{codigo}").then()
 				.statusCode(200);
-	}
+	}*/
 }

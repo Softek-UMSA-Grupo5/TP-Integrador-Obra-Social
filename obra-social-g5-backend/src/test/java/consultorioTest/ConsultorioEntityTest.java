@@ -1,4 +1,4 @@
-package entities;
+package consultorioTest;
 
 import io.quarkus.test.junit.QuarkusTest;
 

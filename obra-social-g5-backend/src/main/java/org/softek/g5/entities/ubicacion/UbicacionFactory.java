@@ -16,6 +16,14 @@ public class UbicacionFactory {
             .altura(dto.getAltura())
             .build();
     }
+    public static Ubicacion toEntityFromResponseDto(UbicacionResponseDto responseDto) {
+        return Ubicacion.builder()
+                .ciudad(responseDto.getCiudad())
+                .provincia(responseDto.getProvincia())
+                .calle(responseDto.getCalle())
+                .altura(responseDto.getAltura())
+                .build();
+    }
     
      public static UbicacionResponseDto toDto(Ubicacion ubicacion) {
     	 if (ubicacion == null) {

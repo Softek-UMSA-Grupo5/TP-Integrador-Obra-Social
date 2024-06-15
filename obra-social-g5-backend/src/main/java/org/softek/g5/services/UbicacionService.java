@@ -8,6 +8,7 @@ import org.softek.g5.entities.ubicacion.Ubicacion;
 import org.softek.g5.entities.ubicacion.UbicacionFactory;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.repositories.UbicacionRepository;
 import org.softek.g5.validation.entitiesValidation.UbicacionValidator;
@@ -60,20 +61,19 @@ public class UbicacionService {
     }
 
     @Transactional
-    public UbicacionResponseDto createUbicacion(@Valid UbicacionRequestDto dto) {
-    	 if (!UbicacionValidator.validateUbicacionRequestDto(dto)) {
-             throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no son válidos");
-         }
-    	try {
+    public UbicacionResponseDto createUbicacion(UbicacionRequestDto dto) throws CustomServerException{
+        if (!UbicacionValidator.validateUbicacionRequestDto(dto)) {
+            throw new IllegalArgumentException("Los parámetros en UbicacionRequestDto no son válidos");
+        }
+        try {
             Ubicacion ubicacion = UbicacionFactory.toEntity(dto);
             ubicacion.setEstaEliminado(false);
             ubicacionRepository.persist(ubicacion);
             return UbicacionFactory.toDto(ubicacion);
-        } catch (Exception e) {
-            throw new ServiceException("Error al crear la ubicación", e);
+        } catch (CustomServerException e) {
+            throw new CustomServerException("Error al crear la ubicación", e);
         }
     }
-
     @Transactional
     public UbicacionResponseDto updateUbicacion(String codigo, @Valid UbicacionRequestDto dto) {
     	 if (!UbicacionValidator.validateUbicacionRequestDto(dto)) {

@@ -1,4 +1,4 @@
-package services;
+package horarioTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -107,8 +107,6 @@ public class HorarioServiceTest {
 
     @Test
     public void createHorarioTest() {
-
-        // Arrange
         HorarioRequestDto requestDto = new HorarioRequestDto(Horario.DiaSemana.LUNES, LocalTime.of(9, 0), LocalTime.of(17, 0), "GENERATED_CODE");
         UbicacionRequestDto ubicacionDto = UbicacionRequestDto.builder()
                                 .ciudad("ciudad")
@@ -162,8 +160,7 @@ public class HorarioServiceTest {
 
     @Test
     public void restoreHorarioTest() {
-
-                Horario existingHorario = new Horario(1L, Horario.DiaSemana.MARTES, LocalTime.of(10, 0), LocalTime.of(18, 0), null, true, "H0015");
+        Horario existingHorario = new Horario(1L, Horario.DiaSemana.MARTES, LocalTime.of(10, 0), LocalTime.of(18, 0), null, true, "H0015");
 
         PanacheQuery<Horario> mockQuery = mock(PanacheQuery.class);
         when(mockQuery.firstResultOptional()).thenReturn(Optional.of(existingHorario));
