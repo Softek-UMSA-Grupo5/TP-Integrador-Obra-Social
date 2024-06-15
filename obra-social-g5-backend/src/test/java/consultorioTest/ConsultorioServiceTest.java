@@ -48,8 +48,8 @@ import java.util.*;
 @ExtendWith(MockitoExtension.class)
 public class ConsultorioServiceTest {
 
-	@InjectMocks
-	private ConsultorioService consultorioService;
+    @InjectMocks
+    private ConsultorioService consultorioService;
     @Mock
     private ConsultorioRepository consultorioRepository;
     @Mock
@@ -70,30 +70,29 @@ public class ConsultorioServiceTest {
     private HorarioValidator horarioValidator;
     @Mock
     private ConsultorioFactory consultorioFactory;
-	@BeforeEach
-	public void setUp() {
-	    MockitoAnnotations.openMocks(this);
-	    
-	    consultorioService = new ConsultorioService(
-	            consultorioRepository,
-	            ubicacionRepository,
-	            ubicacionService,
-	            horarioRepository,
-	            horarioService,
-	            medicoService,
-	            medicoFactory,
-	            medicoRepository,
-	            horarioValidator,
-	            consultorioFactory
-	        );
-	}
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-    /* GetAllConsultorios Test */
+        consultorioService = new ConsultorioService(
+                consultorioRepository,
+                ubicacionRepository,
+                ubicacionService,
+                horarioRepository,
+                horarioService,
+                medicoService,
+                medicoFactory,
+                medicoRepository,
+                horarioValidator,
+                consultorioFactory
+        );
+    }
 
+    /* getAllConsultorios Tests */
 
     @Test
-    void GetAllConsultoriosTest() {
+    void getAllConsultoriosSuccessTest() {
         Consultorio consultorio1 = new Consultorio();
         Consultorio consultorio2 = new Consultorio();
         when(consultorioRepository.listAll()).thenReturn(List.of(consultorio1, consultorio2));
@@ -104,7 +103,7 @@ public class ConsultorioServiceTest {
         assertEquals(2, consultorios.size());
     }
     @Test
-    void GetAllConsultoriosEmptyListTest() {
+    void getAllConsultoriosEmptyListTest() {
         when(consultorioRepository.listAll()).thenReturn(Collections.emptyList());
 
         EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
@@ -115,7 +114,7 @@ public class ConsultorioServiceTest {
         verify(consultorioRepository, times(1)).listAll();
     }
     @Test
-    void GetAllConsultoriosServerErrorTest() {
+    void getAllConsultoriosErrorTest() {
         when(consultorioRepository.listAll()).thenThrow(new CustomServerException("Error en el repositorio"));
 
         CustomServerException thrown = assertThrows(CustomServerException.class, () -> {
@@ -126,12 +125,10 @@ public class ConsultorioServiceTest {
         verify(consultorioRepository, times(1)).listAll();
     }
 
-
-    /* GetAllConsultoriosByCodigo Test */
-
+    /* getAllConsultoriosByCodigo Tests */
 
     @Test
-    void GetConsultorioByCodigoTest() {
+    void getConsultorioByCodigoSuccessTest() {
         String codigo = "testCodigo";
         Consultorio consultorio = new Consultorio();
         consultorio.setCodigo(codigo);
@@ -145,7 +142,7 @@ public class ConsultorioServiceTest {
         assertEquals(codigo, result.getCodigo());
     }
     @Test
-    void GetConsultorioByCodigoNotFoundTest() {
+    void getConsultorioByCodigoNotFoundTest() {
         String codigo = "testCodigo";
 
         when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
@@ -157,7 +154,7 @@ public class ConsultorioServiceTest {
         assertEquals("Consultorio no encontrado con código: " + codigo, thrown.getMessage());
     }
     @Test
-    void GetConsultorioByCodigoEliminadoTest() {
+    void getConsultorioByCodigoEliminadoTest() {
         String codigo = "testCodigo";
         Consultorio consultorio = new Consultorio();
         consultorio.setCodigo(codigo);
@@ -172,7 +169,7 @@ public class ConsultorioServiceTest {
         assertTrue(thrown.getMessage().contains("El consultorio está eliminado"));
     }
     @Test
-    void GetConsultorioByCodigoErrorTest() {
+    void getConsultorioByCodigoErrorTest() {
         String codigo = "testCodigo";
 
         when(consultorioRepository.findByCodigo(codigo)).thenThrow(new CustomServerException("Error en el repositorio"));
@@ -184,12 +181,10 @@ public class ConsultorioServiceTest {
         assertEquals("Error al obtener el consultorio por código", thrown.getMessage());
     }
 
-
-    /* GetAllConsultoriosDeleted Test */
-
+    /* getAllConsultoriosDeleted Tests */
 
     @Test
-    void GetAllConsultoriosDeletedSuccessTest() {
+    void getAllConsultoriosDeletedSuccessTest() {
         Consultorio consultorio1 = new Consultorio();
         consultorio1.setCodigo("codigo1");
         consultorio1.setEstaEliminado(true);
@@ -213,7 +208,7 @@ public class ConsultorioServiceTest {
         }
     }
     @Test
-    void GetAllConsultoriosDeletedCustomServerErrorTest() {
+    void getAllConsultoriosDeletedErrorTest() {
         when(consultorioRepository.listAll()).thenThrow(new CustomServerException("Error en el repositorio"));
 
         CustomServerException thrown = assertThrows(CustomServerException.class, () -> {
@@ -225,7 +220,7 @@ public class ConsultorioServiceTest {
         verify(consultorioRepository, times(1)).listAll();
     }
     @Test
-    void GetAllConsultoriosDeletedEmptyListTest() {
+    void getAllConsultoriosDeletedEmptyListTest() {
         List<Consultorio> consultorios = Collections.emptyList();
 
         when(consultorioRepository.listAll()).thenReturn(consultorios);
@@ -239,28 +234,22 @@ public class ConsultorioServiceTest {
         verify(consultorioRepository, times(1)).listAll();
     }
 
-
-    /* CreateConsultorio Test */
-
+    /* createConsultorio Tests */
 
     @Test
-    public void testCreateConsultorioWithValidData() {
-        // Preparar los datos de prueba
+    public void testCreateConsultorioSuccessTest() {
         ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
         UbicacionRequestDto ubicacionRequestDto = consultorioRequestDto.getUbicacion();
         UbicacionResponseDto ubicacionResponseDto = createUbicacion();
         Medico medico = createMedicoEntity();
         List<HorarioRequestDto> horarios = consultorioRequestDto.getHorarioAtencion();
 
-        // Mock del comportamiento de los repositorios y servicios
         when(ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo())).thenReturn(null);
         when(ubicacionService.createUbicacion(any(UbicacionRequestDto.class))).thenReturn(ubicacionResponseDto);
         when(medicoRepository.findByDni(anyInt())).thenReturn(Optional.of(medico));
 
-        // Ejecutar el método de servicio
         ConsultorioResponseDto responseDto = consultorioService.createConsultorio(consultorioRequestDto);
 
-        // Verificaciones y aserciones
         assertNotNull(responseDto);
         verify(ubicacionService, times(1)).createUbicacion(ubicacionRequestDto);
         verify(consultorioRepository, times(1)).persist(any(Consultorio.class));
@@ -268,82 +257,247 @@ public class ConsultorioServiceTest {
         verify(medicoRepository, times(1)).findByDni(anyInt());
     }
     @Test
-    public void testCreateConsultorioWithOverlappingHorarios() {
-        // Preparar los datos de prueba
+    public void createConsultorioHorarioSuperpuestosTest() {
         ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDtoWithOverlappingHorarios();
-
-        // Ejecutar y verificar que lanza la excepción esperada
         assertThrows(HorarioSuperpuestoException.class, () -> consultorioService.createConsultorio(consultorioRequestDto));
     }
-
     @Test
-    public void testCreateConsultorioWithExistingUbicacion() {
-        // Preparar los datos de prueba
+    public void createConsultorioWithExistingUbicacionTest() {
         ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
         UbicacionRequestDto ubicacionRequestDto = consultorioRequestDto.getUbicacion();
         Ubicacion ubicacion = createUbicacionEntity();
         Medico medico = createMedicoEntity();
         List<HorarioRequestDto> horarios = consultorioRequestDto.getHorarioAtencion();
 
-        // Mock del comportamiento de los repositorios y servicios
         when(ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo())).thenReturn(ubicacion);
         when(medicoRepository.findByDni(anyInt())).thenReturn(Optional.of(medico));
 
-        // Ejecutar el método de servicio
         ConsultorioResponseDto responseDto = consultorioService.createConsultorio(consultorioRequestDto);
 
-        // Verificaciones y aserciones
         assertNotNull(responseDto);
         verify(ubicacionService, never()).createUbicacion(any(UbicacionRequestDto.class));
         verify(consultorioRepository, times(1)).persist(any(Consultorio.class));
         verify(horarioService, times(horarios.size())).createHorario(any(HorarioRequestDto.class), eq(ubicacionRequestDto));
         verify(medicoRepository, times(1)).findByDni(anyInt());
     }
+
     @Test
-    public void testCreateConsultorioWithoutMedico() {
-        // Preparar los datos de prueba
+    public void createConsultorioWithoutMedicoTest() {
         ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDtoNoMedico();
         UbicacionRequestDto ubicacionRequestDto = consultorioRequestDto.getUbicacion();
         UbicacionResponseDto ubicacionResponseDto = createUbicacion();
         List<HorarioRequestDto> horarios = consultorioRequestDto.getHorarioAtencion();
 
-        // Mock del comportamiento de los repositorios y servicios
         when(ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo())).thenReturn(null);
         when(ubicacionService.createUbicacion(any(UbicacionRequestDto.class))).thenReturn(ubicacionResponseDto);
 
-        // Ejecutar el método de servicio
         ConsultorioResponseDto responseDto = consultorioService.createConsultorio(consultorioRequestDto);
 
-        // Verificaciones y aserciones
         assertNotNull(responseDto);
         verify(ubicacionService, times(1)).createUbicacion(ubicacionRequestDto);
         verify(consultorioRepository, times(1)).persist(any(Consultorio.class));
         verify(horarioService, times(horarios.size())).createHorario(any(HorarioRequestDto.class), eq(ubicacionRequestDto));
         verify(medicoRepository, never()).findByDni(anyInt());
     }
+
     @Test
-    public void testCreateConsultorioWithNonExistentMedico() {
-        // Preparar los datos de prueba
+    public void createConsultorioWithNonExistentMedicoTest() {
         ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
         UbicacionRequestDto ubicacionRequestDto = consultorioRequestDto.getUbicacion();
         UbicacionResponseDto ubicacionResponseDto = createUbicacion();
         List<HorarioRequestDto> horarios = consultorioRequestDto.getHorarioAtencion();
 
-        // Mock del comportamiento de los repositorios y servicios
         when(ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo())).thenReturn(null);
         when(ubicacionService.createUbicacion(any(UbicacionRequestDto.class))).thenReturn(ubicacionResponseDto);
         when(medicoRepository.findByDni(anyInt())).thenReturn(Optional.empty());
 
-        // Ejecutar el método de servicio
         ConsultorioResponseDto responseDto = consultorioService.createConsultorio(consultorioRequestDto);
 
-        // Verificaciones y aserciones
         assertNotNull(responseDto);
         verify(ubicacionService, times(1)).createUbicacion(ubicacionRequestDto);
         verify(consultorioRepository, times(1)).persist(any(Consultorio.class));
         verify(horarioService, times(horarios.size())).createHorario(any(HorarioRequestDto.class), eq(ubicacionRequestDto));
         verify(medicoRepository, times(1)).findByDni(anyInt());
     }
+
+    /* updateConsultorio Tests */
+
+    @Test
+    public void updateConsultorioSuccessTest() {
+        Consultorio consultorio = createConsultorioEntity();
+        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
+
+        when(consultorioRepository.findByUbicacion(consultorioRequestDto.getUbicacion().getCiudad(), consultorioRequestDto.getUbicacion().getProvincia(), consultorioRequestDto.getUbicacion().getCalle(), consultorioRequestDto.getUbicacion().getAltura())).thenReturn(consultorio);
+        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo())).thenReturn(consultorio.getUbicacion());
+        when(medicoRepository.findByDniMedico(anyInt())).thenReturn(createMedicoEntity());
+
+        consultorioService.updateConsultorio(consultorio.getMedico().getDni(), consultorioRequestDto);
+
+        verify(consultorioRepository, times(1)).persistAndFlush(any(Consultorio.class));
+    }
+    @Test
+    public void updateConsultorioNotFoundTest() throws CustomServerException {
+        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
+
+        when(consultorioRepository.findByUbicacion(
+                consultorioRequestDto.getUbicacion().getCiudad(),
+                consultorioRequestDto.getUbicacion().getProvincia(),
+                consultorioRequestDto.getUbicacion().getCalle(),
+                consultorioRequestDto.getUbicacion().getAltura()))
+                .thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
+    }
+    @Test
+    public void updateConsultorioInvalidUbicacionTest() {
+        Consultorio consultorio = createConsultorioEntity();
+        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
+
+        when(consultorioRepository.findByUbicacion(
+                consultorioRequestDto.getUbicacion().getCiudad(),
+                consultorioRequestDto.getUbicacion().getProvincia(),
+                consultorioRequestDto.getUbicacion().getCalle(),
+                consultorioRequestDto.getUbicacion().getAltura()))
+                .thenReturn(consultorio);
+        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
+                .thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
+    }
+    @Test
+    public void updateConsultorioMedicoNotFoundTest() {
+        Consultorio consultorio = createConsultorioEntity();
+        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
+
+        when(consultorioRepository.findByUbicacion(
+                consultorioRequestDto.getUbicacion().getCiudad(),
+                consultorioRequestDto.getUbicacion().getProvincia(),
+                consultorioRequestDto.getUbicacion().getCalle(),
+                consultorioRequestDto.getUbicacion().getAltura()))
+                .thenReturn(consultorio);
+        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
+                .thenReturn(consultorio.getUbicacion());
+        when(medicoRepository.findByDniMedico(anyInt()))
+                .thenReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
+    }
+    @Test
+    public void updateConsultorioWithHorariosSuperpuestosTest() {
+        Consultorio consultorio = createConsultorioEntity();
+        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDtoWithOverlappingHorarios();
+
+        when(consultorioRepository.findByUbicacion(
+                consultorioRequestDto.getUbicacion().getCiudad(),
+                consultorioRequestDto.getUbicacion().getProvincia(),
+                consultorioRequestDto.getUbicacion().getCalle(),
+                consultorioRequestDto.getUbicacion().getAltura()))
+                .thenReturn(consultorio);
+        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
+                .thenReturn(consultorio.getUbicacion());
+        when(medicoRepository.findByDniMedico(anyInt()))
+                .thenReturn(createMedicoEntity());
+
+        assertThrows(HorarioSuperpuestoException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
+    }
+
+    /* DeleteConsultorio Tests */
+
+    @Test
+    @Transactional
+    public void deleteConsultorioSuccessTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(false);
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
+
+        boolean result = consultorioService.deleteConsultorio(codigo);
+
+        assertTrue(result);
+        assertTrue(consultorio.isEstaEliminado());
+    }
+    @Test
+    @Transactional
+    public void deleteConsultorioNotFoundTest() {
+        String codigo = "testCodigo";
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
+
+        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
+            consultorioService.deleteConsultorio(codigo);
+        });
+
+        assertEquals("Consultorio no encontrado", thrown.getMessage());
+    }
+    @Test
+    @Transactional
+    public void deleteConsultorioAlreadyDeletedTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(true);
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
+
+        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
+            consultorioService.deleteConsultorio(codigo);
+        });
+
+        assertEquals("El consultorio ya está eliminado", thrown.getMessage());
+    }
+
+    /* RestoreConsultorio Tests */
+
+    @Test
+    @Transactional
+    public void restoreConsultorioSuccessTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(true);
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
+
+        Response response = consultorioService.restoreConsultorio(codigo);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("Consultorio restaurado con éxito.", response.getEntity());
+        assertFalse(consultorio.isEstaEliminado());
+    }
+    @Test
+    @Transactional
+    public void restoreConsultorioNotFoundTest() {
+        String codigo = "testCodigo";
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
+
+        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
+            consultorioService.restoreConsultorio(codigo);
+        });
+
+        assertEquals("Consultorio no encontrado", thrown.getMessage());
+    }
+    @Test
+    @Transactional
+    public void restoreConsultorioNotDeletedTest() {
+        String codigo = "testCodigo";
+        Consultorio consultorio = new Consultorio();
+        consultorio.setCodigo(codigo);
+        consultorio.setEstaEliminado(false);
+
+        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
+
+        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
+            consultorioService.restoreConsultorio(codigo);
+        });
+
+        assertEquals("El consultorio no está eliminado", thrown.getMessage());
+    }
+
+    /* Métodos privados para crear datos de prueba */
+
     private ConsultorioRequestDto createConsultorioRequestDtoWithOverlappingHorarios() {
         List<HorarioRequestDto> overlappingHorarios = Arrays.asList(
                 HorarioRequestDto.builder()
@@ -369,7 +523,7 @@ public class ConsultorioServiceTest {
 
         return consultorioRequestDto;
     }
-    private Medico createMedicoEntity(){
+    private Medico createMedicoEntity() {
         Date fechaNacimiento = new Date(90, 0, 1);
         Medico medicoDto = new Medico();
         medicoDto.setNombre("Juan");
@@ -382,8 +536,6 @@ public class ConsultorioServiceTest {
         medicoDto.setEspecialidad("Pediatría");
         return medicoDto;
     }
-
-
     private Ubicacion createUbicacionEntity() {
         Ubicacion ubicacion = new Ubicacion();
         ubicacion.setCiudad("San Juan");
@@ -402,7 +554,7 @@ public class ConsultorioServiceTest {
         ubicacion.setCodigo("63b75");
         return ubicacion;
     }
-    private ConsultorioRequestDto createConsultorioRequestDtoNoMedico(){
+    private ConsultorioRequestDto createConsultorioRequestDtoNoMedico() {
         ConsultorioRequestDto dto = new ConsultorioRequestDto();
 
         List<HorarioRequestDto> horarios = new ArrayList<>();
@@ -505,208 +657,9 @@ public class ConsultorioServiceTest {
         consultorio.setUbicacion(ubicacion);
 
         Date fechaNacimiento = new Date(90, 0, 1);
-        Medico medicoDto =  createMedicoEntity();
+        Medico medicoDto = createMedicoEntity();
         consultorio.setMedico(medicoDto);
 
         return consultorio;
-    }
-
-
-    /* CreateConsultorio Test */
-
-
-    @Test
-    public void testUpdateConsultorioSuccess(){
-        // Preparar los datos de prueba
-        Consultorio consultorio = createConsultorioEntity();
-        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
-
-        // Mock del comportamiento de los repositorios y servicios
-        when(consultorioRepository.findByUbicacion(consultorioRequestDto.getUbicacion().getCiudad(),consultorioRequestDto.getUbicacion().getProvincia(),consultorioRequestDto.getUbicacion().getCalle(),consultorioRequestDto.getUbicacion().getAltura())).thenReturn(consultorio);
-        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo())).thenReturn(consultorio.getUbicacion());
-        when(medicoRepository.findByDniMedico(anyInt())).thenReturn(createMedicoEntity());
-
-        // Ejecutar el método de servicio
-        consultorioService.updateConsultorio(consultorio.getMedico().getDni(), consultorioRequestDto);
-
-        // Verificaciones y aserciones
-        verify(consultorioRepository, times(1)).persistAndFlush(any(Consultorio.class));
-    }
-    @Test
-    public void testUpdateConsultorioNotFound() throws CustomServerException{
-        // Preparar los datos de prueba
-        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
-
-        // Mock del comportamiento de los repositorios y servicios
-        when(consultorioRepository.findByUbicacion(
-                consultorioRequestDto.getUbicacion().getCiudad(),
-                consultorioRequestDto.getUbicacion().getProvincia(),
-                consultorioRequestDto.getUbicacion().getCalle(),
-                consultorioRequestDto.getUbicacion().getAltura()))
-                .thenReturn(null);
-
-        // Ejecutar y verificar que lanza la excepción esperada
-        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
-    }
-    @Test
-    public void testUpdateConsultorioInvalidUbicacion() {
-        // Preparar los datos de prueba
-        Consultorio consultorio = createConsultorioEntity();
-        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
-
-        // Mock del comportamiento de los repositorios y servicios
-        when(consultorioRepository.findByUbicacion(
-                consultorioRequestDto.getUbicacion().getCiudad(),
-                consultorioRequestDto.getUbicacion().getProvincia(),
-                consultorioRequestDto.getUbicacion().getCalle(),
-                consultorioRequestDto.getUbicacion().getAltura()))
-                .thenReturn(consultorio);
-        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
-                .thenReturn(null);
-
-        // Ejecutar y verificar que lanza la excepción esperada
-        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
-    }
-    @Test
-    public void testUpdateConsultorioMedicoNotFound() {
-        // Preparar los datos de prueba
-        Consultorio consultorio = createConsultorioEntity();
-        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDto();
-
-        // Mock del comportamiento de los repositorios y servicios
-        when(consultorioRepository.findByUbicacion(
-                consultorioRequestDto.getUbicacion().getCiudad(),
-                consultorioRequestDto.getUbicacion().getProvincia(),
-                consultorioRequestDto.getUbicacion().getCalle(),
-                consultorioRequestDto.getUbicacion().getAltura()))
-                .thenReturn(consultorio);
-        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
-                .thenReturn(consultorio.getUbicacion());
-        when(medicoRepository.findByDniMedico(anyInt()))
-                .thenReturn(null);
-
-        // Ejecutar y verificar que lanza la excepción esperada
-        assertThrows(EntityNotFoundException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
-    }
-    @Test
-    public void testUpdateConsultorioWithOverlappingHorarios() {
-        // Preparar los datos de prueba
-        Consultorio consultorio = createConsultorioEntity();
-        ConsultorioRequestDto consultorioRequestDto = createConsultorioRequestDtoWithOverlappingHorarios();
-
-        // Mock del comportamiento de los repositorios y servicios
-        when(consultorioRepository.findByUbicacion(
-                consultorioRequestDto.getUbicacion().getCiudad(),
-                consultorioRequestDto.getUbicacion().getProvincia(),
-                consultorioRequestDto.getUbicacion().getCalle(),
-                consultorioRequestDto.getUbicacion().getAltura()))
-                .thenReturn(consultorio);
-        when(ubicacionRepository.findByCodigo(consultorioRequestDto.getUbicacion().getCodigo()))
-                .thenReturn(consultorio.getUbicacion());
-        when(medicoRepository.findByDniMedico(anyInt()))
-                .thenReturn(createMedicoEntity());
-
-        // Ejecutar y verificar que lanza la excepción esperada
-        assertThrows(HorarioSuperpuestoException.class, () -> consultorioService.updateConsultorio(1, consultorioRequestDto));
-    }
-
-
-
-    /* DeleteConsultorio Test */
-
-
-    @Test
-    @Transactional
-    public void DeleteConsultorioTest() {
-        String codigo = "testCodigo";
-        Consultorio consultorio = new Consultorio();
-        consultorio.setCodigo(codigo);
-        consultorio.setEstaEliminado(false);
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
-
-        boolean result = consultorioService.deleteConsultorio(codigo);
-
-        assertTrue(result);
-        assertTrue(consultorio.isEstaEliminado());
-    }
-    @Test
-    @Transactional
-    public void DeleteConsultorioNotFoundTest() {
-        String codigo = "testCodigo";
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
-
-        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
-            consultorioService.deleteConsultorio(codigo);
-        });
-
-        assertEquals("Consultorio no encontrado", thrown.getMessage());
-    }
-    @Test
-    @Transactional
-    public void DeleteConsultorioAlreadyDeletedTest() {
-        String codigo = "testCodigo";
-        Consultorio consultorio = new Consultorio();
-        consultorio.setCodigo(codigo);
-        consultorio.setEstaEliminado(true);
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
-
-        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
-            consultorioService.deleteConsultorio(codigo);
-        });
-
-        assertEquals("El consultorio ya está eliminado", thrown.getMessage());
-    }
-
-
-    /* RestoreConsultorio Test */
-
-
-    @Test
-    @Transactional
-    public void RestoreConsultorioTest() {
-        String codigo = "testCodigo";
-        Consultorio consultorio = new Consultorio();
-        consultorio.setCodigo(codigo);
-        consultorio.setEstaEliminado(true);
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
-
-        Response response = consultorioService.restoreConsultorio(codigo);
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("Consultorio restaurado con éxito.", response.getEntity());
-        assertFalse(consultorio.isEstaEliminado());
-    }
-    @Test
-    @Transactional
-    public void RestoreConsultorioNotFoundTest() {
-        String codigo = "testCodigo";
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.empty());
-
-        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
-            consultorioService.restoreConsultorio(codigo);
-        });
-
-        assertEquals("Consultorio no encontrado", thrown.getMessage());
-    }
-    @Test
-    @Transactional
-    public void RestoreConsultorioNotDeletedTest() {
-        String codigo = "testCodigo";
-        Consultorio consultorio = new Consultorio();
-        consultorio.setCodigo(codigo);
-        consultorio.setEstaEliminado(false);
-
-        when(consultorioRepository.findByCodigo(codigo)).thenReturn(Optional.of(consultorio));
-
-        EntityNotFoundException thrown = assertThrows(EntityNotFoundException.class, () -> {
-            consultorioService.restoreConsultorio(codigo);
-        });
-
-        assertEquals("El consultorio no está eliminado", thrown.getMessage());
     }
 }

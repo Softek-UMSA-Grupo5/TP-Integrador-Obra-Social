@@ -144,8 +144,14 @@ public class ConsultorioService {
 
         consultorioRepository.persist(consultorio);
 
-        for (HorarioRequestDto horario : horarios) {
-            horarioService.createHorario(horario, ubicacionRequestDto);
+        for (HorarioRequestDto horarioRequestDto : horarios) {
+            horarioService.createHorario(horarioRequestDto, ubicacionRequestDto);
+        }
+
+        for (HorarioRequestDto horarioRequestDto : horarios) {
+            Horario horario = HorarioFactory.toEntity(horarioRequestDto);
+            horario.setConsultorio(consultorio);
+            horarioRepository.persist(horario);
         }
 
         return ConsultorioFactory.toDto(consultorio);
