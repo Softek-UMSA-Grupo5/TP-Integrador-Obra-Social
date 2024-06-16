@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.softek.g5.exceptions.MissingFieldsException;
+import org.softek.g5.exceptions.CustomException.MissingFieldsException;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

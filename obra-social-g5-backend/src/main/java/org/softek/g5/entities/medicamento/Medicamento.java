@@ -4,10 +4,12 @@ package org.softek.g5.entities.medicamento;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +27,7 @@ public class Medicamento extends PanacheEntityBase{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "medicamento_id")
     private Long id;
 
 	private String codigo;
@@ -37,6 +40,7 @@ public class Medicamento extends PanacheEntityBase{
     private Boolean estaEliminado;
     
     @ManyToOne
+    @JoinColumn(name="recetamedica_id")
     private RecetaMedica recetaMedica;
     
 }

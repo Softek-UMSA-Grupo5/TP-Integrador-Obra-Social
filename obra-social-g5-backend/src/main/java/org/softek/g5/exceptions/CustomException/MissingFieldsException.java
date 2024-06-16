@@ -1,6 +1,11 @@
-package org.softek.g5.exceptions;
+package org.softek.g5.exceptions.CustomException;
 
 public class MissingFieldsException extends RuntimeException{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public MissingFieldsException() {
         super();
