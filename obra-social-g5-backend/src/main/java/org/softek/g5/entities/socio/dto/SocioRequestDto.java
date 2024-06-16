@@ -5,6 +5,7 @@ import java.util.List;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,14 +18,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class SocioRequestDto {
+	@NotNull
 	private String nombre;
+	@NotNull
 	private String apellido;
+	@NotNull
 	private String telefono;
+	@NotNull
 	private String email;
+	@NotNull
 	private int dni;
+	@NotNull
 	private String cuil;
+	@NotNull
 	private Date fechaNacimiento;
-	private String nroAfiliado;
 	private List<BeneficiarioRequestDto> beneficiarios;
 	private List<TurnoMedicoRequestDto> turnos;
 }

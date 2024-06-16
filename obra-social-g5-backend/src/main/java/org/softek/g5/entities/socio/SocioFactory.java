@@ -39,7 +39,7 @@ public class SocioFactory {
 				.dni(dto.getDni())
 				.cuil(dto.getCuil())
 				.fechaNacimiento(dto.getFechaNacimiento())
-				.nroAfiliado(dto.getNroAfiliado())
+				.nroAfiliado("022-"+dto.getDni()+"-"+dto.getBeneficiarios().size())
 				.estaEliminado(false)
 				.beneficiarios(null)
 				.turnos(null)
