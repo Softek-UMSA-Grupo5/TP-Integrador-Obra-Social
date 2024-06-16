@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SocioFactory</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.entities.socio</a>
+</div>
+
+<h1>Coverage Summary for Class: SocioFactory (org.softek.g5.entities.socio)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SocioFactory</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/41)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.entities.socio;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.softek.g5.entities.beneficiario.Beneficiario;
+&nbsp;import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
+&nbsp;import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
+&nbsp;import org.softek.g5.entities.socio.dto.SocioRequestDto;
+&nbsp;import org.softek.g5.entities.socio.dto.SocioResponseDto;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedico;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+&nbsp;import org.softek.g5.repositories.BeneficiarioRepository;
+&nbsp;import org.softek.g5.repositories.TurnoMedicoRepository;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="nc">&nbsp;public class SocioFactory {</b>
+&nbsp;	@Inject
+&nbsp;	BeneficiarioFactory beneficiarioFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	BeneficiarioRepository beneficiarioRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoFactory turnoMedicoFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoRepository turnoMedicoRepository;
+&nbsp;	
+&nbsp;	public Socio createEntityFromDto(SocioRequestDto dto) {
+<b class="nc">&nbsp;		return Socio.builder()</b>
+<b class="nc">&nbsp;				.nombre(dto.getNombre())</b>
+<b class="nc">&nbsp;				.apellido(dto.getApellido())</b>
+<b class="nc">&nbsp;				.telefono(dto.getTelefono())</b>
+<b class="nc">&nbsp;				.email(dto.getEmail())</b>
+<b class="nc">&nbsp;				.dni(dto.getDni())</b>
+<b class="nc">&nbsp;				.cuil(dto.getCuil())</b>
+<b class="nc">&nbsp;				.fechaNacimiento(dto.getFechaNacimiento())</b>
+<b class="nc">&nbsp;				.nroAfiliado(dto.getNroAfiliado())</b>
+<b class="nc">&nbsp;				.estaEliminado(false)</b>
+<b class="nc">&nbsp;				.beneficiarios(null)</b>
+<b class="nc">&nbsp;				.turnos(null)</b>
+<b class="nc">&nbsp;				.build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;	public SocioResponseDto createResponseFromEntity(Socio socio) {
+<b class="nc">&nbsp;		return SocioResponseDto.builder()</b>
+<b class="nc">&nbsp;				.nombre(socio.getNombre())</b>
+<b class="nc">&nbsp;				.apellido(socio.getApellido())</b>
+<b class="nc">&nbsp;				.telefono(socio.getTelefono())</b>
+<b class="nc">&nbsp;				.email(socio.getEmail())</b>
+<b class="nc">&nbsp;				.dni(socio.getDni())</b>
+<b class="nc">&nbsp;				.cuil(socio.getCuil())</b>
+<b class="nc">&nbsp;				.fechaNacimiento(socio.getFechaNacimiento())</b>
+<b class="nc">&nbsp;				.nroAfiliado(socio.getNroAfiliado())</b>
+<b class="nc">&nbsp;				.estaEliminado(socio.getEstaEliminado())</b>
+<b class="nc">&nbsp;				.beneficiarios(createListBeneficiarioDtoFromEntity(socio.getBeneficiarios()))</b>
+<b class="nc">&nbsp;				.turnos(createListTurnoDtoFromEntity(socio.getTurnos()))</b>
+<b class="nc">&nbsp;				.build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;	public List&lt;BeneficiarioResponseDto&gt; createListBeneficiarioDtoFromEntity(List&lt;Beneficiario&gt; beneficiarios){
+<b class="nc">&nbsp;		List&lt;BeneficiarioResponseDto&gt; response = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;		if(beneficiarios == null) {</b>
+<b class="nc">&nbsp;			return response;</b>
+&nbsp;		}
+<b class="nc">&nbsp;    	for (Beneficiario b : beneficiarios) {</b>
+<b class="nc">&nbsp;    		response.add(beneficiarioFactory.createResponseFromEntity(b));</b>
+<b class="nc">&nbsp;		}</b>
+<b class="nc">&nbsp;    	return response;</b>
+&nbsp;    }
+&nbsp;	
+&nbsp;	public List&lt;TurnoMedicoResponseDto&gt; createListTurnoDtoFromEntity(List&lt;TurnoMedico&gt; turnos){
+<b class="nc">&nbsp;		List&lt;TurnoMedicoResponseDto&gt; response = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;		if(turnos == null) {</b>
+<b class="nc">&nbsp;			return response;</b>
+&nbsp;		}
+<b class="nc">&nbsp;    	for (TurnoMedico t : turnos) {</b>
+<b class="nc">&nbsp;    		response.add(turnoMedicoFactory.createResponseFromEntity(t));</b>
+<b class="nc">&nbsp;		}</b>
+<b class="nc">&nbsp;    	return response;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

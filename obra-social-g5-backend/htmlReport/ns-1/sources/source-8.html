@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TurnoMedicoController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: TurnoMedicoController (org.softek.g5.controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TurnoMedicoController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TurnoMedicoController$quarkusrestinvoker$addTurnoMedico_92f254c3db5f0b8aaf08f64a26487f3e6903a6c4</td>
+  </tr>
+  <tr>
+    <td class="name">TurnoMedicoController$quarkusrestinvoker$delete_a7b9b5503816b56d248572e3f238c5482a6673cb</td>
+  </tr>
+  <tr>
+    <td class="name">TurnoMedicoController$quarkusrestinvoker$getAllTurnoMedico_f0bd45796c3d56469fd75b5502fe9043ff2bf2ab</td>
+  </tr>
+  <tr>
+    <td class="name">TurnoMedicoController$quarkusrestinvoker$update_d9312fe37e471cdda15a50b1c4ef8fe7e8ce043b</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.controllers;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.Operation;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+&nbsp;import org.softek.g5.services.TurnoMedicoService;
+&nbsp;
+&nbsp;import io.smallrye.common.annotation.Blocking;
+&nbsp;import jakarta.annotation.security.RolesAllowed;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.Consumes;
+&nbsp;import jakarta.ws.rs.DELETE;
+&nbsp;import jakarta.ws.rs.GET;
+&nbsp;import jakarta.ws.rs.POST;
+&nbsp;import jakarta.ws.rs.PUT;
+&nbsp;import jakarta.ws.rs.Path;
+&nbsp;import jakarta.ws.rs.PathParam;
+&nbsp;import jakarta.ws.rs.Produces;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@Path(&quot;/turnoMedico&quot;)
+&nbsp;@Blocking
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class TurnoMedicoController {
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoService TurnoMedicoService;
+&nbsp;
+&nbsp;	@GET
+&nbsp;	@RolesAllowed(&quot;USER&quot;)
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@Operation(summary = &quot;Obtener todos los turnos médicos&quot;, description = &quot;Devuelve una lista de todos los turnos médicos&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Lista de turnos médicos&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al obtener los turnos médicos&quot;)
+&nbsp;	})
+&nbsp;	public Response getAllTurnoMedico() {
+<b class="nc">&nbsp;	        Collection&lt;TurnoMedicoResponseDto&gt; turnos = this.TurnoMedicoService.getTurnoMedico();</b>
+<b class="nc">&nbsp;	        return Response.ok(turnos).build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@POST
+&nbsp;	@RolesAllowed(&quot;ADMIN&quot;)
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;	@Operation(summary = &quot;Añadir turnos médicos&quot;, description = &quot;Añade y persiste una lista de turnos médicos&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;201&quot;, description = &quot;Turnos médicos añadidos y persistidos&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al añadir y persistir los turnos médicos&quot;)
+&nbsp;	})
+&nbsp;	@Transactional
+&nbsp;	public Response addTurnoMedico(@Valid List&lt;TurnoMedicoRequestDto&gt; dtos) {
+<b class="nc">&nbsp;	        Collection&lt;TurnoMedicoResponseDto&gt; response = this.TurnoMedicoService.persistTurnoMedico(dtos);</b>
+<b class="nc">&nbsp;	        return Response.status(Response.Status.CREATED).entity(response).build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@PUT
+&nbsp;	@Path(&quot;/{codigo}&quot;)
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;	@RolesAllowed(&quot;ADMIN&quot;)
+&nbsp;	@Operation(summary = &quot;Actualizar turno médico&quot;, description = &quot;Actualiza un turno médico existente&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Turno médico actualizado&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al actualizar el turno médico&quot;)
+&nbsp;	})
+&nbsp;	public Response update(@Parameter(required = true, description = &quot;Código del turno médico&quot;) @PathParam(&quot;codigo&quot;) String codigo, @Valid TurnoMedicoRequestDto dto) {
+<b class="nc">&nbsp;	        TurnoMedicoService.updateTurnoMedico(codigo, dto);</b>
+<b class="nc">&nbsp;	        return Response.ok().build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@DELETE
+&nbsp;	@Path(&quot;/{codigo}&quot;)
+&nbsp;	@RolesAllowed(&quot;ADMIN&quot;)
+&nbsp;	@Operation(summary = &quot;Eliminar turno médico&quot;, description = &quot;Elimina un turno médico existente&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Turno médico eliminado&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al eliminar el turno médico&quot;)
+&nbsp;	})
+&nbsp;	public Response delete(@Parameter(required = true, description = &quot;Código del turno médico&quot;) @PathParam(&quot;codigo&quot;) String codigo) {
+<b class="nc">&nbsp;	        this.TurnoMedicoService.deleteTurnoMedico(codigo);</b>
+<b class="nc">&nbsp;	        return Response.ok().build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

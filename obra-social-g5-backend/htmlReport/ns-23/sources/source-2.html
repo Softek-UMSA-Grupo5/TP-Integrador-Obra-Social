@@ -1,0 +1,355 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ConsultorioService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.services</a>
+</div>
+
+<h1>Coverage Summary for Class: ConsultorioService (org.softek.g5.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConsultorioService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94,5%
+  </span>
+  <span class="absValue">
+    (104/110)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.services;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import org.softek.g5.entities.consultorio.Consultorio;
+&nbsp;import org.softek.g5.entities.consultorio.ConsultorioFactory;
+&nbsp;import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
+&nbsp;import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
+&nbsp;import org.softek.g5.entities.horario.Horario;
+&nbsp;import org.softek.g5.entities.horario.HorarioFactory;
+&nbsp;import org.softek.g5.entities.horario.dto.HorarioRequestDto;
+&nbsp;import org.softek.g5.entities.medico.Medico;
+&nbsp;import org.softek.g5.entities.medico.MedicoFactory;
+&nbsp;import org.softek.g5.entities.medico.dto.MedicoRequestDto;
+&nbsp;import org.softek.g5.entities.ubicacion.Ubicacion;
+&nbsp;import org.softek.g5.entities.ubicacion.UbicacionFactory;
+&nbsp;import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
+&nbsp;import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
+&nbsp;import org.softek.g5.exceptions.CustomException.CustomServerException;
+&nbsp;import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
+&nbsp;import org.softek.g5.exceptions.CustomException.HorarioSuperpuestoException;
+&nbsp;import org.softek.g5.repositories.ConsultorioRepository;
+&nbsp;import org.softek.g5.repositories.HorarioRepository;
+&nbsp;import org.softek.g5.repositories.MedicoRepository;
+&nbsp;import org.softek.g5.repositories.UbicacionRepository;
+&nbsp;import org.softek.g5.validation.entitiesValidation.HorarioValidator;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class ConsultorioService {
+&nbsp;    @Inject
+&nbsp;    private final ConsultorioRepository consultorioRepository;
+&nbsp;    @Inject
+&nbsp;	private final UbicacionRepository ubicacionRepository;
+&nbsp;    @Inject
+&nbsp;    private final UbicacionService ubicacionService;
+&nbsp;    @Inject
+&nbsp;    private final HorarioRepository horarioRepository;
+&nbsp;    @Inject
+&nbsp;    private final HorarioService horarioService;
+&nbsp;    @Inject
+&nbsp;    private final MedicoService medicoService;
+&nbsp;    @Inject
+&nbsp;    private final MedicoFactory medicoFactory;
+&nbsp;    @Inject
+&nbsp;    private final MedicoRepository medicoRepository;
+&nbsp;    @Inject
+&nbsp;    private final HorarioValidator horarioValidator;
+&nbsp;    @Inject
+&nbsp;    private final ConsultorioFactory consultorioFactory;
+&nbsp;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public List&lt;ConsultorioResponseDto&gt; getAllConsultorios() throws CustomServerException {
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;Consultorio&gt; consultorios = consultorioRepository.listAll();</b>
+<b class="fc">&nbsp;            if (consultorios.isEmpty()){</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;No hay consultorios registrados&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return consultorios.stream()</b>
+<b class="fc">&nbsp;                    .filter(consultorio -&gt; !consultorio.isEstaEliminado())</b>
+<b class="fc">&nbsp;                    .map(ConsultorioFactory::toDto)</b>
+<b class="fc">&nbsp;                    .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        } catch (CustomServerException e) {</b>
+<b class="fc">&nbsp;            throw new CustomServerException(&quot;Error al obtener los consultorios&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public ConsultorioResponseDto getConsultorioByCodigo(String codigo) throws CustomServerException {
+&nbsp;    	try {
+<b class="fc">&nbsp;            Optional&lt;Consultorio&gt; optionalConsultorio = consultorioRepository.findByCodigo(codigo);</b>
+<b class="fc">&nbsp;            if (optionalConsultorio.isPresent()) {</b>
+<b class="fc">&nbsp;                Consultorio consultorio = optionalConsultorio.get();</b>
+<b class="fc">&nbsp;                if (consultorio.isEstaEliminado()) {</b>
+<b class="fc">&nbsp;                    throw new EntityNotFoundException(&quot;El consultorio está eliminado&quot; + codigo);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                return ConsultorioFactory.toDto(consultorio);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Consultorio no encontrado con código: &quot; + codigo);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        } catch (CustomServerException e) {</b>
+<b class="fc">&nbsp;            throw new CustomServerException(&quot;Error al obtener el consultorio por código&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;ConsultorioResponseDto&gt; getAllConsultoriosDeleted() throws CustomServerException{
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;Consultorio&gt; consultorios = consultorioRepository.listAll();</b>
+<b class="fc">&nbsp;            List&lt;ConsultorioResponseDto&gt; consultoriosEliminados = consultorios.stream()</b>
+<b class="fc">&nbsp;                    .filter(Consultorio::isEstaEliminado)</b>
+<b class="fc">&nbsp;                    .map(ConsultorioFactory::toDto)</b>
+<b class="fc">&nbsp;                    .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;            if (consultoriosEliminados.isEmpty()){</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;No hay consultorios eliminados&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return consultoriosEliminados;</b>
+<b class="fc">&nbsp;        } catch (CustomServerException e) {</b>
+<b class="fc">&nbsp;            throw new CustomServerException(&quot;Error al obtener los consultorios eliminados&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) throws CustomServerException{
+<b class="fc">&nbsp;        List&lt;HorarioRequestDto&gt; horarios = dto.getHorarioAtencion();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!HorarioValidator.validateHorarios(horarios)) {</b>
+<b class="fc">&nbsp;            throw new HorarioSuperpuestoException(&quot;Los horarios no pueden superponerse&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Consultorio consultorio = ConsultorioFactory.toEntity(dto);</b>
+&nbsp;
+<b class="fc">&nbsp;        UbicacionRequestDto ubicacionRequestDto = dto.getUbicacion();</b>
+<b class="fc">&nbsp;        Ubicacion ubicacion = ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (ubicacion == null) {</b>
+<b class="fc">&nbsp;            UbicacionResponseDto ubicacionResponseDto = ubicacionService.createUbicacion(ubicacionRequestDto);</b>
+<b class="fc">&nbsp;            ubicacion = UbicacionFactory.toEntityFromResponseDto(ubicacionResponseDto);</b>
+<b class="fc">&nbsp;            ubicacionRepository.persist(ubicacion);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        consultorio.setUbicacion(ubicacion);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (dto.getMedico() != null) {</b>
+<b class="fc">&nbsp;            Optional&lt;Medico&gt; medicoOptional = medicoRepository.findByDni(dto.getMedico().getDni());</b>
+&nbsp;            Medico medico;
+<b class="fc">&nbsp;            if (medicoOptional.isPresent()) {</b>
+<b class="fc">&nbsp;                medico = medicoOptional.get();</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                MedicoRequestDto medicoRequestDto = dto.getMedico();</b>
+<b class="fc">&nbsp;                medico = medicoFactory.createEntityFromDto(medicoRequestDto);</b>
+<b class="fc">&nbsp;                medicoRepository.persist(medico);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            consultorio.setMedico(medico);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        consultorioRepository.persist(consultorio);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (HorarioRequestDto horarioRequestDto : horarios) {</b>
+<b class="fc">&nbsp;            horarioService.createHorario(horarioRequestDto, ubicacionRequestDto);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        for (HorarioRequestDto horarioRequestDto : horarios) {</b>
+<b class="fc">&nbsp;            Horario horario = HorarioFactory.toEntity(horarioRequestDto);</b>
+<b class="fc">&nbsp;            horario.setConsultorio(consultorio);</b>
+<b class="fc">&nbsp;            horarioRepository.persist(horario);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return ConsultorioFactory.toDto(consultorio);</b>
+&nbsp;    }
+&nbsp;    @Transactional
+&nbsp;    public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) throws CustomServerException {
+&nbsp;        try {
+<b class="fc">&nbsp;            Consultorio consultorio = consultorioRepository.findByUbicacion(dto.getUbicacion().getCiudad(), dto.getUbicacion().getProvincia(), dto.getUbicacion().getCalle(), dto.getUbicacion().getAltura());</b>
+&nbsp;
+<b class="fc">&nbsp;            if (consultorio == null) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Consultorio no encontrado&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Ubicacion ubicacion = ubicacionRepository.findByCodigo(dto.getUbicacion().getCodigo());</b>
+<b class="fc">&nbsp;            if (ubicacion == null) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Ubicación no válida: &quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            consultorio.setUbicacion(ubicacion);</b>
+&nbsp;
+<b class="fc">&nbsp;            Medico medico = medicoRepository.findByDniMedico(dniMedico);</b>
+<b class="fc">&nbsp;            if (medico == null) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Medico no encontrado&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            consultorio.setMedico(medico);</b>
+&nbsp;
+<b class="fc">&nbsp;            consultorio.getHorarioAtencion().clear();</b>
+<b class="fc">&nbsp;            consultorioRepository.flush();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (!HorarioValidator.validateHorarios(dto.getHorarioAtencion())) {</b>
+<b class="fc">&nbsp;                throw new HorarioSuperpuestoException(&quot;Los horarios no pueden superponerse&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            List&lt;Horario&gt; nuevosHorarios = dto.getHorarioAtencion().stream()</b>
+<b class="fc">&nbsp;                    .map(HorarioFactory::toEntity)</b>
+<b class="fc">&nbsp;                    .toList();</b>
+<b class="fc">&nbsp;            nuevosHorarios.forEach(horario -&gt; horario.setConsultorio(consultorio));</b>
+<b class="fc">&nbsp;            consultorio.getHorarioAtencion().addAll(nuevosHorarios);</b>
+&nbsp;
+<b class="fc">&nbsp;            consultorioRepository.persistAndFlush(consultorio);</b>
+<b class="fc">&nbsp;        } catch (EntityNotFoundException | HorarioSuperpuestoException e) {</b>
+<b class="fc">&nbsp;            throw e;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            throw new CustomServerException(&quot;Error al actualizar el consultorio&quot;, e);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public boolean deleteConsultorio(String codigo) throws CustomServerException {
+&nbsp;        try {
+<b class="fc">&nbsp;            Optional&lt;Consultorio&gt; consultorioOptional = consultorioRepository.findByCodigo(codigo);</b>
+<b class="fc">&nbsp;            if (consultorioOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Consultorio no encontrado&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Consultorio consultorio = consultorioOptional.get();</b>
+<b class="fc">&nbsp;            if (consultorio.isEstaEliminado()) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;El consultorio ya está eliminado&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            consultorio.setEstaEliminado(true);</b>
+<b class="fc">&nbsp;            consultorioRepository.persist(consultorio);</b>
+<b class="fc">&nbsp;            return true;</b>
+<b class="fc">&nbsp;        } catch (EntityNotFoundException e) {</b>
+<b class="fc">&nbsp;            throw e;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            throw new CustomServerException(&quot;Error al eliminar el consultorio&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public Response restoreConsultorio(String codigo) throws CustomServerException {
+&nbsp;        try {
+<b class="fc">&nbsp;            Optional&lt;Consultorio&gt; consultorioOptional = consultorioRepository.findByCodigo(codigo);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (consultorioOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;Consultorio no encontrado&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Consultorio consultorio = consultorioOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (!consultorio.isEstaEliminado()) {</b>
+<b class="fc">&nbsp;                throw new EntityNotFoundException(&quot;El consultorio no está eliminado&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            consultorio.setEstaEliminado(false);</b>
+<b class="fc">&nbsp;            consultorioRepository.persist(consultorio);</b>
+&nbsp;
+<b class="fc">&nbsp;            return Response.ok(&quot;Consultorio restaurado con éxito.&quot;).build();</b>
+<b class="fc">&nbsp;        } catch (EntityNotFoundException e) {</b>
+<b class="fc">&nbsp;            throw e;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            throw new CustomServerException(&quot;Error al restaurar el consultorio&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

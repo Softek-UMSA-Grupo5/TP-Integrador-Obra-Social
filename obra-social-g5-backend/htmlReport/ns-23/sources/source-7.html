@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SocioService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.services</a>
+</div>
+
+<h1>Coverage Summary for Class: SocioService (org.softek.g5.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SocioService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.services;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.softek.g5.entities.beneficiario.Beneficiario;
+&nbsp;import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
+&nbsp;import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
+&nbsp;import org.softek.g5.entities.socio.Socio;
+&nbsp;import org.softek.g5.entities.socio.SocioFactory;
+&nbsp;import org.softek.g5.entities.socio.dto.SocioRequestDto;
+&nbsp;import org.softek.g5.entities.socio.dto.SocioResponseDto;
+&nbsp;import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
+&nbsp;import org.softek.g5.exceptions.entitiesCustomException.socio.InvalidSocioData;
+&nbsp;import org.softek.g5.exceptions.entitiesCustomException.socio.SocioNotFoundException;
+&nbsp;import org.softek.g5.repositories.BeneficiarioRepository;
+&nbsp;import org.softek.g5.repositories.SocioRepository;
+&nbsp;import org.softek.g5.validation.DataValidator;
+&nbsp;import org.softek.g5.validation.entitiesValidation.SocioValidator;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class SocioService {
+&nbsp;	@Inject
+&nbsp;	SocioRepository socioRepository;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	SocioFactory socioFactory;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	BeneficiarioService beneficiarioService;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	BeneficiarioFactory beneficiarioFactory;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	BeneficiarioRepository beneficiarioRepository;
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public Collection&lt;SocioResponseDto&gt; getSocios() {
+<b class="nc">&nbsp;		Collection&lt;Socio&gt; socios = socioRepository.listAll();</b>
+<b class="nc">&nbsp;		Collection&lt;SocioResponseDto&gt; dtos = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;		for (Socio s : socios) {</b>
+<b class="nc">&nbsp;			dtos.add(socioFactory.createResponseFromEntity(s));</b>
+<b class="nc">&nbsp;		}</b>
+&nbsp;
+<b class="nc">&nbsp;		if (dtos.isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new EntityNotFoundException(&quot;No hay registros de Socio&quot;);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		return dtos;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public SocioResponseDto persistSocio(SocioRequestDto dto) {
+<b class="nc">&nbsp;		SocioResponseDto response = new SocioResponseDto();</b>
+&nbsp;		
+<b class="nc">&nbsp;		DataValidator.validateDtoFields(dto);</b>
+<b class="nc">&nbsp;		if(!SocioValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;			throw new InvalidSocioData(&quot;Los datos enviados de socio son erróneos&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		Socio socio = socioFactory.createEntityFromDto(dto);</b>
+<b class="nc">&nbsp;		Optional&lt;Socio&gt; optionalSocio = socioRepository.findByDni(socio.getDni());</b>
+<b class="nc">&nbsp;		if (optionalSocio.isPresent()) {</b>
+<b class="nc">&nbsp;			throw new RuntimeException(&quot;Este socio ya existe&quot;);</b>
+&nbsp;		}
+&nbsp;		
+<b class="nc">&nbsp;		this.socioRepository.persist(socio);</b>
+<b class="nc">&nbsp;		if(socio.getBeneficiarios() != null) {</b>
+<b class="nc">&nbsp;			this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());</b>
+&nbsp;		}
+&nbsp;		
+<b class="nc">&nbsp;		response = socioFactory.createResponseFromEntity(socio);</b>
+&nbsp;
+<b class="nc">&nbsp;		return response;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public SocioResponseDto updateSocio(Long id, SocioRequestDto dto) {
+<b class="nc">&nbsp;		Optional&lt;Socio&gt; optionalSocio = Optional.of(socioRepository.findById(id));</b>
+<b class="nc">&nbsp;		if (optionalSocio.isPresent()) {</b>
+&nbsp;			
+<b class="nc">&nbsp;			DataValidator.validateDtoFields(dto);</b>
+<b class="nc">&nbsp;			if(!SocioValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;				throw new InvalidSocioData(&quot;Los datos enviados de socio son erróneos&quot;);</b>
+&nbsp;			}
+&nbsp;			
+<b class="nc">&nbsp;			Socio socio = optionalSocio.get();</b>
+<b class="nc">&nbsp;			socio.setId(optionalSocio.get().getId());</b>
+<b class="nc">&nbsp;			socio.setApellido(dto.getApellido());</b>
+<b class="nc">&nbsp;			socio.setNombre(dto.getNombre());</b>
+<b class="nc">&nbsp;			socio.setCuil(dto.getCuil());</b>
+<b class="nc">&nbsp;			socio.setDni(dto.getDni());</b>
+<b class="nc">&nbsp;			socio.setEmail(dto.getEmail());</b>
+<b class="nc">&nbsp;			socio.setFechaNacimiento(dto.getFechaNacimiento());</b>
+<b class="nc">&nbsp;			socio.setNroAfiliado(dto.getNroAfiliado());</b>
+<b class="nc">&nbsp;			socio.setTelefono(dto.getTelefono());</b>
+<b class="nc">&nbsp;			for (BeneficiarioRequestDto d : dto.getBeneficiarios()) {</b>
+<b class="nc">&nbsp;				beneficiarioService.updateBeneficiario(d.getDni(), socio.getId(), d);</b>
+<b class="nc">&nbsp;			}</b>
+<b class="nc">&nbsp;			return this.socioFactory.createResponseFromEntity(socio);</b>
+&nbsp;		} else {
+<b class="nc">&nbsp;			throw new SocioNotFoundException(&quot;Socio no encontrado&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public void deleteSocio(Long id) {
+<b class="nc">&nbsp;		int updatedRows = this.socioRepository.update(&quot;estaEliminado = true WHERE id = ?1&quot;, id);</b>
+<b class="nc">&nbsp;		if (updatedRows == 0) {</b>
+<b class="nc">&nbsp;			throw new SocioNotFoundException(&quot;Socio no encontrado&quot;);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		List&lt;Beneficiario&gt; beneficiarios = this.beneficiarioRepository.findBySocio(id);</b>
+<b class="nc">&nbsp;		for (Beneficiario b : beneficiarios) {</b>
+<b class="nc">&nbsp;			beneficiarioService.deleteBeneficiario(b.getId(), id);</b>
+<b class="nc">&nbsp;		}</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RecetaMedicaService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.services</a>
+</div>
+
+<h1>Coverage Summary for Class: RecetaMedicaService (org.softek.g5.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RecetaMedicaService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/43)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.services;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.softek.g5.entities.medicamento.MedicamentoFactory;
+&nbsp;import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
+&nbsp;import org.softek.g5.entities.recetaMedica.RecetaMedica;
+&nbsp;import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
+&nbsp;import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
+&nbsp;import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedico;
+&nbsp;import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
+&nbsp;import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
+&nbsp;import org.softek.g5.exceptions.entitiesCustomException.recetaMedica.RecetaMedicaNotFoundException;
+&nbsp;import org.softek.g5.repositories.RecetaMedicaRepository;
+&nbsp;import org.softek.g5.repositories.TurnoMedicoRepository;
+&nbsp;import org.softek.g5.validation.DataValidator;
+&nbsp;import org.softek.g5.validation.entitiesValidation.RecetaMedicaValidator;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class RecetaMedicaService {
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	RecetaMedicaRepository recetaMedicaRepository;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	RecetaMedicaFactory recetaMedicaFactory;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	MedicamentoService medicamentoService;
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	MedicamentoFactory medicamentoFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoRepository turnoMedicoRepository;
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public Collection&lt;RecetaMedicaResponseDto&gt; getRecetaMedica() {
+<b class="nc">&nbsp;		Collection&lt;RecetaMedica&gt; RecetaMedica = recetaMedicaRepository.listAll();</b>
+<b class="nc">&nbsp;		Collection&lt;RecetaMedicaResponseDto&gt; dtos = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;		for (RecetaMedica m : RecetaMedica) {</b>
+<b class="nc">&nbsp;			dtos.add(recetaMedicaFactory.createResponseFromEntity(m));</b>
+<b class="nc">&nbsp;		}</b>
+&nbsp;
+<b class="nc">&nbsp;		if (dtos.isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new EntityNotFoundException(&quot;No hay registros de RecetaMedica&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		return dtos;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public RecetaMedicaResponseDto persistRecetaMedica(String codigoTurno, RecetaMedicaRequestDto dto) throws Exception {
+&nbsp;		
+<b class="nc">&nbsp;		RecetaMedicaResponseDto response = new RecetaMedicaResponseDto();</b>
+&nbsp;		
+<b class="nc">&nbsp;		DataValidator.validateDtoFields(dto);</b>
+&nbsp;		
+<b class="nc">&nbsp;		if (!RecetaMedicaValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;			throw new InvalidDataRequest(&quot;Los datos de receta enviados son erroneos&quot;);</b>
+&nbsp;		}
+&nbsp;		
+<b class="nc">&nbsp;		RecetaMedica recetaMedica = recetaMedicaFactory.createEntityFromDto(dto);</b>
+&nbsp;		
+<b class="nc">&nbsp;		Optional&lt;RecetaMedica&gt; optionalRecetaMedica = recetaMedicaRepository.findByCodigo(recetaMedica.getCodigo());</b>
+<b class="nc">&nbsp;		if (optionalRecetaMedica.isPresent()) {</b>
+<b class="nc">&nbsp;			throw new RuntimeException(&quot;Esta receta ya existe en el turno&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		Optional&lt;TurnoMedico&gt; turno = turnoMedicoRepository.findByCodigo(codigoTurno);</b>
+<b class="nc">&nbsp;		if (!optionalRecetaMedica.isPresent()) {</b>
+<b class="nc">&nbsp;			throw new RuntimeException(&quot;El turno no se ha encontrado&quot;);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		recetaMedica.setTurno(turno.get());</b>
+&nbsp;
+<b class="nc">&nbsp;		this.recetaMedicaRepository.persist(recetaMedica);</b>
+<b class="nc">&nbsp;		this.medicamentoService.persistMedicamento(recetaMedica.getCodigo(), dto.getMedicamentos());</b>
+<b class="nc">&nbsp;		response = recetaMedicaFactory.createResponseFromEntity(recetaMedica);</b>
+&nbsp;
+<b class="nc">&nbsp;		return response;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public void updateRecetaMedica(String codigo, RecetaMedicaRequestDto dto) throws Exception {
+<b class="nc">&nbsp;		Optional&lt;RecetaMedica&gt; optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigo);</b>
+<b class="nc">&nbsp;		if (optionalRecetaMedica.isPresent()) {</b>
+<b class="nc">&nbsp;			RecetaMedica recetaMedica = optionalRecetaMedica.get();</b>
+&nbsp;			
+<b class="nc">&nbsp;			DataValidator.validateDtoFields(dto);</b>
+&nbsp;			
+<b class="nc">&nbsp;			if (!RecetaMedicaValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;				throw new InvalidDataRequest(&quot;Los datos de receta enviados son erroneos&quot;);</b>
+&nbsp;			}
+&nbsp;			
+<b class="nc">&nbsp;			recetaMedica.setCantDiasVigencia(dto.getCantDiasVigencia());</b>
+<b class="nc">&nbsp;			recetaMedica.setUltimaModificacion(LocalDate.now());</b>
+&nbsp;
+<b class="nc">&nbsp;			for (MedicamentoRequestDto d : dto.getMedicamentos()) {</b>
+<b class="nc">&nbsp;				medicamentoService.updateMedicamento(</b>
+<b class="nc">&nbsp;						(d.getNombre() + &quot;-&quot; + d.getConcentracion() + &quot;-&quot; + d.getFormaFarmaceutica()),</b>
+<b class="nc">&nbsp;						recetaMedica.getId(), d);</b>
+<b class="nc">&nbsp;			}</b>
+&nbsp;
+<b class="nc">&nbsp;		} else {</b>
+<b class="nc">&nbsp;			throw new RecetaMedicaNotFoundException(&quot;RecetaMedica no encontrado&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;	public void deleteRecetaMedica(String codigo) {
+<b class="nc">&nbsp;		int updatedRows = this.recetaMedicaRepository.update(&quot;estaEliminado = true WHERE codigo = ?1&quot;, codigo);</b>
+<b class="nc">&nbsp;		if (updatedRows == 0) {</b>
+<b class="nc">&nbsp;			throw new RecetaMedicaNotFoundException(&quot;RecetaMedica no encontrado&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

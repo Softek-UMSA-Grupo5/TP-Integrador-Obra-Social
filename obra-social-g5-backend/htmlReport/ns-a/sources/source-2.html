@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MedicoFactory</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.entities.medico</a>
+</div>
+
+<h1>Coverage Summary for Class: MedicoFactory (org.softek.g5.entities.medico)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MedicoFactory</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/41)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$C2XzkwOB</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$cEQNlA1W</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$hiqFHr7q</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$KunET11k</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$YTxHEP2Y</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$oLb9KcXE$auxiliary$Z736WMfx</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$DKCCYUiD</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$EqWO9329</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$jdrSNGpQ</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$NvCwIpUf</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$rEkBAizE</td>
+  </tr>
+  <tr>
+    <td class="name">MedicoFactory$MockitoMock$TeoZu0py$auxiliary$Y2VMRvAv</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/41)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.entities.medico;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.softek.g5.entities.consultorio.Consultorio;
+&nbsp;import org.softek.g5.entities.consultorio.ConsultorioFactory;
+&nbsp;import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
+&nbsp;import org.softek.g5.entities.medico.dto.MedicoRequestDto;
+&nbsp;import org.softek.g5.entities.medico.dto.MedicoResponseDto;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedico;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+&nbsp;import org.softek.g5.repositories.ConsultorioRepository;
+&nbsp;import org.softek.g5.repositories.TurnoMedicoRepository;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="nc">&nbsp;public class MedicoFactory {</b>
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	ConsultorioRepository consultorioRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoRepository turnoMedicoRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoFactory turnoMedicoFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	ConsultorioFactory consultorioFactory;
+&nbsp;	
+&nbsp;	public Medico createEntityFromDto(MedicoRequestDto dto) {
+<b class="nc">&nbsp;		return Medico.builder()</b>
+<b class="nc">&nbsp;				.nombre(dto.getNombre())</b>
+<b class="nc">&nbsp;				.apellido(dto.getApellido())</b>
+<b class="nc">&nbsp;				.telefono(dto.getTelefono())</b>
+<b class="nc">&nbsp;				.email(dto.getEmail())</b>
+<b class="nc">&nbsp;				.dni(dto.getDni())</b>
+<b class="nc">&nbsp;				.cuil(dto.getCuil())</b>
+<b class="nc">&nbsp;				.fechaNacimiento(dto.getFechaNacimiento())</b>
+<b class="nc">&nbsp;				.especialidad(dto.getEspecialidad())</b>
+<b class="nc">&nbsp;				.consultorios(null)</b>
+<b class="nc">&nbsp;				.turnos(null)</b>
+<b class="nc">&nbsp;				.estaEliminado(false)</b>
+<b class="nc">&nbsp;				.build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;	public MedicoResponseDto createResponseFromEntity(Medico medico) {
+<b class="nc">&nbsp;		return MedicoResponseDto.builder()</b>
+<b class="nc">&nbsp;				.nombre(medico.getNombre())</b>
+<b class="nc">&nbsp;				.apellido(medico.getApellido())</b>
+<b class="nc">&nbsp;				.telefono(medico.getTelefono())</b>
+<b class="nc">&nbsp;				.email(medico.getEmail())</b>
+<b class="nc">&nbsp;				.dni(medico.getDni())</b>
+<b class="nc">&nbsp;				.cuil(medico.getCuil())</b>
+<b class="nc">&nbsp;				.fechaNacimiento(medico.getFechaNacimiento())</b>
+<b class="nc">&nbsp;				.especialidad(medico.getEspecialidad())</b>
+<b class="nc">&nbsp;				.consultorios(createListConsultorioDtoFromEntity(medico.getConsultorios()))</b>
+<b class="nc">&nbsp;				.turnos(createListTurnoMedicoDtoFromEntity(medico.getTurnos()))</b>
+<b class="nc">&nbsp;				.estaEliminado(medico.getEstaEliminado())</b>
+<b class="nc">&nbsp;				.build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;	public List&lt;ConsultorioResponseDto&gt; createListConsultorioDtoFromEntity(List&lt;Consultorio&gt; consultorios){
+<b class="nc">&nbsp;		List&lt;ConsultorioResponseDto&gt; response = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;		if(consultorios == null || consultorios.isEmpty()) {</b>
+<b class="nc">&nbsp;			return response;</b>
+&nbsp;		}
+<b class="nc">&nbsp;    	for (Consultorio c : consultorios) {</b>
+<b class="nc">&nbsp;    		response.add(ConsultorioFactory.toDto(c));</b>
+<b class="nc">&nbsp;		}</b>
+<b class="nc">&nbsp;    	return response;</b>
+&nbsp;    }
+&nbsp;	
+&nbsp;	public List&lt;TurnoMedicoResponseDto&gt; createListTurnoMedicoDtoFromEntity(List&lt;TurnoMedico&gt; turnos){
+<b class="nc">&nbsp;		List&lt;TurnoMedicoResponseDto&gt; response = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;		if(turnos == null || turnos.isEmpty()) {</b>
+<b class="nc">&nbsp;			return response;</b>
+&nbsp;		}
+<b class="nc">&nbsp;    	for (TurnoMedico t : turnos) {</b>
+<b class="nc">&nbsp;    		response.add(turnoMedicoFactory.createResponseFromEntity(t));</b>
+<b class="nc">&nbsp;		}</b>
+<b class="nc">&nbsp;    	return response;</b>
+&nbsp;    }
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

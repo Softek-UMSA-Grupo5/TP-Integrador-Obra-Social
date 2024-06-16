@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DataValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.validation</a>
+</div>
+
+<h1>Coverage Summary for Class: DataValidator (org.softek.g5.validation)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DataValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    16,7%
+  </span>
+  <span class="absValue">
+    (3/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8,1%
+  </span>
+  <span class="absValue">
+    (3/37)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DataValidator$DataValidatorBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    15,8%
+  </span>
+  <span class="absValue">
+    (3/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7,9%
+  </span>
+  <span class="absValue">
+    (3/38)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.validation;
+&nbsp;
+&nbsp;
+&nbsp;import java.lang.reflect.Field;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.function.Predicate;
+&nbsp;
+&nbsp;import org.softek.g5.exceptions.CustomException.MissingFieldsException;
+&nbsp;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Builder;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;
+<b class="nc">&nbsp;@Data</b>
+&nbsp;@Getter
+<b class="nc">&nbsp;@Setter</b>
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="nc">&nbsp;@NoArgsConstructor</b>
+<b class="nc">&nbsp;@Builder</b>
+&nbsp;public class DataValidator&lt;T&gt; {
+&nbsp;
+<b class="nc">&nbsp;	private T value;</b>
+<b class="nc">&nbsp;    private Predicate&lt;T&gt; validator;</b>
+&nbsp;	
+&nbsp;    public boolean isValid() {
+<b class="nc">&nbsp;        return validator.test(value);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;	public static &lt;T&gt; boolean validate(T value, Predicate&lt;T&gt; validator) {
+<b class="fc">&nbsp;        return validator.test(value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Static methods for common validations
+&nbsp;    public static boolean validateString(String value, int minLength, int maxLength) {
+<b class="fc">&nbsp;        return validate(value, v -&gt; v != null &amp;&amp; v.length() &gt;= minLength &amp;&amp; v.length() &lt;= maxLength);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean validateInteger(Integer value, int minValue, int maxValue) {
+<b class="fc">&nbsp;        return validate(value, v -&gt; v != null &amp;&amp; v &gt;= minValue &amp;&amp; v &lt;= maxValue);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public static boolean validateLong(Long value, Long minValue, Long maxValue) {
+<b class="nc">&nbsp;        return validate(value, v -&gt; v != null &amp;&amp; v &gt;= minValue &amp;&amp; v &lt;= maxValue);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean validateDouble(Double value, double minValue, double maxValue) {
+<b class="nc">&nbsp;        return validate(value, v -&gt; v != null &amp;&amp; v &gt;= minValue &amp;&amp; v &lt;= maxValue);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public static boolean validateBoolean(Boolean value) {
+<b class="nc">&nbsp;    	return validate(value, v -&gt; v != null &amp;&amp; (v == true || v == false));</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;
+&nbsp;    public static boolean ValidateDate(Date date) {
+<b class="nc">&nbsp;        if (date == null) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Calendar minDate = Calendar.getInstance();</b>
+<b class="nc">&nbsp;        minDate.set(1915, Calendar.JANUARY, 1, 0, 0, 0);</b>
+<b class="nc">&nbsp;        Calendar maxDate = Calendar.getInstance();</b>
+<b class="nc">&nbsp;        if (date.before(minDate.getTime()) || date.after(maxDate.getTime())) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public static boolean validateFields(Boolean value) {
+<b class="nc">&nbsp;    	return validate(value, v -&gt; v != null &amp;&amp; (v == true || v == false));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean validateDate(LocalDate date) {
+<b class="nc">&nbsp;        return validate(date, d -&gt; d != null &amp;&amp; !d.isBefore(LocalDate.now()));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;    
+&nbsp;    public static &lt;T&gt; void validateDtoFields(T dto) {
+<b class="nc">&nbsp;        List&lt;String&gt; missingFields = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        Field[] fields = dto.getClass().getDeclaredFields();</b>
+<b class="nc">&nbsp;        for (Field field : fields) {</b>
+<b class="nc">&nbsp;            if (field.isAnnotationPresent(NotNull.class)) {</b>
+<b class="nc">&nbsp;                field.setAccessible(true);</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    Object value = field.get(dto);</b>
+<b class="nc">&nbsp;                    if (value == null) {</b>
+<b class="nc">&nbsp;                        missingFields.add(field.getName());</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                } catch (IllegalAccessException e) {</b>
+<b class="nc">&nbsp;                    throw new RuntimeException(&quot;Error al acceder al campo: &quot; + field.getName(), e);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!missingFields.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new MissingFieldsException(&quot;Los siguientes campos son obligatorios y no están presentes: &quot; + missingFields);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

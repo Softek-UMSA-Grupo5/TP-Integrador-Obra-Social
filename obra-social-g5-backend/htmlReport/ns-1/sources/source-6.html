@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RecetaMedicaController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: RecetaMedicaController (org.softek.g5.controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RecetaMedicaController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RecetaMedicaController$quarkusrestinvoker$addRecetaMedica_3795cdaa7d9fba9a09143806c58ec91b2f70603c</td>
+  </tr>
+  <tr>
+    <td class="name">RecetaMedicaController$quarkusrestinvoker$delete_a7b9b5503816b56d248572e3f238c5482a6673cb</td>
+  </tr>
+  <tr>
+    <td class="name">RecetaMedicaController$quarkusrestinvoker$getAll_ff0bca512259cdc61f4195f154f924d414f41466</td>
+  </tr>
+  <tr>
+    <td class="name">RecetaMedicaController$quarkusrestinvoker$update_535cb238e774defabaec6e1ce81f821e5021cc48</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.controllers;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.Operation;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+&nbsp;import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+&nbsp;import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
+&nbsp;import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
+&nbsp;import org.softek.g5.services.RecetaMedicaService;
+&nbsp;
+&nbsp;import io.smallrye.common.annotation.Blocking;
+&nbsp;import jakarta.annotation.security.RolesAllowed;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.Consumes;
+&nbsp;import jakarta.ws.rs.DELETE;
+&nbsp;import jakarta.ws.rs.GET;
+&nbsp;import jakarta.ws.rs.POST;
+&nbsp;import jakarta.ws.rs.PUT;
+&nbsp;import jakarta.ws.rs.Path;
+&nbsp;import jakarta.ws.rs.PathParam;
+&nbsp;import jakarta.ws.rs.Produces;
+&nbsp;import jakarta.ws.rs.QueryParam;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@Path(&quot;/recetas&quot;)
+&nbsp;@Blocking
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class RecetaMedicaController {
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	RecetaMedicaService RecetaMedicaService;
+&nbsp;
+&nbsp;	@GET
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@RolesAllowed({&quot;USER&quot;, &quot;ADMIN&quot;})
+&nbsp;	@Operation(summary = &quot;Obtener todas las recetas médicas&quot;, description = &quot;Devuelve una lista de todas las recetas médicas&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Lista de recetas médicas&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al obtener las recetas médicas&quot;)
+&nbsp;	})
+&nbsp;	public Response getAll() {
+<b class="nc">&nbsp;	        Collection&lt;RecetaMedicaResponseDto&gt; recetas = this.RecetaMedicaService.getRecetaMedica();</b>
+<b class="nc">&nbsp;	        return Response.ok(recetas).build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@POST
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;	@RolesAllowed({&quot;USER&quot;, &quot;ADMIN&quot;})
+&nbsp;	@Operation(summary = &quot;Añadir receta médica&quot;, description = &quot;Añade y persiste una receta médica&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;201&quot;, description = &quot;Receta médica añadida y persistida&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al añadir y persistir la receta médica&quot;)
+&nbsp;	})
+&nbsp;	@Transactional
+&nbsp;	public Response addRecetaMedica(@Valid RecetaMedicaRequestDto dto,
+&nbsp;	                                @Valid @QueryParam(&quot;codigoTurno&quot;) String codigoTurno) throws Exception {
+<b class="nc">&nbsp;	        RecetaMedicaResponseDto response = this.RecetaMedicaService.persistRecetaMedica(codigoTurno, dto);</b>
+<b class="nc">&nbsp;	        return Response.status(Response.Status.CREATED).entity(response).build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@PUT
+&nbsp;	@Path(&quot;/{codigo}&quot;)
+&nbsp;	@Produces(MediaType.APPLICATION_JSON)
+&nbsp;	@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;	@RolesAllowed({&quot;USER&quot;, &quot;ADMIN&quot;})
+&nbsp;	@Operation(summary = &quot;Actualizar receta médica&quot;, description = &quot;Actualiza una receta médica existente&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Receta médica actualizada&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al actualizar la receta médica&quot;)
+&nbsp;	})
+&nbsp;	public Response update(@PathParam(&quot;codigo&quot;) String codigo, @Valid RecetaMedicaRequestDto dto) throws Exception {
+<b class="nc">&nbsp;	        RecetaMedicaService.updateRecetaMedica(codigo, dto);</b>
+<b class="nc">&nbsp;	        return Response.ok().build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@DELETE
+&nbsp;	@Path(&quot;/{codigo}&quot;)
+&nbsp;	@RolesAllowed({&quot;USER&quot;, &quot;ADMIN&quot;})
+&nbsp;	@Operation(summary = &quot;Eliminar receta médica&quot;, description = &quot;Elimina una receta médica existente&quot;)
+&nbsp;	@APIResponses({
+&nbsp;	    @APIResponse(responseCode = &quot;200&quot;, description = &quot;Receta médica eliminada&quot;),
+&nbsp;	    @APIResponse(responseCode = &quot;500&quot;, description = &quot;Error al eliminar la receta médica&quot;)
+&nbsp;	})
+&nbsp;	public Response delete(@PathParam(&quot;codigo&quot;) String codigo) {
+<b class="nc">&nbsp;	        this.RecetaMedicaService.deleteRecetaMedica(codigo);</b>
+<b class="nc">&nbsp;	        return Response.ok().build();</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TurnoMedicoService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.softek.g5.services</a>
+</div>
+
+<h1>Coverage Summary for Class: TurnoMedicoService (org.softek.g5.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TurnoMedicoService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/45)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.softek.g5.services;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.softek.g5.entities.medico.Medico;
+&nbsp;import org.softek.g5.entities.medico.MedicoFactory;
+&nbsp;import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
+&nbsp;import org.softek.g5.entities.socio.Socio;
+&nbsp;import org.softek.g5.entities.socio.SocioFactory;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedico;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedicoEstadoEnum;
+&nbsp;import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
+&nbsp;import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+&nbsp;import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
+&nbsp;import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
+&nbsp;import org.softek.g5.exceptions.entitiesCustomException.TurnoMedicoNotFoundException;
+&nbsp;import org.softek.g5.repositories.MedicoRepository;
+&nbsp;import org.softek.g5.repositories.SocioRepository;
+&nbsp;import org.softek.g5.repositories.TurnoMedicoRepository;
+&nbsp;import org.softek.g5.validation.DataValidator;
+&nbsp;import org.softek.g5.validation.entitiesValidation.TurnoMedicoValidator;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;@ApplicationScoped
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class TurnoMedicoService {
+&nbsp;
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoRepository turnoMedicoRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	TurnoMedicoFactory turnoMedicoFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	RecetaMedicaFactory recetaMedicaFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	SocioRepository socioRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	SocioFactory socioFactory;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	MedicoRepository medicoRepository;
+&nbsp;	
+&nbsp;	@Inject
+&nbsp;	MedicoFactory medicoFactory;
+&nbsp;
+&nbsp;	@Transactional
+&nbsp;    public Collection&lt;TurnoMedicoResponseDto&gt; getTurnoMedico() {
+<b class="nc">&nbsp;        Collection&lt;TurnoMedico&gt; turnoMedico = turnoMedicoRepository.listAll();</b>
+<b class="nc">&nbsp;        Collection&lt;TurnoMedicoResponseDto&gt; dtos = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (TurnoMedico m : turnoMedico) {</b>
+<b class="nc">&nbsp;            dtos.add(turnoMedicoFactory.createResponseFromEntity(m));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (dtos.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new EntityNotFoundException(&quot;No hay registros de turnoMedico&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return dtos;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public Collection&lt;TurnoMedicoResponseDto&gt; persistTurnoMedico(List&lt;TurnoMedicoRequestDto&gt; dtos) {
+<b class="nc">&nbsp;        Collection&lt;TurnoMedicoResponseDto&gt; response = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (TurnoMedicoRequestDto dto : dtos) {</b>
+&nbsp;        	
+<b class="nc">&nbsp;        	DataValidator.validateDtoFields(dto);</b>
+&nbsp;
+<b class="nc">&nbsp;			if (!TurnoMedicoValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;				throw new InvalidDataRequest(&quot;Los datos de turno medico enviados son erroneos&quot;);</b>
+&nbsp;			}
+&nbsp;        	
+<b class="nc">&nbsp;            TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);</b>
+<b class="nc">&nbsp;            Optional&lt;TurnoMedico&gt; optionalturnoMedico = turnoMedicoRepository.findByCodigo(turnoMedico.getCodigo());</b>
+<b class="nc">&nbsp;			if(optionalturnoMedico.isPresent()) {</b>
+<b class="nc">&nbsp;				throw new RuntimeException(&quot;Este turno ya existe&quot;);</b>
+&nbsp;			}
+&nbsp;			
+<b class="nc">&nbsp;			Optional&lt;Medico&gt; medico = Optional.of(medicoRepository.findByDni(dto.getMedico().getDni()).get());</b>
+<b class="nc">&nbsp;			Optional&lt;Socio&gt; socio = Optional.of(socioRepository.findByDni(dto.getSocio().getDni()).get());</b>
+&nbsp;			
+<b class="nc">&nbsp;			turnoMedico.setMedico(medico.get());</b>
+<b class="nc">&nbsp;			turnoMedico.setSocio(socio.get());</b>
+&nbsp;			
+<b class="nc">&nbsp;            this.turnoMedicoRepository.persist(turnoMedico);</b>
+<b class="nc">&nbsp;            response.add(turnoMedicoFactory.createResponseFromEntity(turnoMedico));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;        
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void updateTurnoMedico(String codigo, TurnoMedicoRequestDto dto) {
+<b class="nc">&nbsp;        Optional&lt;TurnoMedico&gt; optionalturnoMedico = turnoMedicoRepository.findByCodigo(codigo);</b>
+<b class="nc">&nbsp;        if (optionalturnoMedico.isPresent()) {</b>
+&nbsp;        	
+<b class="nc">&nbsp;        	DataValidator.validateDtoFields(dto);</b>
+&nbsp;
+<b class="nc">&nbsp;			if (!TurnoMedicoValidator.validateRequestDto(dto)) {</b>
+<b class="nc">&nbsp;				throw new InvalidDataRequest(&quot;Los datos de turno medico enviados son erroneos&quot;);</b>
+&nbsp;			}
+&nbsp;        	
+<b class="nc">&nbsp;            TurnoMedico turnoMedico = optionalturnoMedico.get();</b>
+&nbsp;            
+<b class="nc">&nbsp;            turnoMedico.setEstado(dto.getEstado());</b>
+<b class="nc">&nbsp;            turnoMedico.setFecha(dto.getFecha());</b>
+<b class="nc">&nbsp;            turnoMedico.setHora(dto.getHora());</b>
+<b class="nc">&nbsp;            turnoMedico.setMinutos(dto.getMinutos());</b>
+<b class="nc">&nbsp;            turnoMedico.setMotivoConsulta(dto.getMotivoConsulta());</b>
+<b class="nc">&nbsp;            turnoMedico.setRecetaMedica(recetaMedicaFactory.createEntityFromDto(dto.getRecetaMedica()));</b>
+<b class="nc">&nbsp;            turnoMedico.setMedico(medicoFactory.createEntityFromDto(dto.getMedico()));</b>
+<b class="nc">&nbsp;            turnoMedico.setSocio(socioFactory.createEntityFromDto(dto.getSocio()));</b>
+&nbsp;            
+<b class="nc">&nbsp;        } else {</b>
+<b class="nc">&nbsp;            throw new TurnoMedicoNotFoundException(&quot;turnoMedico no encontrado&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void deleteTurnoMedico(String codigo) {
+<b class="nc">&nbsp;        int updatedRows = this.turnoMedicoRepository.update(&quot;estado = ?1, estaDisponible = ?2 WHERE codigo = ?3&quot;, TurnoMedicoEstadoEnum.CANCELADA, 1, codigo);</b>
+<b class="nc">&nbsp;        if (updatedRows == 0) {</b>
+<b class="nc">&nbsp;            throw new TurnoMedicoNotFoundException(&quot;turnoMedico no encontrado&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-06-16 12:42</div>
+</div>
+</body>
+</html>
