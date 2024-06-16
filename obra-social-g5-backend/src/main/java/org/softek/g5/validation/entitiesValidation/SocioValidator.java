@@ -10,7 +10,6 @@ public class SocioValidator {
 				&& DataValidator.validateString(dto.getEmail(), 3, 254)
 				&& DataValidator.validateInteger(dto.getDni(), 1, 99999999)
 				&& DataValidator.validateString(dto.getCuil(), 11, 11)
-				&& DataValidator.ValidateDate(dto.getFechaNacimiento())
-				&& DataValidator.validateString(dto.getNroAfiliado(), 11, 13);
+				&& DataValidator.ValidateDate(dto.getFechaNacimiento());
 	}
 }
