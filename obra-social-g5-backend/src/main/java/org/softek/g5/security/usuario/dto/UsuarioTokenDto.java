@@ -1,4 +1,4 @@
-package org.softek.g5.entities.usuario.dto;
+package org.softek.g5.security.usuario.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsuarioResponseDto {
+public class UsuarioTokenDto {
 
 	private String token;
 	

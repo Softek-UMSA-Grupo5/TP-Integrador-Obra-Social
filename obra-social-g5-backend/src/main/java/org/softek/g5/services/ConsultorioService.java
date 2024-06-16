@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.hibernate.service.spi.ServiceException;
 import org.softek.g5.entities.consultorio.Consultorio;
 import org.softek.g5.entities.consultorio.ConsultorioFactory;
 import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
@@ -14,11 +13,14 @@ import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.medico.MedicoFactory;
+import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.ubicacion.Ubicacion;
-import org.softek.g5.exceptions.entitiesCustomException.consultorio.ConsultorioNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.horario.HorarioSuperpuestoException;
-import org.softek.g5.exceptions.entitiesCustomException.medico.MedicoNotFoundException;
-import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
+import org.softek.g5.entities.ubicacion.UbicacionFactory;
+import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
+import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
+import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
+import org.softek.g5.exceptions.CustomException.HorarioSuperpuestoException;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.HorarioRepository;
 import org.softek.g5.repositories.MedicoRepository;
@@ -58,167 +60,192 @@ public class ConsultorioService {
 
 
     @Transactional
-    public List<ConsultorioResponseDto> getAllConsultorios() {
+    public List<ConsultorioResponseDto> getAllConsultorios() throws CustomServerException {
         try {
             List<Consultorio> consultorios = consultorioRepository.listAll();
+            if (consultorios.isEmpty()){
+                throw new EntityNotFoundException("No hay consultorios registrados");
+            }
             return consultorios.stream()
                     .filter(consultorio -> !consultorio.isEstaEliminado())
                     .map(ConsultorioFactory::toDto)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new ServiceException("Error al obtener todos los consultorios", e);
+        } catch (CustomServerException e) {
+            throw new CustomServerException("Error al obtener los consultorios");
         }
     }
 
-    public ConsultorioResponseDto getConsultorioByCodigo(String codigo) {
+    public ConsultorioResponseDto getConsultorioByCodigo(String codigo) throws CustomServerException {
     	try {
             Optional<Consultorio> optionalConsultorio = consultorioRepository.findByCodigo(codigo);
             if (optionalConsultorio.isPresent()) {
                 Consultorio consultorio = optionalConsultorio.get();
                 if (consultorio.isEstaEliminado()) {
-                    throw new ConsultorioNotFoundException("Consultorio eliminado encontrado con código: " + codigo);
+                    throw new EntityNotFoundException("El consultorio está eliminado" + codigo);
                 }
                 return ConsultorioFactory.toDto(consultorio);
             } else {
-                throw new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo);
+                throw new EntityNotFoundException("Consultorio no encontrado con código: " + codigo);
             }
-        } catch (Exception e) {
-            throw new ServiceException("Error al obtener el consultorio por código", e);
+        } catch (CustomServerException e) {
+            throw new CustomServerException("Error al obtener el consultorio por código");
         }
     }
 
-    public List<ConsultorioResponseDto> getAllConsultoriosDeleted() {
+    public List<ConsultorioResponseDto> getAllConsultoriosDeleted() throws CustomServerException{
         try {
-            List<Consultorio> consultoriosEliminados = consultorioRepository.listAll();
-            return consultoriosEliminados.stream()
+            List<Consultorio> consultorios = consultorioRepository.listAll();
+            List<ConsultorioResponseDto> consultoriosEliminados = consultorios.stream()
                     .filter(Consultorio::isEstaEliminado)
                     .map(ConsultorioFactory::toDto)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new ServiceException("Error al obtener todos los consultorios eliminados", e);
+            if (consultoriosEliminados.isEmpty()){
+                throw new EntityNotFoundException("No hay consultorios eliminados");
+            }
+            return consultoriosEliminados;
+        } catch (CustomServerException e) {
+            throw new CustomServerException("Error al obtener los consultorios eliminados");
         }
     }
 
     @Transactional
-    public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) {
-    		List<HorarioRequestDto> horarios = dto.getHorarioAtencion();
+    public ConsultorioResponseDto createConsultorio(@Valid ConsultorioRequestDto dto) throws CustomServerException{
+        List<HorarioRequestDto> horarios = dto.getHorarioAtencion();
 
-    	    if (!HorarioValidator.validateHorarios(horarios)) {
-    	        throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
-    	    }
-    	    
+        if (!HorarioValidator.validateHorarios(horarios)) {
+            throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+        }
 
-            Consultorio consultorio = ConsultorioFactory.toEntity(dto);
+        Consultorio consultorio = ConsultorioFactory.toEntity(dto);
 
-            Ubicacion ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
-            		, consultorio.getUbicacion().getProvincia()
-            		, consultorio.getUbicacion().getCalle()
-            		, consultorio.getUbicacion().getAltura());
-            
-            if(ubicacion == null) {
-            	ubicacionService.createUbicacion(dto.getUbicacion());
-            	ubicacion = ubicacionRepository.searchByDetails(consultorio.getUbicacion().getCiudad()
-                		, consultorio.getUbicacion().getProvincia()
-                		, consultorio.getUbicacion().getCalle()
-                		, consultorio.getUbicacion().getAltura());
-            }
-            
-            if(dto.getMedico() != null) {
-            	Optional<Medico> medico = medicoRepository.findByDni(dto.getMedico().getDni());
-            	consultorio.setMedico(medico.get());
-            }
-            
-            consultorio.setUbicacion(ubicacion);
-            
-            
-            consultorioRepository.persist(consultorio);
-            
-            for (HorarioRequestDto horario : dto.getHorarioAtencion()) {
-            	horarioService.createHorario(horario, dto.getUbicacion());
-            }
-            
-            return ConsultorioFactory.toDto(consultorio);
-        
-    }
+        UbicacionRequestDto ubicacionRequestDto = dto.getUbicacion();
+        Ubicacion ubicacion = ubicacionRepository.findByCodigo(ubicacionRequestDto.getCodigo());
 
-    @Transactional
-    public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) {
-        try {
-            
-        	Consultorio consultorio = consultorioRepository.findByUbicacion(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());
-        	
-            if (consultorio != null) {
-                
-                Ubicacion ubicacion = ubicacionRepository.searchByDetails(dto.getUbicacion().getCiudad(),dto.getUbicacion().getProvincia(),dto.getUbicacion().getCalle(),dto.getUbicacion().getAltura());           
-                if (ubicacion == null) {
-                    throw new UbicacionNotFoundException("Ubicación no válida: " + dto.getUbicacion());
-                }
-                consultorio.setUbicacion(ubicacion);
-                
+        if (ubicacion == null) {
+            UbicacionResponseDto ubicacionResponseDto = ubicacionService.createUbicacion(ubicacionRequestDto);
+            ubicacion = UbicacionFactory.toEntityFromResponseDto(ubicacionResponseDto);
+            ubicacionRepository.persist(ubicacion);
+        }
 
-                
-                Medico medico = medicoRepository.findByDniMedico(dniMedico);
-                if (medico == null) {
-                    throw new MedicoNotFoundException("Medico no encontrado");
-                }
-                consultorio.setMedico(medico);
-                
+        consultorio.setUbicacion(ubicacion);
 
-                
-                consultorio.getHorarioAtencion().clear();
-                consultorioRepository.flush();
-                
-                if (!HorarioValidator.validateHorarios(dto.getHorarioAtencion())) {
-                    throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
-                }
-
-                List<Horario> nuevosHorarios = dto.getHorarioAtencion().stream()
-                        .map(HorarioFactory::toEntity)
-                        .collect(Collectors.toList());
-                nuevosHorarios.forEach(horario -> horario.setConsultorio(consultorio));
-                consultorio.getHorarioAtencion().addAll(nuevosHorarios);
-
-                consultorioRepository.persistAndFlush(consultorio);
+        if (dto.getMedico() != null) {
+            Optional<Medico> medicoOptional = medicoRepository.findByDni(dto.getMedico().getDni());
+            Medico medico;
+            if (medicoOptional.isPresent()) {
+                medico = medicoOptional.get();
             } else {
-                throw new ConsultorioNotFoundException("Consultorio no encontrado");
+                MedicoRequestDto medicoRequestDto = dto.getMedico();
+                medico = medicoFactory.createEntityFromDto(medicoRequestDto);
+                medicoRepository.persist(medico);
             }
+            consultorio.setMedico(medico);
+        }
+
+        consultorioRepository.persist(consultorio);
+
+        for (HorarioRequestDto horarioRequestDto : horarios) {
+            horarioService.createHorario(horarioRequestDto, ubicacionRequestDto);
+        }
+
+        for (HorarioRequestDto horarioRequestDto : horarios) {
+            Horario horario = HorarioFactory.toEntity(horarioRequestDto);
+            horario.setConsultorio(consultorio);
+            horarioRepository.persist(horario);
+        }
+
+        return ConsultorioFactory.toDto(consultorio);
+    }
+    @Transactional
+    public void updateConsultorio(int dniMedico, ConsultorioRequestDto dto) throws CustomServerException {
+        try {
+            Consultorio consultorio = consultorioRepository.findByUbicacion(dto.getUbicacion().getCiudad(), dto.getUbicacion().getProvincia(), dto.getUbicacion().getCalle(), dto.getUbicacion().getAltura());
+
+            if (consultorio == null) {
+                throw new EntityNotFoundException("Consultorio no encontrado");
+            }
+
+            Ubicacion ubicacion = ubicacionRepository.findByCodigo(dto.getUbicacion().getCodigo());
+            if (ubicacion == null) {
+                throw new EntityNotFoundException("Ubicación no válida: ");
+            }
+            consultorio.setUbicacion(ubicacion);
+
+            Medico medico = medicoRepository.findByDniMedico(dniMedico);
+            if (medico == null) {
+                throw new EntityNotFoundException("Medico no encontrado");
+            }
+            consultorio.setMedico(medico);
+
+            consultorio.getHorarioAtencion().clear();
+            consultorioRepository.flush();
+
+            if (!HorarioValidator.validateHorarios(dto.getHorarioAtencion())) {
+                throw new HorarioSuperpuestoException("Los horarios no pueden superponerse");
+            }
+
+            List<Horario> nuevosHorarios = dto.getHorarioAtencion().stream()
+                    .map(HorarioFactory::toEntity)
+                    .toList();
+            nuevosHorarios.forEach(horario -> horario.setConsultorio(consultorio));
+            consultorio.getHorarioAtencion().addAll(nuevosHorarios);
+
+            consultorioRepository.persistAndFlush(consultorio);
+        } catch (EntityNotFoundException | HorarioSuperpuestoException e) {
+            throw e;
         } catch (Exception e) {
-        	throw new ServiceException("Error al actualizar el consultorio", e);
+            throw new CustomServerException("Error al actualizar el consultorio", e);
         }
     }
 
     @Transactional
-    public boolean deleteConsultorio(String codigo) {
+    public boolean deleteConsultorio(String codigo) throws CustomServerException {
         try {
-            Consultorio consultorio = consultorioRepository.find("codigo", codigo)
-                    .firstResultOptional()
-                    .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo));
+            Optional<Consultorio> consultorioOptional = consultorioRepository.findByCodigo(codigo);
+            if (consultorioOptional.isEmpty()) {
+                throw new EntityNotFoundException("Consultorio no encontrado");
+            }
+
+            Consultorio consultorio = consultorioOptional.get();
+            if (consultorio.isEstaEliminado()) {
+                throw new EntityNotFoundException("El consultorio ya está eliminado");
+            }
 
             consultorio.setEstaEliminado(true);
             consultorioRepository.persist(consultorio);
             return true;
+        } catch (EntityNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ServiceException("Error al eliminar el consultorio", e);
+            throw new CustomServerException("Error al eliminar el consultorio");
         }
     }
 
     @Transactional
-    public Response restoreConsultorio(String codigo) {
+    public Response restoreConsultorio(String codigo) throws CustomServerException {
         try {
-            Consultorio consultorio = consultorioRepository.find("codigo", codigo)
-                    .firstResultOptional()
-                    .orElseThrow(() -> new ConsultorioNotFoundException("Consultorio no encontrado con código: " + codigo));
+            Optional<Consultorio> consultorioOptional = consultorioRepository.findByCodigo(codigo);
 
-            if (consultorio.isEstaEliminado()) {
-                consultorio.setEstaEliminado(false);
-                consultorioRepository.persist(consultorio);
-                return Response.ok("Consultorio restaurado con éxito.").build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).entity("El consultorio no está eliminado.").build();
+            if (consultorioOptional.isEmpty()) {
+                throw new EntityNotFoundException("Consultorio no encontrado");
             }
+
+            Consultorio consultorio = consultorioOptional.get();
+
+            if (!consultorio.isEstaEliminado()) {
+                throw new EntityNotFoundException("El consultorio no está eliminado");
+            }
+
+            consultorio.setEstaEliminado(false);
+            consultorioRepository.persist(consultorio);
+
+            return Response.ok("Consultorio restaurado con éxito.").build();
+        } catch (EntityNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ServiceException("Error al restaurar el consultorio", e);
+            throw new CustomServerException("Error al restaurar el consultorio", e);
         }
     }
+
 }
 

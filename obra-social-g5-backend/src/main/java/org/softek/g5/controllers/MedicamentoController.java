@@ -1,6 +1,5 @@
 package org.softek.g5.controllers;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -38,13 +37,55 @@ public class MedicamentoController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "USER", "ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
 	@Operation(summary = "Obtener medicamentos", description = "devuelve una lista de medicamentos")
 	@APIResponse(responseCode = "200", description = "lista de medicamentos")
 	@APIResponse(responseCode = "404", description = "no hay medicamentos registrados")
 	public Response getAll() throws CustomServerException {
 
-		Collection<MedicamentoResponseDto> medicamentos = medicamentoService.getMedicamentos();
+		List<MedicamentoResponseDto> medicamentos = medicamentoService.getMedicamentos();
+		return Response.ok(medicamentos).build();
+
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@Operation(summary = "Obtener medicamento por id", description = "devuelve el medicamento con el id proporcionado")
+	@APIResponse(responseCode = "200", description = "medicamento encontrado")
+	@APIResponse(responseCode = "404", description = "no se encontró el medicamento")
+	public Response getMedicamentoById(@Parameter(required = true, description = "id del medicamento") @PathParam("id") Long id) throws CustomServerException {
+
+		MedicamentoResponseDto medicamento = medicamentoService.getMedicamentosById(id);
+		return Response.ok(medicamento).build();
+
+	}
+	
+	@GET
+	@Path("/{codigo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@Operation(summary = "Obtener medicamento por codigo", description = "devuelve los medicamentos con el código proporcionado")
+	@APIResponse(responseCode = "200", description = "lista de medicamentos")
+	@APIResponse(responseCode = "404", description = "no se encontrarón medicamentos")
+	public Response getMedicamentoByCodigo(@Parameter(required = true, description = "codigo del medicamento") @PathParam("codigo") String codigo) throws CustomServerException {
+
+		List<MedicamentoResponseDto> medicamentos = medicamentoService.getMedicamentosByCodigo(codigo);
+		return Response.ok(medicamentos).build();
+
+	}
+	
+	@GET
+	@Path("/{receta}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@Operation(summary = "Obtener medicamento por receta", description = "devuelve los medicamentos con la receta proporcionada")
+	@APIResponse(responseCode = "200", description = "lista de medicamentos")
+	@APIResponse(responseCode = "404", description = "no se encontrarón medicamentos")
+	public Response getMedicamentoByReceta(@Parameter(required = true, description = "id de la receta médica") @PathParam("receta") Long idReceta) throws CustomServerException {
+
+		List<MedicamentoResponseDto> medicamentos = medicamentoService.getMedicamentosByReceta(idReceta);
 		return Response.ok(medicamentos).build();
 
 	}
@@ -52,27 +93,27 @@ public class MedicamentoController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ADMIN" })
+	@RolesAllowed("ROL_ADMIN")
 	@Operation(summary = "Añadir medicamentos", description = "Añade y persiste una lista de medicamentos")
 	@APIResponse(responseCode = "201", description = "lista de medicamentos añadido y persistido")
 	@APIResponse(responseCode = "500", description = "No se pudo añadir y persistir la lista de medicamentos por un error del servidor")
-	public Response addRecetaMedica(@Valid @QueryParam("codigoReceta") String codigoReceta,
+	public Response addMedicamento(@Parameter(required = true, description = "codigo de la receta médica") @QueryParam("codigoReceta") String codigoReceta,
 			@Valid List<MedicamentoRequestDto> dtos) throws CustomServerException {
 
-		Collection<MedicamentoResponseDto> response = this.medicamentoService.persistMedicamento(codigoReceta, dtos);
+		List<MedicamentoResponseDto> response = this.medicamentoService.persistMedicamento(codigoReceta, dtos);
 		return Response.status(Response.Status.CREATED).entity(response).build();
 
 	}
 
 	@PUT
-	@Path("/{nombre}")
-	@RolesAllowed({ "USER", "ADMIN" })
+	@Path("/{codigo}")
+	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
 	@Operation(summary = "Actualizar medicamento", description = "Actualiza un medicamento de una receta")
 	@APIResponse(responseCode = "200", description = "medicamento actualizado")
 	@APIResponse(responseCode = "500", description = "No se pudo actualizar el medicamento por un error del servidor")
-	public Response update(
-			@Parameter(required = true, description = "Nombre del medicamento") @PathParam("nombre") String codigoMedicamento,
-			@Valid @QueryParam("idReceta") Long idReceta, MedicamentoRequestDto dto) throws CustomServerException {
+	public Response updateMedicamento(
+			@Parameter(required = true, description = "Código del medicamento") @PathParam("codigo") String codigoMedicamento,
+			@Parameter(required = true, description = "id de la receta médica") @QueryParam("idReceta") Long idReceta, MedicamentoRequestDto dto) throws CustomServerException {
 
 		MedicamentoResponseDto updatedMedicamento = medicamentoService.updateMedicamento(codigoMedicamento, idReceta,
 				dto);
@@ -81,14 +122,14 @@ public class MedicamentoController {
 	}
 
 	@DELETE
-	@Path("/{nombre}")
-	@RolesAllowed({ "USER", "ADMIN" })
+	@Path("/{codigo}")
+	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
 	@Operation(summary = "Eliminar medicamento", description = "Elimina un medicamento de una receta")
 	@APIResponse(responseCode = "200", description = "medicamento eliminado")
 	@APIResponse(responseCode = "500", description = "No se pudo eliminar el medicamento por un error del servidor")
-	public Response delete(
-			@Parameter(required = true, description = "Nombre del medicamento") @PathParam("nombre") String codigoMedicamento,
-			@Valid @QueryParam("idReceta") Long idReceta) throws CustomServerException {
+	public Response deleteMedicamento(
+			@Parameter(required = true, description = "Código del medicamento") @PathParam("codigo") String codigoMedicamento,
+			@Parameter(required = true, description = "id de la receta médica") @QueryParam("idReceta") Long idReceta) throws CustomServerException {
 
 		this.medicamentoService.deleteMedicamento(codigoMedicamento, idReceta);
 		return Response.ok().build();

@@ -4,8 +4,10 @@ import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
 import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
+@Transactional
 public class MedicamentoFactory {
 
 	public Medicamento createEntityFromDto(MedicamentoRequestDto dto) {

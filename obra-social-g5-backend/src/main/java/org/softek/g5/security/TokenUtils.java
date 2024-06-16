@@ -6,7 +6,7 @@ import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
-import org.softek.g5.entities.usuario.UsuarioRolesEnum;
+import org.softek.g5.security.usuario.UsuarioRolesEnum;
 
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
