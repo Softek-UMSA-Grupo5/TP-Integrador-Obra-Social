@@ -1,8 +1,10 @@
 package org.softek.g5.validation.entitiesValidation;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.validation.DataValidator;
 
+@ApplicationScoped
 public class UbicacionValidator {
 	  public static boolean validateUbicacionRequestDto(UbicacionRequestDto dto) {
 	        return DataValidator.validateString(dto.getCiudad(), 1, 255) &&

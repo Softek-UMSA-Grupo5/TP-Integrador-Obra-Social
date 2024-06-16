@@ -1,11 +1,7 @@
 package org.softek.g5.exceptions;
 
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
-import org.softek.g5.exceptions.CustomException.CustomServerException;
-import org.softek.g5.exceptions.CustomException.EntityExistException;
-import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
-import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
-import org.softek.g5.exceptions.CustomException.MissingFieldsException;
+import org.softek.g5.exceptions.CustomException.*;
 
 import jakarta.ws.rs.core.Response;
 
@@ -64,6 +60,21 @@ public class ExceptionHandler {
 	                .entity(errorResponse)
 	                .build();
 	}
+
+	@ServerExceptionMapper
+	public Response handleHorarioSuperpuestoException(HorarioSuperpuestoException exception) {
+		errorResponse = new ErrorResponse(
+				Response.Status.CONFLICT.getStatusCode(),
+				"Error: Horario superpuesto",
+				exception.getMessage()
+		);
+
+		return Response.status(Response.Status.CONFLICT)
+				.entity(errorResponse)
+				.build();
+	}
+
+
 	
 	@ServerExceptionMapper
 	public Response handleEntityExistException(EntityExistException exception) {
