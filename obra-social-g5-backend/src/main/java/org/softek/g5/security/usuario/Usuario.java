@@ -1,4 +1,4 @@
-package org.softek.g5.entities.usuario;
+package org.softek.g5.security.usuario;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ public class Usuario extends PanacheEntityBase{
 	private String username;
 	private String password;
 	private String email;
-	private UsuarioRolesEnum roles;
+	private UsuarioRolesEnum rol;
 	private Boolean estaEliminado;
 	
 }

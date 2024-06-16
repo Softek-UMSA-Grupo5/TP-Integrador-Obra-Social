@@ -1,5 +1,4 @@
-package org.softek.g5.entities.usuario.dto;
-
+package org.softek.g5.security.usuario.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,12 +14,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsuarioRequestDto {
+public class UsuarioLoginDto {
 
 	@NotNull
 	private String username;
 	@NotNull
 	private String password;
-	private String email;
 	
 }
