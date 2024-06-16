@@ -26,7 +26,7 @@ public class ExceptionHandler {
 	public Response handleEntityNotFoundException(EntityNotFoundException exception) {
 		errorResponse = new ErrorResponse(
 	            Response.Status.NOT_FOUND.getStatusCode(),
-	            "Error interno del servidor al buscar una entidad",
+	            "Error: no se pudo encontrar la/s entidad/es",
 	            exception.getMessage()
 	        );
 
@@ -39,7 +39,7 @@ public class ExceptionHandler {
 	public Response handleInvalidDataRequest(InvalidDataRequest exception) {
 		errorResponse = new ErrorResponse(
 	            Response.Status.BAD_REQUEST.getStatusCode(),
-	            "Error: algún campo/atributo de la Request enviada no tiene el tipo de dato correcto",
+	            "Error: Los datos enviados no son correctos",
 	            exception.getMessage()
 	        );
 
@@ -75,4 +75,18 @@ public class ExceptionHandler {
 	}
 
 
+	
+	@ServerExceptionMapper
+	public Response handleEntityExistException(EntityExistException exception) {
+		errorResponse = new ErrorResponse(
+	            Response.Status.CONFLICT.getStatusCode(),
+	            "Error: la entidad ya existe",
+	            exception.getMessage()
+	        );
+
+	        return Response.status(Response.Status.NOT_FOUND)
+	                .entity(errorResponse)
+	                .build();
+	}
+	
 }
