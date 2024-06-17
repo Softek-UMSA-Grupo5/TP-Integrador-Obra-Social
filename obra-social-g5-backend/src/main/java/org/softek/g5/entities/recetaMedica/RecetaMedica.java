@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +37,7 @@ public class RecetaMedica extends PanacheEntityBase{
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "recetamedica_id")
     private Long id;
 	
 	private String codigo;
@@ -46,7 +47,7 @@ public class RecetaMedica extends PanacheEntityBase{
     private Boolean estaEliminado;
     
     @JsonIgnore
-    @OneToMany(mappedBy="recetaMedica", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="recetaMedica")
     private List<Medicamento> medicamentos;
     
     @OneToOne

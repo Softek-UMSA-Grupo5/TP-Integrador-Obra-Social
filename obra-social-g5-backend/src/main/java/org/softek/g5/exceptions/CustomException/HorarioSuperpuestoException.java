@@ -1,7 +1,12 @@
-package org.softek.g5.exceptions.entitiesCustomException.horario;
+package org.softek.g5.exceptions.CustomException;
 
 public class HorarioSuperpuestoException extends RuntimeException{
-	public HorarioSuperpuestoException() {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    public HorarioSuperpuestoException() {
         super();
     }
 
