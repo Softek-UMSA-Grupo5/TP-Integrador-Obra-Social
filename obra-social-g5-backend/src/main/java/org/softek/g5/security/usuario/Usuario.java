@@ -1,10 +1,7 @@
 package org.softek.g5.security.usuario;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name = "usuario")
 @EqualsAndHashCode(callSuper=false)
 @Builder
 @NoArgsConstructor
