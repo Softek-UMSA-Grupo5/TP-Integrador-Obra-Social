@@ -6,6 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.BeneficiarioService;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
@@ -33,44 +34,44 @@ public class BeneficiarioController {
 	BeneficiarioService beneficiarioService;
 	
 	@GET
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los beneficiarios", description ="Se obtendrá una lista de todos los beneficiarios")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<BeneficiarioResponseDto> getAll() {
+	public Collection<BeneficiarioResponseDto> getAll() throws CustomServerException{
 		return this.beneficiarioService.getBeneficiarios();
 	}
 
 	@POST
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un beneficiario", description ="Se creará un beneficiario")
 	@Transactional
 	public Collection<BeneficiarioResponseDto> addBeneficiario(
 			@Valid @QueryParam("dniSocio") int dniSocio,
-			@Valid List<BeneficiarioRequestDto> dtos) {
+			@Valid List<BeneficiarioRequestDto> dtos) throws CustomServerException{
 		Collection<BeneficiarioResponseDto> response = this.beneficiarioService.persistBeneficiario(dniSocio, dtos);
 		return response;
 	}
 
 	@PUT
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Actualizar un beneficiario", description ="Se actualizará un beneficiario")
 	@Transactional
 	@Path("/{dni}")
 	public BeneficiarioResponseDto update(
 			@Parameter(required = true, description = "Beneficiario DNI") @PathParam("dni") int dniBeneficiario,
 			@Valid @QueryParam("idSocio") Long idSocio,
-			BeneficiarioRequestDto dto) {
+			BeneficiarioRequestDto dto) throws CustomServerException{
 		return beneficiarioService.updateBeneficiario(dniBeneficiario, idSocio, dto);
 	}
 
 	@DELETE
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN"})
 	@Operation(summary = "Eliminar un beneficiario", description ="Se eliminará un beneficiario")
 	@Transactional
 	@Path("/{id}")
-	public void delete(@Parameter(required = true, description = "Beneficiario ID") @PathParam("id") Long idBeneficiario, @Valid @QueryParam("idSocio") Long idSocio) {
+	public void delete(@Parameter(required = true, description = "Beneficiario ID") @PathParam("id") Long idBeneficiario, @Valid @QueryParam("idSocio") Long idSocio) throws CustomServerException{
 		this.beneficiarioService.deleteBeneficiario(idBeneficiario, idSocio);
 	}
 }

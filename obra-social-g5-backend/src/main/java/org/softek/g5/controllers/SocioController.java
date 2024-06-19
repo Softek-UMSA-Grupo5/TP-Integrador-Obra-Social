@@ -6,6 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.SocioService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -35,40 +36,40 @@ public class SocioController {
 	SocioService socioService;
 	
 	@GET
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
-	public Collection<SocioResponseDto> getAll(){
+	public Collection<SocioResponseDto> getAll() throws CustomServerException{
 		return this.socioService.getSocios();
 	}
 	
 	@POST
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
 	@Transactional
-	public SocioResponseDto addSocio(@Valid SocioRequestDto dto) {
+	public SocioResponseDto addSocio(@Valid SocioRequestDto dto) throws CustomServerException{
 		SocioResponseDto response = this.socioService.persistSocio(dto);
 		return response;
 	}
 	
 	@PUT
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un socio", description ="Se actualizará un socio")
 	@Transactional
-	public ResponseBuilder update(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id, SocioRequestDto dto) {
+	public ResponseBuilder update(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id, SocioRequestDto dto) throws CustomServerException{
 		socioService.updateSocio(id, dto);
 		return Response.ok();
 	}
 	
 	@DELETE
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN"})
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un socio", description ="Se eliminará un socio")
 	@Transactional
-	public void delete(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id) {
+	public void delete(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id) throws CustomServerException{
 		this.socioService.deleteSocio(id);
 	}
 }

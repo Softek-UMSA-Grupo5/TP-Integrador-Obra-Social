@@ -37,7 +37,7 @@ public class ConsultorioController {
 	private final ConsultorioService consultorioService;
 	
 	@GET
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener todos los consultorios", description = "Se obtendrá una lista de todos los consultorios disponibles")
     @APIResponse(responseCode = "200", description = "Lista de Consultorios")
@@ -48,7 +48,7 @@ public class ConsultorioController {
 	}
 	
 	@GET
-	@RolesAllowed({"ADMIN"})
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
     @Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener consultorio por código", description = "Se obtendrá un consultorio por su código")
@@ -60,7 +60,7 @@ public class ConsultorioController {
     }
 	
 	@GET
-	@RolesAllowed({"ADMIN"})
+	@RolesAllowed({"ROL_ADMIN"})
     @Path("/eliminados")
     @Operation(summary = "Obtener todos los consultorios eliminados", description = "Se obtendrá una lista de todos los consultorios eliminados")
     @APIResponse(responseCode = "200", description = "Lista de consultorios eliminados")
@@ -71,7 +71,7 @@ public class ConsultorioController {
     }
 	
     @POST
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ROL_ADMIN"})
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear consultorio", description = "Se creará un nuevo consultorio")
@@ -85,7 +85,7 @@ public class ConsultorioController {
     }
 	
     @PUT
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ROL_ADMIN"})
     @Path("/{dniMedico}")
     @Transactional
     @Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
@@ -99,7 +99,7 @@ public class ConsultorioController {
     }
     
     @DELETE
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ROL_ADMIN"})
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Eliminar consultorio", description = "Se marcará un consultorio como eliminado")
@@ -116,7 +116,7 @@ public class ConsultorioController {
     }
 
     @PUT
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"ROL_ADMIN"})
     @Path("/restore/{codigo}")
     @Transactional
     @Operation(summary = "Restaurar consultorio", description = "Se restaurará un consultorio eliminado")

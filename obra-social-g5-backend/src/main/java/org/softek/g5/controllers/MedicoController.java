@@ -6,6 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.medico.dto.MedicoResponseDto;
+import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.MedicoService;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -34,40 +35,40 @@ public class MedicoController {
 	MedicoService medicoService;
 	
 	@GET
-	@RolesAllowed({"USER", "ADMIN"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los médicos especialistas", description ="Se obtendrá una lista de todos los médicos especialistas")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<MedicoResponseDto> getAll(){
+	public Collection<MedicoResponseDto> getAll() throws CustomServerException{
 		return this.medicoService.getMedicosEspecialistas();
 	}
 	
 	@POST
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un médico especialista", description ="Se creará un médico especialista")
 	@Transactional
-	public Collection<MedicoResponseDto> addMedico(@Valid List<MedicoRequestDto> dtos) {
+	public Collection<MedicoResponseDto> addMedico(@Valid List<MedicoRequestDto> dtos) throws CustomServerException{
 		Collection<MedicoResponseDto> response = this.medicoService.persistMedico(dtos);
 		return response;
 	}
 	
 	@PUT
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN"})
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un médico especialista", description ="Se actualizará un médico especialista")
 	@Transactional
-	public ResponseBuilder update(@Parameter(required = true, description = "Medico ID") @PathParam("id") Long id, MedicoRequestDto dto) {
+	public ResponseBuilder update(@Parameter(required = true, description = "Medico ID") @PathParam("id") Long id, MedicoRequestDto dto) throws CustomServerException{
 		medicoService.updateMedico(id, dto);
 		return Response.ok();
 	}
 	
 	@DELETE
-	@RolesAllowed("ADMIN")
+	@RolesAllowed({"ROL_ADMIN"})
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un médico especialista", description ="Se eliminará un médico especialista")
 	@Transactional
-	public void delete(@Parameter(required = true, description = "Medico ID") @PathParam("id") Long id) {
+	public void delete(@Parameter(required = true, description = "Medico ID") @PathParam("id") Long id) throws CustomServerException{
 		this.medicoService.deleteMedico(id);
 	}
 }
