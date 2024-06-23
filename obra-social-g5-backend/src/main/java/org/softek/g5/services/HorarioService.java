@@ -77,6 +77,7 @@ public class HorarioService {
         }
 
         horario.setConsultorio(consultorio);
+        horario.persist();
         
         return horario;
     }
