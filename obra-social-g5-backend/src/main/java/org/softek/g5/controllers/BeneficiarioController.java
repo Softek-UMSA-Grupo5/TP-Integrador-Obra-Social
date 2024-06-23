@@ -1,13 +1,17 @@
 package org.softek.g5.controllers;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
+import org.softek.g5.entities.beneficiario.dto.BeneficiarioUpdateRequestDto;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.BeneficiarioService;
+
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -23,6 +27,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 
 @Path("/beneficiarios")
@@ -30,15 +35,24 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Tag(name="BeneficiarioController", description="Endpoints del servicio Beneficiario")
 public class BeneficiarioController {
+	
 	@Inject
 	BeneficiarioService beneficiarioService;
+	
+	@Inject
+	BeneficiarioFactory beneficiarioFactory;
 	
 	@GET
 	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los beneficiarios", description ="Se obtendrá una lista de todos los beneficiarios")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<BeneficiarioResponseDto> getAll() throws CustomServerException{
-		return this.beneficiarioService.getBeneficiarios();
+	public Response getAll() throws CustomServerException{
+		
+		List<BeneficiarioResponseDto> response =  beneficiarioService.getBeneficiarios().stream().map(beneficiarioFactory::createResponseFromEntity)
+				.collect(Collectors.toList());
+		
+		return Response.ok(response).build();
+		
 	}
 
 	@POST
@@ -47,11 +61,15 @@ public class BeneficiarioController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un beneficiario", description ="Se creará un beneficiario")
 	@Transactional
-	public Collection<BeneficiarioResponseDto> addBeneficiario(
+	public Response addBeneficiario(
 			@Valid @QueryParam("dniSocio") int dniSocio,
 			@Valid List<BeneficiarioRequestDto> dtos) throws CustomServerException{
-		Collection<BeneficiarioResponseDto> response = this.beneficiarioService.persistBeneficiario(dniSocio, dtos);
-		return response;
+		
+		List<BeneficiarioResponseDto> response = beneficiarioService.persistBeneficiario(dniSocio, dtos).stream().map(beneficiarioFactory::createResponseFromEntity)
+				.collect(Collectors.toList());
+		
+		return Response.ok(response).build();
+		
 	}
 
 	@PUT
@@ -59,11 +77,15 @@ public class BeneficiarioController {
 	@Operation(summary = "Actualizar un beneficiario", description ="Se actualizará un beneficiario")
 	@Transactional
 	@Path("/{dni}")
-	public BeneficiarioResponseDto update(
-			@Parameter(required = true, description = "Beneficiario DNI") @PathParam("dni") int dniBeneficiario,
+	public Response update(
+			@Parameter(required = true, description = "Beneficiario DNI") @PathParam("dni") Long idBeneficiario,
 			@Valid @QueryParam("idSocio") Long idSocio,
-			BeneficiarioRequestDto dto) throws CustomServerException{
-		return beneficiarioService.updateBeneficiario(dniBeneficiario, idSocio, dto);
+			BeneficiarioUpdateRequestDto dto) throws CustomServerException{
+		
+		BeneficiarioResponseDto response = beneficiarioFactory.createResponseFromEntity(beneficiarioService.updateBeneficiario(idSocio, dto));
+		
+		return Response.ok(response).build();
+		
 	}
 
 	@DELETE
@@ -71,7 +93,10 @@ public class BeneficiarioController {
 	@Operation(summary = "Eliminar un beneficiario", description ="Se eliminará un beneficiario")
 	@Transactional
 	@Path("/{id}")
-	public void delete(@Parameter(required = true, description = "Beneficiario ID") @PathParam("id") Long idBeneficiario, @Valid @QueryParam("idSocio") Long idSocio) throws CustomServerException{
+	public Response delete(@Parameter(required = true, description = "Beneficiario ID") @PathParam("id") Long idBeneficiario, @Valid @QueryParam("idSocio") Long idSocio) throws CustomServerException{
+		
 		this.beneficiarioService.deleteBeneficiario(idBeneficiario, idSocio);
+		
+		return Response.ok().build();
 	}
 }

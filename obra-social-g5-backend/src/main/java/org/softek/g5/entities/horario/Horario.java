@@ -34,17 +34,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Horario extends PanacheEntityBase{
-
-	public enum DiaSemana {
-        LUNES, MARTES, MIERCOLES, JUEVES, VIERNES
-    }
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
     @Enumerated(EnumType.STRING)
-	private DiaSemana diaSemana;
+	private HorarioDiaSemanaEnum diaSemana;
 	@NotNull(message = "La hora de inicio no puede estar vacía")
 	private LocalTime horaInicio;
 	@NotNull(message = "La hora de fin no puede estar vacía")

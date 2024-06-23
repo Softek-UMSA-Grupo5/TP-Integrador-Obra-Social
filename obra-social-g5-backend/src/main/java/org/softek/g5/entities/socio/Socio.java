@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +32,7 @@ public class Socio extends Persona{
 	@NotNull
 	private String nroAfiliado;
 	
-	@JsonIgnore
-    @OneToMany(mappedBy="socio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="socio", fetch = FetchType.EAGER)
 	private List<Beneficiario> beneficiarios;
 
 	@JsonIgnore

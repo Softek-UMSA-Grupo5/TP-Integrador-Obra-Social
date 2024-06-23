@@ -1,22 +1,20 @@
 package org.softek.g5.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
-import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
+import org.softek.g5.entities.medicamento.dto.MedicamentoUpdateRequestDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 import org.softek.g5.entities.recetaMedica.RecetaMedicaFactory;
 import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaRequestDto;
-import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaResponseDto;
+import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaUpdateRequestDto;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.CustomException.EntityExistException;
 import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
-import org.softek.g5.exceptions.entitiesCustomException.recetaMedica.RecetaMedicaNotFoundException;
 import org.softek.g5.repositories.MedicamentoRepository;
 import org.softek.g5.repositories.RecetaMedicaRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
@@ -50,28 +48,22 @@ public class RecetaMedicaService {
 	@Inject
 	TurnoMedicoRepository turnoMedicoRepository;
 
-	public List<RecetaMedicaResponseDto> getRecetaMedica() throws CustomServerException {
+	public List<RecetaMedica> getRecetaMedica() throws CustomServerException {
 		try {
-			List<RecetaMedica> recetaMedica = recetaMedicaRepository.listAll();
+			List<RecetaMedica> recetasMedicas = recetaMedicaRepository.listAll();
 
-			if (recetaMedica.isEmpty()) {
+			if (recetasMedicas.isEmpty()) {
 				throw new EntityNotFoundException("No hay registros de recetas médicas");
 			}
 
-			List<RecetaMedicaResponseDto> dtos = new ArrayList<>();
-
-			for (RecetaMedica m : recetaMedica) {
-				dtos.add(recetaMedicaFactory.createResponseFromEntity(m));
-			}
-
-			return dtos;
+			return recetasMedicas;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener las recetas medicas");
 		}
 
 	}
 
-	public RecetaMedicaResponseDto getRecetaMedicaById(Long idReceta) throws CustomServerException {
+	public RecetaMedica getRecetaMedicaById(Long idReceta) throws CustomServerException {
 		try {
 			Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByIdOptional(idReceta);
 
@@ -79,15 +71,13 @@ public class RecetaMedicaService {
 				throw new EntityNotFoundException("No se encontró la receta médica");
 			}
 
-			RecetaMedicaResponseDto response = recetaMedicaFactory.createResponseFromEntity(optionalRecetaMedica.get());
-
-			return response;
+			return optionalRecetaMedica.get();
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
 		}
 	}
 
-	public RecetaMedicaResponseDto getRecetaMedicaByCodigo(String codigoReceta) throws CustomServerException {
+	public RecetaMedica getRecetaMedicaByCodigo(String codigoReceta) throws CustomServerException {
 		try {
 			Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigoReceta);
 
@@ -95,15 +85,13 @@ public class RecetaMedicaService {
 				throw new EntityNotFoundException("No se encontró la receta médica");
 			}
 
-			RecetaMedicaResponseDto response = recetaMedicaFactory.createResponseFromEntity(optionalRecetaMedica.get());
-
-			return response;
+			return optionalRecetaMedica.get();
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
 		}
 	}
 
-	public List<RecetaMedicaResponseDto> getRecetaMedicaBetweenDates(String fechaDesde, String fechaHasta)
+	public List<RecetaMedica> getRecetaMedicaBetweenDates(String fechaDesde, String fechaHasta)
 			throws CustomServerException {
 		try {
 
@@ -120,20 +108,14 @@ public class RecetaMedicaService {
 				throw new EntityNotFoundException("No se encontraron recetas médicas entre esas fechas");
 			}
 
-			List<RecetaMedicaResponseDto> response = new ArrayList<>();
-
-			for (RecetaMedica rm : listRecetaMedica) {
-				response.add(recetaMedicaFactory.createResponseFromEntity(rm));
-			}
-
-			return response;
+			return listRecetaMedica;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
 		}
 	}
 
 	@Transactional
-	public RecetaMedicaResponseDto persistRecetaMedica(String codigoTurno, RecetaMedicaRequestDto dto)
+	public RecetaMedica persistRecetaMedica(String codigoTurno, RecetaMedicaRequestDto dto)
 			throws CustomServerException {
 
 		try {
@@ -143,8 +125,6 @@ public class RecetaMedicaService {
 				throw new InvalidDataRequest("Los datos de receta enviados son erroneos");
 			}
 
-			RecetaMedicaResponseDto response = new RecetaMedicaResponseDto();
-
 			RecetaMedica recetaMedica = recetaMedicaFactory.createEntityFromDto(dto);
 
 			Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(recetaMedica.getCodigo());
@@ -152,20 +132,18 @@ public class RecetaMedicaService {
 				throw new EntityExistException("Esta receta ya existe en el turno");
 			}
 
-			Optional<TurnoMedico> turnoMedico = turnoMedicoRepository.findByCodigo(codigoTurno);
-			if (!optionalRecetaMedica.isPresent()) {
+			Optional<TurnoMedico> optionalTurnoMedico = turnoMedicoRepository.findByCodigo(codigoTurno);
+			if (optionalTurnoMedico.isEmpty()) {
 				throw new EntityNotFoundException("El turno no se ha encontrado");
 			}
 
-			recetaMedica.setTurno(turnoMedico.get());
+			recetaMedica.setTurno(optionalTurnoMedico.get());
 
-			this.recetaMedicaRepository.persist(recetaMedica);
+			recetaMedica.persist();
 
-			this.medicamentoService.persistMedicamento(recetaMedica.getCodigo(), dto.getMedicamentos());
+			medicamentoService.persistMedicamento(recetaMedica.getId(), dto.getMedicamentos());
 
-			response = recetaMedicaFactory.createResponseFromEntity(recetaMedica);
-
-			return response;
+			return recetaMedica;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al guardar la receta medica");
@@ -173,7 +151,7 @@ public class RecetaMedicaService {
 	}
 
 	@Transactional
-	public void updateRecetaMedica(String codigo, RecetaMedicaRequestDto dto) throws CustomServerException {
+	public void updateRecetaMedica(Long id, RecetaMedicaUpdateRequestDto dto) throws CustomServerException {
 
 		try {
 
@@ -183,20 +161,16 @@ public class RecetaMedicaService {
 				throw new InvalidDataRequest("Los datos de receta enviados son erroneos");
 			}
 			
-			Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigo);
-			if (optionalRecetaMedica.isEmpty()) {
+			RecetaMedica recetaMedica = recetaMedicaRepository.findById(id);
+			if (recetaMedica == null) {
 				throw new EntityNotFoundException("Receta medica no encontrada");
 			}
-			
-			RecetaMedica recetaMedica = optionalRecetaMedica.get();
 
 			recetaMedica.setCantDiasVigencia(dto.getCantDiasVigencia());
 			recetaMedica.setUltimaModificacion(LocalDate.now());
 
-			for (MedicamentoRequestDto d : dto.getMedicamentos()) {
-				medicamentoService.updateMedicamento(
-						(d.getNombre() + "-" + d.getConcentracion() + "-" + d.getFormaFarmaceutica()),
-						recetaMedica.getId(), d);
+			for (MedicamentoUpdateRequestDto d : dto.getMedicamentos()) {
+				medicamentoService.updateMedicamento(recetaMedica.getId(), d);
 			}
 
 		} catch (CustomServerException e) {
@@ -213,7 +187,7 @@ public class RecetaMedicaService {
 			int updatedRecetaMedicaRows = this.recetaMedicaRepository.update("estaEliminado = true WHERE codigo = ?1", codigo);
 			this.medicamentoRepository.update("estaEliminado = true WHERE recetaMedica.id = ?1", recetaMedicaRepository.findByCodigo(codigo).get().getId());
 			if (updatedRecetaMedicaRows == 0) {
-				throw new RecetaMedicaNotFoundException("Receta médica no encontrada");
+				throw new EntityNotFoundException("Receta médica no encontrada");
 			}
 			
 			

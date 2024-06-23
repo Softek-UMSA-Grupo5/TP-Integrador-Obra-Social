@@ -1,5 +1,7 @@
 package org.softek.g5.entities.ubicacion.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,14 +13,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UbicacionResponseDto {
-	
+public class UbicacionUpdateRequestDto {
+
+	@NotNull
 	private Long id;
+	@NotBlank
     private String ciudad;
+	@NotBlank
     private String provincia;
-    private String calle;
+    @NotBlank
+	private String calle;
+    @NotNull
     private int altura;
-    private boolean estaEliminado;
     private String codigo;
-    
+	
 }

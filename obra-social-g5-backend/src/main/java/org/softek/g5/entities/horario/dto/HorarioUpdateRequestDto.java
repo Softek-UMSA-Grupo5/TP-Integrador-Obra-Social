@@ -4,6 +4,8 @@ import java.time.LocalTime;
 
 import org.softek.g5.entities.horario.HorarioDiaSemanaEnum;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +17,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HorarioResponseDto {
-	
+@RegisterForReflection
+public class HorarioUpdateRequestDto implements HorarioDto{
+
+	@NotNull
 	private Long id;
+	@NotNull
     private HorarioDiaSemanaEnum diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-    private boolean estaEliminado;
     private String codigo;
-    
+	
 }

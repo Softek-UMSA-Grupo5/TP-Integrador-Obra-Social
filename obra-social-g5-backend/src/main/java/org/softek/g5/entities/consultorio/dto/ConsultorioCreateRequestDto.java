@@ -3,7 +3,6 @@ package org.softek.g5.entities.consultorio.dto;
 import java.util.List;
 
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
-import org.softek.g5.entities.medico.dto.MedicoRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 
 import lombok.AllArgsConstructor;
@@ -17,10 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConsultorioRequestDto {
+public class ConsultorioCreateRequestDto {
+	
 	 private List<HorarioRequestDto> horarioAtencion;
 	 private UbicacionRequestDto ubicacion;
-	 private MedicoRequestDto medico;
-	 private String codigo;
-  
+	 private Long medicoId;
+ 
 }

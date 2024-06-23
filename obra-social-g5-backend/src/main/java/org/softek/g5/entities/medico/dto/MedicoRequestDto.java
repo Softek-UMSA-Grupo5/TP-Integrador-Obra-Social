@@ -3,8 +3,6 @@ package org.softek.g5.entities.medico.dto;
 import java.sql.Date;
 import java.util.List;
 
-import org.softek.g5.entities.consultorio.dto.ConsultorioRequestDto;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class MedicoRequestDto {
+	
 	@NotNull
 	private String nombre;
 	@NotNull
@@ -34,5 +33,6 @@ public class MedicoRequestDto {
 	private String cuil;
 	@NotNull
 	private String especialidad;
-	private List<ConsultorioRequestDto> consultorios;
+	private List<Long> consultoriosId;
+	
 }

@@ -2,7 +2,7 @@ package org.softek.g5.entities.horario.dto;
 
 import java.time.LocalTime;
 
-import org.softek.g5.entities.horario.Horario;
+import org.softek.g5.entities.horario.HorarioDiaSemanaEnum;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
@@ -18,10 +18,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @RegisterForReflection
-public class HorarioRequestDto {
+public class HorarioRequestDto implements HorarioDto{
+	
 	@NotNull
-    private Horario.DiaSemana diaSemana;
+    private HorarioDiaSemanaEnum diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
     private String codigo;
+    
 }
