@@ -25,6 +25,7 @@ public class MedicamentoFactory {
 	
 	public MedicamentoResponseDto createResponseFromEntity(Medicamento medicamento) {
 		return MedicamentoResponseDto.builder()
+				.id(medicamento.getId())
 				.codigo(medicamento.getCodigo())
 				.nombre(medicamento.getNombre())
 				.concentracion(medicamento.getConcentracion())
@@ -33,7 +34,7 @@ public class MedicamentoFactory {
 				.duracion(medicamento.getDuracion())
 				.instrucciones(medicamento.getInstrucciones())
 				.estaEliminado(medicamento.getEstaEliminado())
-				.receta(medicamento.getRecetaMedica().getId())
+				.recetaId(medicamento.getRecetaMedica().getId())
 				.build();
 	}
 	

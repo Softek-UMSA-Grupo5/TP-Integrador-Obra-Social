@@ -14,6 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class BeneficiarioResponseDto {
+	
+	private Long id;
 	private String nombre;
 	private String apellido;
 	private String telefono;
@@ -23,4 +25,5 @@ public class BeneficiarioResponseDto {
 	private String cuil;
 	private Boolean estaEliminado;
 	private Long socio;
+	
 }

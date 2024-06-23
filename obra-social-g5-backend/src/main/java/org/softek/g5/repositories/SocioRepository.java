@@ -7,6 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SocioRepository implements PanacheRepositoryBase<Socio, Long>{
 	public Optional<Socio> findByDni(int dni) {
-		return find("dni", dni).firstResultOptional();
+		return find("dni AND estaEliminado = 0", dni).firstResultOptional();
 	}
 }

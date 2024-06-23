@@ -3,15 +3,14 @@ package org.softek.g5.entities.consultorio;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.annotations.BatchSize;
 import org.softek.g5.entities.horario.Horario;
 import org.softek.g5.entities.medico.Medico;
 import org.softek.g5.entities.ubicacion.Ubicacion;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,8 +38,7 @@ public class Consultorio extends PanacheEntityBase{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, orphanRemoval = true)
-	@BatchSize(size = 10)
+	@OneToMany(mappedBy = "consultorio", fetch = FetchType.EAGER)
 	private List<Horario> horarioAtencion;
 	
 	@ManyToOne

@@ -1,12 +1,13 @@
 package org.softek.g5.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.softek.g5.entities.ubicacion.UbicacionFactory;
 import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
 import org.softek.g5.entities.ubicacion.dto.UbicacionResponseDto;
-import org.softek.g5.exceptions.entitiesCustomException.ubicacion.UbicacionNotFoundException;
 import org.softek.g5.services.UbicacionService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -37,19 +38,14 @@ public class UbicacionController {
 	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN"})
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicaciones", description ="Se obtendrá una lista de ubicaciones")
-    public List<UbicacionResponseDto> getAllUbicaciones() {
-        return ubicacionService.getAllUbicaciones();
+    public Response getAllUbicaciones() {
+        
+    	List<UbicacionResponseDto> ubicaciones = ubicacionService.getAllUbicaciones().stream().map(UbicacionFactory::toDto)
+				.collect(Collectors.toList());
+		
+		return Response.ok(ubicaciones).build();
+    	
     }
-    
-    @GET
-	@RolesAllowed({"ROL_ADMIN"})
-    @Path("/eliminados")
-	@Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Obtener ucicacion eliminadas", description = "Se obtendrá una lista con las ubicaciones eliminadas")
-    public List<UbicacionResponseDto> getAllUbicacionDeleted(){
-    	return ubicacionService.getAllUbicacionesDeleted();
-    }
-    
     
     @GET
 	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
@@ -57,11 +53,11 @@ public class UbicacionController {
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicación", description ="Se obtendrá una ubicación en particular")
     public Response getUbicacionByCodigo(@PathParam("codigo") String codigo) {
-        UbicacionResponseDto dto = ubicacionService.getUbicacionByCodigo(codigo);
-        if (dto == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    	
+        UbicacionResponseDto dto = UbicacionFactory.toDto(ubicacionService.getUbicacionByCodigo(codigo));
+        
         return Response.ok(dto).build();
+        
     }
 
     @POST
@@ -70,8 +66,8 @@ public class UbicacionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear ubicación", description ="Se creará una ubicación en particular")
     public Response createUbicacion(@Valid UbicacionRequestDto dto) {
-        UbicacionResponseDto createdDto = ubicacionService.createUbicacion(dto);
-        return Response.status(Response.Status.CREATED).entity(createdDto).build();
+        UbicacionResponseDto createdDto = UbicacionFactory.toDto(ubicacionService.createUbicacion(dto));
+        return Response.ok(createdDto).build();
     }
 
     @PUT
@@ -80,33 +76,28 @@ public class UbicacionController {
     @Transactional
     @Operation(summary = "Actualizar ubicación", description ="Se actualizará una ubicación en particular")
     public Response updateUbicacion(@PathParam("codigo") String codigo, @Valid UbicacionRequestDto dto) {
-    	 try {
-             UbicacionResponseDto updatedDto = ubicacionService.updateUbicacion(codigo, dto);
+             UbicacionResponseDto updatedDto = UbicacionFactory.toDto(ubicacionService.updateUbicacion(codigo, dto));
+      
              return Response.ok(updatedDto).build();
-         } catch (UbicacionNotFoundException e) {
-             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-         }
     }
 
     @PUT
 	@RolesAllowed({"ROL_ADMIN"})
-    @Path("/restore/{codigo}")
+    @Path("/restore/{id}")
     @Transactional
     @Operation(summary = "Restaurar ubicación", description ="Se restaurará una ubicación en particular")
-    public Response restoreUbicacion(@PathParam("codigo") String codigo) {
-        return ubicacionService.restoreUbicacion(codigo);
+    public Response restoreUbicacion(@PathParam("id") Long id) {
+       ubicacionService.restoreUbicacion(id);
+        return Response.ok().build();
     }
 
     @DELETE
 	@RolesAllowed({"ROL_ADMIN"})
-    @Path("/{codigo}")
+    @Path("/{id}")
     @Transactional
     @Operation(summary = "Eliminar ubicación", description ="Se eliminará una ubicación por soft delete")
-    public Response deleteUbicacion(@PathParam("codigo") String codigo) {
-    	 try {
-             return ubicacionService.deleteUbicacion(codigo);
-         } catch (UbicacionNotFoundException e) {
-             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-         }
+    public Response deleteUbicacion(@PathParam("id") Long id) {
+             ubicacionService.deleteUbicacion(id);
+             return Response.ok().build();
     }
 }

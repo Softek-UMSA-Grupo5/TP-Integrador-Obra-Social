@@ -3,12 +3,11 @@ package org.softek.g5.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.softek.g5.entities.medicamento.Medicamento;
 import org.softek.g5.entities.medicamento.MedicamentoFactory;
 import org.softek.g5.entities.medicamento.dto.MedicamentoRequestDto;
-import org.softek.g5.entities.medicamento.dto.MedicamentoResponseDto;
+import org.softek.g5.entities.medicamento.dto.MedicamentoUpdateRequestDto;
 import org.softek.g5.entities.recetaMedica.RecetaMedica;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.CustomException.EntityExistException;
@@ -38,7 +37,7 @@ public class MedicamentoService {
 	@Inject
 	RecetaMedicaRepository recetaMedicaRepository;
 
-	public List<MedicamentoResponseDto> getMedicamentos() throws CustomServerException {
+	public List<Medicamento> getMedicamentos() throws CustomServerException {
 		try {
 			List<Medicamento> medicamentos = medicamentoRepository.listAll();
 
@@ -46,19 +45,13 @@ public class MedicamentoService {
 				throw new EntityNotFoundException("No hay registros de medicamentos");
 			}
 
-			List<MedicamentoResponseDto> dtos = new ArrayList<>();
-
-			for (Medicamento m : medicamentos) {
-				dtos.add(medicamentoFactory.createResponseFromEntity(m));
-			}
-
-			return dtos;
+			return medicamentos;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener medicamento por id");
 		}
 	}
 
-	public MedicamentoResponseDto getMedicamentosById(Long id) throws CustomServerException {
+	public Medicamento getMedicamentosById(Long id) throws CustomServerException {
 
 		try {
 			Medicamento medicamento = medicamentoRepository.findById(id);
@@ -67,15 +60,13 @@ public class MedicamentoService {
 				throw new EntityNotFoundException("No se encontró el medicamento con id " + id);
 			}
 
-			MedicamentoResponseDto response = medicamentoFactory.createResponseFromEntity(medicamento);
-
-			return response;
+			return medicamento;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener los medicamentos");
 		}
 	}
 
-	public List<MedicamentoResponseDto> getMedicamentosByCodigo(String codigo) throws CustomServerException {
+	public List<Medicamento> getMedicamentosByCodigo(String codigo) throws CustomServerException {
 		try {
 			List<Medicamento> medicamentos = medicamentoRepository.findByCodigo(codigo);
 
@@ -83,16 +74,13 @@ public class MedicamentoService {
 				throw new EntityNotFoundException("No se encontró medicamentos con codigo " + codigo);
 			}
 
-			List<MedicamentoResponseDto> response = medicamentos.stream()
-					.map(medicamentoFactory::createResponseFromEntity).collect(Collectors.toList());
-
-			return response;
+			return medicamentos;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener los medicamento");
 		}
 	}
 
-	public List<MedicamentoResponseDto> getMedicamentosByReceta(Long id) throws CustomServerException {
+	public List<Medicamento> getMedicamentosByReceta(Long id) throws CustomServerException {
 
 		try {
 			List<Medicamento> medicamentos = medicamentoRepository.findByReceta(id);
@@ -101,10 +89,7 @@ public class MedicamentoService {
 				throw new EntityNotFoundException("No se encontró medicamentos con la receta id " + id);
 			}
 
-			List<MedicamentoResponseDto> response = medicamentos.stream()
-					.map(medicamentoFactory::createResponseFromEntity).collect(Collectors.toList());
-
-			return response;
+			return medicamentos;
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener los medicamento");
 		}
@@ -112,12 +97,12 @@ public class MedicamentoService {
 	}
 
 	@Transactional
-	public List<MedicamentoResponseDto> persistMedicamento(String codigoReceta, List<MedicamentoRequestDto> dtos)
+	public List<Medicamento> persistMedicamento(Long idReceta, List<MedicamentoRequestDto> dtos)
 			throws CustomServerException {
 
 		try {
 
-			List<MedicamentoResponseDto> response = new ArrayList<>();
+			List<Medicamento> response = new ArrayList<>();
 
 			for (MedicamentoRequestDto dto : dtos) {
 
@@ -129,25 +114,25 @@ public class MedicamentoService {
 
 				Medicamento medicamento = medicamentoFactory.createEntityFromDto(dto);
 
-				Optional<RecetaMedica> optionalRecetaMedica = recetaMedicaRepository.findByCodigo(codigoReceta);
+				RecetaMedica existRecetaMedica = recetaMedicaRepository.findById(idReceta);
 
-				if (optionalRecetaMedica.isEmpty()) {
+				if (existRecetaMedica == null) {
 					throw new EntityNotFoundException("No se encontró la receta medica");
 				}
 
 				Optional<Medicamento> optionalMedicamento = medicamentoRepository
-						.findByCodigoyReceta(medicamento.getCodigo(), optionalRecetaMedica.get().getId());
+						.findByCodigoyReceta(medicamento.getCodigo(), existRecetaMedica.getId());
 
 				if (optionalMedicamento.isPresent()) {
 					throw new EntityExistException(
 							medicamento.getCodigo() + " este medicamento ya existe en la receta");
 				}
 
-				medicamento.setRecetaMedica(optionalRecetaMedica.get());
+				medicamento.setRecetaMedica(existRecetaMedica);
 
 				medicamento.persist();
 
-				response.add(medicamentoFactory.createResponseFromEntity(medicamento));
+				response.add(medicamento);
 			}
 
 			return response;
@@ -159,7 +144,7 @@ public class MedicamentoService {
 	}
 
 	@Transactional
-	public MedicamentoResponseDto updateMedicamento(String codigoMedicamento, Long idReceta, MedicamentoRequestDto dto)
+	public Medicamento updateMedicamento(Long idReceta, MedicamentoUpdateRequestDto dto)
 			throws CustomServerException {
 
 		try {
@@ -170,7 +155,7 @@ public class MedicamentoService {
 				throw new InvalidDataRequest("Los datos de medicamento enviados son erróneos");
 			}
 
-			Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByCodigoyReceta(codigoMedicamento,
+			Optional<Medicamento> optionalMedicamento = medicamentoRepository.findByidyReceta(dto.getId(),
 					idReceta);
 
 			if (optionalMedicamento.isEmpty()) {
@@ -187,7 +172,7 @@ public class MedicamentoService {
 			medicamento.setDuracion(dto.getDuracion());
 			medicamento.setInstrucciones(dto.getInstrucciones());
 
-			return this.medicamentoFactory.createResponseFromEntity(medicamento);
+			return medicamento;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al actualizar los medicamentos");
@@ -196,12 +181,12 @@ public class MedicamentoService {
 	}
 
 	@Transactional
-	public void deleteMedicamento(String codigoMedicamento, Long idReceta) throws CustomServerException {
+	public void deleteMedicamento(Long idMedicamento, Long idReceta) throws CustomServerException {
 
 		try {
 
 			int updatedRows = this.medicamentoRepository.update(
-					"estaEliminado = true WHERE codigo = ?1 and recetaMedica.id = ?2", codigoMedicamento, idReceta);
+					"estaEliminado = true WHERE id = ?1 and recetaMedica.id = ?2", idMedicamento, idReceta);
 			if (updatedRows == 0) {
 				throw new EntityNotFoundException("Medicamento no encontrado");
 			}

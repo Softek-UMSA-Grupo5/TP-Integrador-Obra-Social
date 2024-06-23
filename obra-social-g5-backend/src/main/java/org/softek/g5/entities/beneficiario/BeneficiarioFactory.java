@@ -22,6 +22,7 @@ public class BeneficiarioFactory {
 	
 	public BeneficiarioResponseDto createResponseFromEntity(Beneficiario beneficiario) {
 		return BeneficiarioResponseDto.builder()
+				.id(beneficiario.getId())
 				.nombre(beneficiario.getNombre())
 				.apellido(beneficiario.getApellido())
 				.telefono(beneficiario.getTelefono())

@@ -10,8 +10,8 @@ import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoEstadoEnum;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoCreateRequestDto;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoUpdateRequestDto;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.CustomException.EntityExistException;
 import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
@@ -46,7 +46,7 @@ public class TurnoMedicoService {
 	@Inject
 	MedicoRepository medicoRepository;
 
-	public List<TurnoMedicoResponseDto> getTurnoMedico() throws CustomServerException {
+	public List<TurnoMedico> getTurnoMedico() throws CustomServerException {
 
 		try {
 
@@ -56,13 +56,7 @@ public class TurnoMedicoService {
 				throw new EntityNotFoundException("No hay registros de turnos médicos");
 			}
 
-			List<TurnoMedicoResponseDto> response = new ArrayList<>();
-
-			for (TurnoMedico tm : listTurnoMedico) {
-				response.add(turnoMedicoFactory.createResponseFromEntity(tm));
-			}
-
-			return response;
+			return listTurnoMedico;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener las recetas medicas");
@@ -70,7 +64,7 @@ public class TurnoMedicoService {
 
 	}
 
-	public TurnoMedicoResponseDto getTurnoMedicoByCodigo(String codigoTurno) throws CustomServerException {
+	public TurnoMedico getTurnoMedicoByCodigo(String codigoTurno) throws CustomServerException {
 
 		try {
 
@@ -80,9 +74,7 @@ public class TurnoMedicoService {
 				throw new EntityNotFoundException("No se encontró el turno medico");
 			}
 
-			TurnoMedicoResponseDto response = turnoMedicoFactory.createResponseFromEntity(optionalTurnoMedico.get());
-
-			return response;
+			return optionalTurnoMedico.get();
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
@@ -90,7 +82,7 @@ public class TurnoMedicoService {
 
 	}
 
-	public List<TurnoMedicoResponseDto> getTurnoMedicoBySocio(Long idSocio) throws CustomServerException {
+	public List<TurnoMedico> getTurnoMedicoBySocio(Long idSocio) throws CustomServerException {
 
 		try {
 
@@ -100,13 +92,7 @@ public class TurnoMedicoService {
 				throw new EntityNotFoundException("No se encontrarón turnos para el socio de id " + idSocio);
 			}
 
-			List<TurnoMedicoResponseDto> response = new ArrayList<>();
-
-			for (TurnoMedico tm : listTurnoMedico) {
-				response.add(turnoMedicoFactory.createResponseFromEntity(tm));
-			}
-
-			return response;
+			return listTurnoMedico;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
@@ -114,7 +100,7 @@ public class TurnoMedicoService {
 
 	}
 
-	public List<TurnoMedicoResponseDto> getTurnoMedicoByMedico(Long idMedico) throws CustomServerException {
+	public List<TurnoMedico> getTurnoMedicoByMedico(Long idMedico) throws CustomServerException {
 
 		try {
 
@@ -124,13 +110,7 @@ public class TurnoMedicoService {
 				throw new EntityNotFoundException("No se encontrarón turnos para el medico de id " + idMedico);
 			}
 
-			List<TurnoMedicoResponseDto> response = new ArrayList<>();
-
-			for (TurnoMedico tm : listTurnoMedico) {
-				response.add(turnoMedicoFactory.createResponseFromEntity(tm));
-			}
-
-			return response;
+			return listTurnoMedico;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener la receta medica");
@@ -138,7 +118,7 @@ public class TurnoMedicoService {
 
 	}
 
-	public List<TurnoMedicoResponseDto> getTurnoMedicoBetweenDates(String fechaDesde, String fechaHasta)
+	public List<TurnoMedico> getTurnoMedicoBetweenDates(String fechaDesde, String fechaHasta)
 			throws CustomServerException {
 
 		try {
@@ -156,13 +136,7 @@ public class TurnoMedicoService {
 				throw new EntityNotFoundException("No se encontraron turnos médicos entre esas fechas");
 			}
 
-			List<TurnoMedicoResponseDto> response = new ArrayList<>();
-
-			for (TurnoMedico tm : listTurnoMedico) {
-				response.add(turnoMedicoFactory.createResponseFromEntity(tm));
-			}
-
-			return response;
+			return listTurnoMedico;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener las recetas medicas");
@@ -171,14 +145,14 @@ public class TurnoMedicoService {
 	}
 
 	@Transactional
-	public List<TurnoMedicoResponseDto> persistTurnoMedico(List<TurnoMedicoRequestDto> dtos)
+	public List<TurnoMedico> persistTurnoMedico(List<TurnoMedicoCreateRequestDto> dtos)
 			throws CustomServerException {
 
 		try {
 
-			List<TurnoMedicoResponseDto> response = new ArrayList<>();
+			List<TurnoMedico> response = new ArrayList<>();
 
-			for (TurnoMedicoRequestDto dto : dtos) {
+			for (TurnoMedicoCreateRequestDto dto : dtos) {
 
 				DataValidator.validateDtoFields(dto);
 
@@ -187,29 +161,29 @@ public class TurnoMedicoService {
 				}
 
 				TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);
-				Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigoAndDisponibility(turnoMedico.getCodigo());
+				Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(turnoMedico.getCodigo());
 				if (optionalturnoMedico.isPresent()) {
 					throw new EntityExistException("Este turno ya está ocupado");
 				}
 
-				Optional<Medico> optionalMedico = medicoRepository.findByDni(dto.getMedico().getDni());
+				Medico medico = medicoRepository.findById(dto.getMedicoId());
 
-				if (optionalMedico.isEmpty()) {
+				if (medico == null) {
 					throw new EntityNotFoundException("No se encontró al medico");
 				}
 
-				Optional<Socio> optionalSocio = socioRepository.findByDni(dto.getSocio().getDni());
+				Socio socio = socioRepository.findById(dto.getSocioId());
 
-				if (optionalSocio.isEmpty()) {
+				if (socio == null) {
 					throw new EntityNotFoundException("No se encontró al socio");
 				}
 
-				turnoMedico.setMedico(optionalMedico.get());
-				turnoMedico.setSocio(optionalSocio.get());
+				turnoMedico.setMedico(medico);
+				turnoMedico.setSocio(socio);
 
-				this.turnoMedicoRepository.persist(turnoMedico);
+				turnoMedico.persist();
 
-				response.add(turnoMedicoFactory.createResponseFromEntity(turnoMedico));
+				response.add(turnoMedico);
 			}
 
 			return response;
@@ -221,7 +195,7 @@ public class TurnoMedicoService {
 	}
 
 	@Transactional
-	public void updateTurnoMedico(String codigo, TurnoMedicoRequestDto dto) throws CustomServerException {
+	public void updateTurnoMedico(TurnoMedicoUpdateRequestDto dto) throws CustomServerException {
 
 		try {
 
@@ -231,23 +205,21 @@ public class TurnoMedicoService {
 				throw new InvalidDataRequest("Los datos de turno medico enviados son erroneos");
 			}
 
-			Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(codigo);
+			TurnoMedico turnoMedico = turnoMedicoRepository.findById(dto.getId());
 
-			if (optionalturnoMedico.isEmpty()) {
+			if (turnoMedico == null) {
 				throw new EntityNotFoundException("Turno médico no encontrado");
 			}
 			
-			TurnoMedico turnoMedico = optionalturnoMedico.get();
-			
-			Optional<Medico> optionalMedico = medicoRepository.findByDni(dto.getMedico().getDni());
+			Medico medico = medicoRepository.findById(dto.getMedicoId());
 
-			if (optionalMedico.isEmpty()) {
+			if (medico == null) {
 				throw new EntityNotFoundException("No se encontró al medico");
 			}
 
-			Optional<Socio> optionalSocio = socioRepository.findByDni(dto.getSocio().getDni());
+			Socio socio = socioRepository.findById(dto.getSocioId());
 
-			if (optionalSocio.isEmpty()) {
+			if (socio == null) {
 				throw new EntityNotFoundException("No se encontró al socio");
 			}
 
@@ -256,13 +228,8 @@ public class TurnoMedicoService {
 			turnoMedico.setHora(dto.getHora());
 			turnoMedico.setMinutos(dto.getMinutos());
 			turnoMedico.setMotivoConsulta(dto.getMotivoConsulta());
-			if(turnoMedico.getRecetaMedica() == null) {
-				recetaMedicaService.persistRecetaMedica(codigo, dto.getRecetaMedica());
-			}else {
-				recetaMedicaService.updateRecetaMedica(codigo, dto.getRecetaMedica());
-			}
-			turnoMedico.setMedico(optionalMedico.get());
-			turnoMedico.setSocio(optionalSocio.get());
+			turnoMedico.setMedico(medico);
+			turnoMedico.setSocio(socio);
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al guardar la receta medica");
