@@ -1,5 +1,5 @@
 import React from 'react';
-import AddNewOfficeForm from './component/AddNewOfficeForm';
+import AddNewOfficeForm from './components/CrearConsultorio';
 
 const App: React.FC = () => {
   return (
