@@ -3,7 +3,6 @@ import java.sql.Date;
 import java.util.List;
 
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,6 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class SocioRequestDto {
+	
 	@NotNull
 	private String nombre;
 	@NotNull
@@ -33,5 +33,5 @@ public class SocioRequestDto {
 	@NotNull
 	private Date fechaNacimiento;
 	private List<BeneficiarioRequestDto> beneficiarios;
-	private List<TurnoMedicoRequestDto> turnos;
+	
 }

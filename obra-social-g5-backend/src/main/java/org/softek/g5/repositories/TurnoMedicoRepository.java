@@ -13,12 +13,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class TurnoMedicoRepository implements PanacheRepositoryBase<TurnoMedico, Long>{
 
 	public Optional<TurnoMedico> findByCodigo(String codigo) {
-		return find("codigo AND estaDisponible = 1", codigo).firstResultOptional();
+		return find("codigo = ?1 AND estaDisponible = false", codigo).firstResultOptional();
 	} 
-	
-	public Optional<TurnoMedico> findByCodigoAndDisponibility(String codigo) {
-		return find("codigo AND estaDisponible = 1", codigo).firstResultOptional();
-	}
 	
 	public List<TurnoMedico> findByTurno(Long id) {
 		return find("turno.id = ?1 ", id).list();

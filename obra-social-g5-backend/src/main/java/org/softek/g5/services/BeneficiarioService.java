@@ -1,15 +1,15 @@
 package org.softek.g5.services;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
-import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
+import org.softek.g5.entities.beneficiario.dto.BeneficiarioUpdateRequestDto;
 import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
+import org.softek.g5.exceptions.CustomException.EntityExistException;
 import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
 import org.softek.g5.repositories.BeneficiarioRepository;
@@ -27,79 +27,93 @@ import lombok.AllArgsConstructor;
 public class BeneficiarioService {
 	@Inject
 	BeneficiarioRepository beneficiarioRepository;
-	
+
 	@Inject
 	BeneficiarioFactory beneficiarioFactory;
-	
+
 	@Inject
 	SocioRepository socioRepository;
-	
+
 	@Transactional
-	public Collection<BeneficiarioResponseDto> getBeneficiarios() throws CustomServerException{
+	public List<Beneficiario> getBeneficiarios() throws CustomServerException {
 		try {
-			Collection<Beneficiario> beneficiarios = beneficiarioRepository.listAll();
-			
-			if(beneficiarios.isEmpty()) {
+			List<Beneficiario> beneficiarios = beneficiarioRepository.listAll();
+
+			if (beneficiarios.isEmpty()) {
 				throw new EntityNotFoundException("No hay registros de beneficiarios");
 			}
-			
-			Collection<BeneficiarioResponseDto> dtos = new ArrayList<>();
-			
-			for (Beneficiario b : beneficiarios) {
-				dtos.add(beneficiarioFactory.createResponseFromEntity(b));
+
+			return beneficiarios;
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los beneficiarios");
+		}
+	}
+	
+	@Transactional
+	public List<Beneficiario> getBeneficiariosSocio(Long id) throws CustomServerException {
+		try {
+			List<Beneficiario> beneficiarios = beneficiarioRepository.findBySocio(id);
+
+			if (beneficiarios.isEmpty()) {
+				throw new EntityNotFoundException("No hay registros de beneficiarios");
 			}
-			
-			return dtos;
-		} catch(CustomServerException e) {
+
+			return beneficiarios;
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener los beneficiarios");
 		}
 	}
 
 	@Transactional
-	public Collection<BeneficiarioResponseDto> persistBeneficiario(int dniSocio, List<BeneficiarioRequestDto> dtos) throws CustomServerException{
+	public List<Beneficiario> persistBeneficiario(int dniSocio, List<BeneficiarioRequestDto> dtos)
+			throws CustomServerException {
 		try {
+
+			Socio socio = socioRepository.findByDni(dniSocio).get();
+			if (socio == null) {
+				throw new EntityNotFoundException("El socio no se encuentra registrado");
+			}
 			
-			Collection<BeneficiarioResponseDto> response = new ArrayList<>();	
 			for (BeneficiarioRequestDto dto : dtos) {
-				
+
 				DataValidator.validateDtoFields(dto);
-				if(!BeneficiarioValidator.validateRequestDto(dto)) {
+				if (!BeneficiarioValidator.validateRequestDto(dto)) {
 					throw new InvalidDataRequest("Los datos enviados de beneficiario son erroneos");
 				}
-				
+
 				Beneficiario beneficiario = beneficiarioFactory.createEntityFromDto(dto);
-				Socio socio = socioRepository.findByDni(dniSocio).get();
-				if(socio.getEstaEliminado()==true) {
-					throw new RuntimeException("El socio está eliminado");
-				}else {
-					Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository.findByDniyIdSocio(beneficiario.getDni(), socio.getId());
-					if(optionalBeneficiario.isPresent()) {
-						throw new RuntimeException("Este beneficiario ya está agregado al grupo familiar del socio");
-					}
-					beneficiario.setSocio(socio);
-					this.beneficiarioRepository.persist(beneficiario);
-					response.add(beneficiarioFactory.createResponseFromEntity(beneficiario));
+
+				Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository
+						.findByDniyIdSocio(beneficiario.getDni(), socio.getId());
+				if (optionalBeneficiario.isPresent()) {
+					throw new EntityExistException("Este beneficiario ya está agregado al grupo familiar del socio");
 				}
+				beneficiario.setSocio(socio);
+				beneficiario.persist();
 			}
-			return response;
 			
-		} catch(CustomServerException e) {
+			return this.getBeneficiariosSocio(socio.getId());
+
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al crear los beneficiarios");
 		}
 	}
 
 	@Transactional
-	public BeneficiarioResponseDto updateBeneficiario(int dniBeneficiario, Long idSocio, BeneficiarioRequestDto dto) throws CustomServerException{
+	public Beneficiario updateBeneficiario(Long idSocio, BeneficiarioUpdateRequestDto dto)
+			throws CustomServerException {
 		try {
+
+			DataValidator.validateDtoFields(dto);
+			if (!BeneficiarioValidator.validateRequestDto(dto)) {
+				throw new InvalidDataRequest("Los datos enviados de beneficiario son erroneos");
+			}
 			
-			Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository.findByDniyIdSocio(dniBeneficiario, idSocio);
+			Optional<Beneficiario> optionalBeneficiario = beneficiarioRepository.findByIdBeneficiarioAndIdSocio(dto.getId(),
+					idSocio);
+			
 			if (optionalBeneficiario.isPresent()) {
-				
-				DataValidator.validateDtoFields(dto);
-				if(!BeneficiarioValidator.validateRequestDto(dto)) {
-					throw new InvalidDataRequest("Los datos enviados de beneficiario son erroneos");
-				}
-				
+
 				Beneficiario beneficiario = optionalBeneficiario.get();
 				beneficiario.setId(optionalBeneficiario.get().getId());
 				beneficiario.setNombre(dto.getNombre());
@@ -109,27 +123,28 @@ public class BeneficiarioService {
 				beneficiario.setDni(dto.getDni());
 				beneficiario.setFechaNacimiento(dto.getFechaNacimiento());
 				beneficiario.setCuil(dto.getCuil());
-				
-				return this.beneficiarioFactory.createResponseFromEntity(beneficiario);
+
+				return beneficiario;
 			} else {
 				throw new EntityNotFoundException("Beneficiario no encontrado");
 			}
-			
-		}catch(CustomServerException e) {
+
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al actualizar los beneficiarios");
 		}
 	}
 
 	@Transactional
-	public void deleteBeneficiario(Long idBeneficiario, Long idSocio) throws CustomServerException{
+	public void deleteBeneficiario(Long idBeneficiario, Long idSocio) throws CustomServerException {
 		try {
-			
-			int updatedRows = this.beneficiarioRepository.update("estaEliminado = true WHERE id = ?1 and socio.id = ?2", idBeneficiario, idSocio);
+
+			int updatedRows = this.beneficiarioRepository.update("estaEliminado = true WHERE id = ?1 and socio.id = ?2",
+					idBeneficiario, idSocio);
 			if (updatedRows == 0) {
 				throw new EntityNotFoundException("Beneficiario no encontrado");
 			}
-			
-		}catch(CustomServerException e) {
+
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al eliminar un beneficiario");
 		}
 	}

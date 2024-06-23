@@ -14,6 +14,6 @@ public class UbicacionRepository implements PanacheRepository<Ubicacion>{
 	    }
 
 	 public Ubicacion findByCodigo(String codigo) {
-	        return find("codigo", codigo).firstResult();
+	        return find("codigo = ?1 AND estaEliminado = 0", codigo).firstResult();
 	    }
 }

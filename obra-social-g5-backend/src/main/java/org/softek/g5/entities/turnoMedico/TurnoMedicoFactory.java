@@ -1,6 +1,6 @@
 package org.softek.g5.entities.turnoMedico;
 
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoCreateRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.repositories.TurnoMedicoRepository;
 
@@ -13,7 +13,7 @@ public class TurnoMedicoFactory {
 	@Inject
 	TurnoMedicoRepository turnoMedicoRepository;
 
-	public TurnoMedico createEntityFromDto(TurnoMedicoRequestDto dto) {
+	public TurnoMedico createEntityFromDto(TurnoMedicoCreateRequestDto dto) {
 		return TurnoMedico.builder()
 				.codigo("turno-" + (turnoMedicoRepository.count() + 1))
 				.fecha(dto.getFecha())
@@ -33,6 +33,7 @@ public class TurnoMedicoFactory {
 		}
 		
 		return TurnoMedicoResponseDto.builder()
+				.id(turnoMedico.getId())
 				.codigo(turnoMedico.getCodigo())
 				.fecha(turnoMedico.getFecha())
 				.hora(turnoMedico.getHora())
@@ -40,7 +41,7 @@ public class TurnoMedicoFactory {
 				.estado(turnoMedico.getEstado())
 				.motivoConsulta(turnoMedico.getMotivoConsulta())
 				.estaDisponible(turnoMedico.getEstaDisponible())
-				.recetaMedica(recetaId)
+				.recetaMedicaId(recetaId)
 				.socioId(turnoMedico.getSocio().getId())
 				.medicoId(turnoMedico.getMedico().getId())
 				.build();

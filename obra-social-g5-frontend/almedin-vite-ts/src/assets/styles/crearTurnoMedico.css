@@ -1,0 +1,13 @@
+.label {
+    font-weight: bold !important;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: black !important;
+}
+
+.label-disabled {
+    font-weight: bold !important;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: grey !important;
+}

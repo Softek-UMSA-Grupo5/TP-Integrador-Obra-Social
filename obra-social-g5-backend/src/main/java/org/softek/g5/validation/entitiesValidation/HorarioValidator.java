@@ -3,7 +3,9 @@ package org.softek.g5.validation.entitiesValidation;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.softek.g5.entities.horario.dto.HorarioDto;
 import org.softek.g5.entities.horario.dto.HorarioRequestDto;
+import org.softek.g5.entities.horario.dto.HorarioUpdateRequestDto;
 import org.softek.g5.validation.DataValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,14 +13,23 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class HorarioValidator {
 
+	//Implementar polimorfismo para los dtos
+	
     public static boolean validateRequestDto(HorarioRequestDto dto) {
         return DataValidator.validateString(dto.getCodigo(), 3, 20)
                 && dto.getHoraInicio() != null
                 && dto.getHoraFin() != null
                 && dto.getDiaSemana() != null;
     }
+    
+    public static boolean validateRequestDto(HorarioUpdateRequestDto dto) {
+        return DataValidator.validateString(dto.getCodigo(), 3, 20)
+                && dto.getHoraInicio() != null
+                && dto.getHoraFin() != null
+                && dto.getDiaSemana() != null;
+    }
 
-    public static boolean validateHorarios(List<HorarioRequestDto> horarios) {
+    public static boolean validateHorarios(List<? extends HorarioDto> horarios) {
         if (horarios.isEmpty() || horarios.size() == 1) {
             return true; 
         }
@@ -36,7 +47,7 @@ public class HorarioValidator {
         return true; 
     }
 
-    private static boolean horariosSeSuperponen(HorarioRequestDto horario1, HorarioRequestDto horario2) {
+    private static boolean horariosSeSuperponen(HorarioDto horario1, HorarioDto horario2) {
         LocalTime inicio1 = horario1.getHoraInicio();
         LocalTime fin1 = horario1.getHoraFin();
         LocalTime inicio2 = horario2.getHoraInicio();
@@ -46,5 +57,6 @@ public class HorarioValidator {
                 || (inicio1.equals(inicio2) && fin1.equals(fin2)) 
                 || (inicio1.isAfter(inicio2) && fin1.isBefore(fin2)); 
     }
+
 }
 

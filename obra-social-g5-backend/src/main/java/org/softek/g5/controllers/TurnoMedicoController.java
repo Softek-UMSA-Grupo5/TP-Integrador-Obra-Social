@@ -1,14 +1,16 @@
 package org.softek.g5.controllers;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoRequestDto;
+import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoCreateRequestDto;
 import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
+import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoUpdateRequestDto;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.TurnoMedicoService;
 
@@ -38,6 +40,9 @@ public class TurnoMedicoController {
 	@Inject
 	TurnoMedicoService turnoMedicoService;
 
+	@Inject
+	TurnoMedicoFactory turnoMedicoFactory;
+
 	@GET
 	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
 	@Produces(MediaType.APPLICATION_JSON)
@@ -45,8 +50,12 @@ public class TurnoMedicoController {
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Lista de turnos médicos"),
 			@APIResponse(responseCode = "500", description = "Error al obtener los turnos médicos") })
 	public Response getAllTurnoMedico() throws CustomServerException {
-		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedico();
+
+		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedico().stream()
+				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());
+
 		return Response.ok(turnos).build();
+
 	}
 
 	@GET
@@ -59,8 +68,12 @@ public class TurnoMedicoController {
 	public Response getTurnoMedicoByCodigo(
 			@Parameter(required = true, description = "codigo del turno médico") @PathParam("codigo") String codigoTurno)
 			throws CustomServerException {
-		TurnoMedicoResponseDto turnos = turnoMedicoService.getTurnoMedicoByCodigo(codigoTurno);
+
+		TurnoMedicoResponseDto turnos = turnoMedicoFactory
+				.createResponseFromEntity(turnoMedicoService.getTurnoMedicoByCodigo(codigoTurno));
+
 		return Response.ok(turnos).build();
+
 	}
 
 	@GET
@@ -73,8 +86,12 @@ public class TurnoMedicoController {
 	public Response getTurnoMedicoBySocio(
 			@Parameter(required = true, description = "id del socio") @PathParam("idSocio") Long idSocio)
 			throws CustomServerException {
-		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedicoBySocio(idSocio);
+
+		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedicoBySocio(idSocio).stream()
+				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());;
+
 		return Response.ok(turnos).build();
+
 	}
 
 	@GET
@@ -87,8 +104,12 @@ public class TurnoMedicoController {
 	public Response getTurnoMedicoByMedico(
 			@Parameter(required = true, description = "id del médico") @PathParam("idMedico") Long idMedico)
 			throws CustomServerException {
-		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedicoByMedico(idMedico);
+		
+		List<TurnoMedicoResponseDto> turnos = turnoMedicoService.getTurnoMedicoByMedico(idMedico).stream()
+				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());;
+		
 		return Response.ok(turnos).build();
+		
 	}
 
 	@GET
@@ -102,8 +123,12 @@ public class TurnoMedicoController {
 			@Parameter(required = true, description = "fecha desde") @QueryParam("fechaDesde") String fechaDesde,
 			@Parameter(required = true, description = "fecha hasta") @QueryParam("fechaHasta") String fechaHasta)
 			throws CustomServerException {
-		List<TurnoMedicoResponseDto> recetas = turnoMedicoService.getTurnoMedicoBetweenDates(fechaDesde, fechaHasta);
+		
+		List<TurnoMedicoResponseDto> recetas = turnoMedicoService.getTurnoMedicoBetweenDates(fechaDesde, fechaHasta).stream()
+				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());;
+		
 		return Response.ok(recetas).build();
+		
 	}
 
 	@POST
@@ -114,13 +139,16 @@ public class TurnoMedicoController {
 	@APIResponses({ @APIResponse(responseCode = "201", description = "Turnos médicos añadidos y persistidos"),
 			@APIResponse(responseCode = "500", description = "Error al añadir y persistir los turnos médicos") })
 	@Transactional
-	public Response addTurnoMedico(@Valid List<TurnoMedicoRequestDto> dtos) throws CustomServerException {
-		Collection<TurnoMedicoResponseDto> response = turnoMedicoService.persistTurnoMedico(dtos);
+	public Response addTurnoMedico(@Valid List<TurnoMedicoCreateRequestDto> dtos) throws CustomServerException {
+		
+		List<TurnoMedicoResponseDto> response = turnoMedicoService.persistTurnoMedico(dtos).stream()
+				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());;
+		
 		return Response.status(Response.Status.CREATED).entity(response).build();
+		
 	}
 
 	@PUT
-	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN" })
@@ -128,9 +156,8 @@ public class TurnoMedicoController {
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turno médico actualizado"),
 			@APIResponse(responseCode = "500", description = "Error al actualizar el turno médico") })
 	public Response update(
-			@Parameter(required = true, description = "Código del turno médico") @PathParam("codigo") String codigo,
-			@Valid TurnoMedicoRequestDto dto) throws CustomServerException {
-		turnoMedicoService.updateTurnoMedico(codigo, dto);
+			@Valid TurnoMedicoUpdateRequestDto dto) throws CustomServerException {
+		turnoMedicoService.updateTurnoMedico(dto);
 		return Response.ok().build();
 	}
 

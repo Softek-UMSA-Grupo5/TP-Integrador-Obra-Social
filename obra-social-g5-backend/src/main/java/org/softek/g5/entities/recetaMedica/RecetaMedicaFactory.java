@@ -39,13 +39,14 @@ public class RecetaMedicaFactory {
 
     public RecetaMedicaResponseDto createResponseFromEntity(RecetaMedica recetaMedica) {
         return RecetaMedicaResponseDto.builder()
+        		.id(recetaMedica.getId())
                 .codigo(recetaMedica.getCodigo())
                 .fechaEmision(recetaMedica.getFechaEmision())
                 .ultimaModificacion(recetaMedica.getUltimaModificacion())
                 .cantDiasVigencia(recetaMedica.getCantDiasVigencia())
                 .estaEliminado(recetaMedica.getEstaEliminado())
                 .medicamentos(createListMedicamentoDtoFromEntity(medicamentoRepository.findByReceta(recetaMedica.getId())))
-                .turno(recetaMedica.getTurno().getId())
+                .turnoId(recetaMedica.getTurno().getId())
                 .build();
     }
 
