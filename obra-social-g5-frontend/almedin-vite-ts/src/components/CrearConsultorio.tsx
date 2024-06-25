@@ -1,477 +1,649 @@
-import React, { useState } from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import OfficeData from '../models/Office';
-import DeleteIcon from '@mui/icons-material/Delete';
-//import { saveOffice } from '../service/api';
+import React, { useState, useEffect } from 'react';
 import {
-    FormControl,
+    Card,
+    CardHeader,
+    CardContent,
+    CardActions,
     Grid,
-    IconButton,
-    Input,
+    FormControl,
     InputLabel,
+    Select,
     MenuItem,
     OutlinedInput,
-    Select,
+    IconButton,
+    Button,
+    FormControlLabel,
+    Checkbox,
     SelectChangeEvent,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { addMedico, getAll } from '../api/MedicoApi';
+import { createConsultorio } from '../api/ConsultorioApi';
+import { MedicoRequestDto, MedicoResponseDto } from '../types/Medico';
+import { ConsultorioResponseDto } from '../types/Horario';
 
-const AddNewOfficeForm: React.FC = () => {
-    const initialHorario = {
-        diaSemana: '',
-        horaInicio: '',
-        horaFin: '',
+interface ConsultorioCreateRequest {
+    id?: number;
+    horarioAtencion: { diaSemana: string; horaInicio: string; horaFin: string }[];
+    ubicacion: {
+        ciudad: string;
+        provincia: string;
+        calle: string;
+        altura: number;
     };
-
-    const [officeData, setOfficeData] = useState<OfficeData>({
-        horarioAtencion: [initialHorario],
+    medicoId?: number;
+}
+const ConsultorioForm: React.FC = () => {
+    const [officeData, setOfficeData] = useState<ConsultorioCreateRequest>({
+        id: undefined,
+        horarioAtencion: [{ diaSemana: 'LUNES', horaInicio: '08:00:00', horaFin: '12:00:00' }],
         ubicacion: {
             ciudad: '',
             provincia: '',
             calle: '',
-            altura: undefined,
-        },
-        medico: {
-            nombre: '',
-            apellido: '',
-            telefono: '',
-            email: '',
-            dni: undefined,
-            fechaNacimiento: '',
-            cuil: '',
-            especialidad: '',
+            altura: 0,
         },
     });
+    const [medicoData, setMedicoData] = useState({
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        email: '',
+        dni: '',
+        fechaNacimiento: '',
+        cuil: '',
+        especialidad: '',
+        consultoriosId: [],
+    });
+    const [existingMedicos, setExistingMedicos] = useState<MedicoResponseDto[]>([]);
+    const [createNewMedico, setCreateNewMedico] = useState(false);
+    const [selectExistingMedico, setSelectExistingMedico] = useState(false);
+    const [selectedMedicoId, setSelectedMedicoId] = useState<number | undefined>(undefined);
+    useEffect(() => {
+        const fetchMedicos = async () => {
+            try {
+                const medicos = await getAll();
+                setExistingMedicos(medicos);
+            } catch (error) {
+                console.error('Error fetching medicos:', error);
+            }
+        };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = event.target;
-        const onlyNums = value.replace(/[^0-9]/g, '');
+        fetchMedicos();
+    }, []);
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = event.target;
+        if (name === 'createNewMedico') {
+            setCreateNewMedico(checked);
+            if (checked) setSelectExistingMedico(false);
+        } else if (name === 'selectExistingMedico') {
+            setSelectExistingMedico(checked);
+            if (checked) setCreateNewMedico(false);
+        }
+    };
+    const handleSelectExistingMedicoChange = (event: SelectChangeEvent<number>) => {
+        setSelectedMedicoId(event.target.value as number);
+    };
+    const handleNoMedicoSelection = () => {
+        setCreateNewMedico(false);
+        setSelectExistingMedico(false);
+        setSelectedMedicoId(undefined);
+    };
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-        const newValue = onlyNums === '' ? undefined : parseInt(onlyNums, 10);
-        setOfficeData((prevData) => ({
+        try {
+            const consultorioResponse: ConsultorioResponseDto = await createConsultorio(officeData);
+            const consultorioId = consultorioResponse.id;
+
+            if (createNewMedico) {
+                const medicoToCreate: MedicoRequestDto = {
+                    nombre: medicoData.nombre,
+                    apellido: medicoData.apellido,
+                    telefono: medicoData.telefono,
+                    email: medicoData.email,
+                    dni: parseInt(medicoData.dni),
+                    fechaNacimiento: medicoData.fechaNacimiento,
+                    cuil: medicoData.cuil,
+                    especialidad: medicoData.especialidad,
+                    consultoriosId: [consultorioId],
+                };
+
+                await addMedico([medicoToCreate]);
+
+                console.log('Consultorio y médico creados correctamente.');
+                alert('Consultorio y médico creados correctamente.');
+            } else {
+                console.log('Consultorio creado correctamente.');
+                alert('Consultorio creado correctamente.');
+            }
+        } catch (error) {
+            console.error('Error al crear el consultorio y/o médico:', error);
+            alert('Error al crear el consultorio y/o médico. Por favor, inténtelo nuevamente.');
+        }
+    };
+    const handleMedicoDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setMedicoData((prevData) => ({
             ...prevData,
-            medico: {
-                ...prevData.medico,
-                [id]: newValue,
-            },
+            [name]: value,
         }));
     };
-
     const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = event.target;
-        const onlyNums = value.replace(/[^0-9]/g, '');
-        setOfficeData((prevData) => ({
-            ...prevData,
-            ubicacion: {
-                ...prevData.ubicacion,
-                [id]: onlyNums === '' ? undefined : parseInt(onlyNums, 10),
-            },
-        }));
-    };
-
-    const handleHorarioChange = (
-        index: number,
-        event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-    ) => {
         const { name, value } = event.target;
+
+        if (name === 'altura') {
+            const alturaValue = value === '' ? 0 : parseInt(value, 10);
+            setOfficeData((prevData) => ({
+                ...prevData,
+                ubicacion: {
+                    ...prevData.ubicacion,
+                    altura: isNaN(alturaValue) ? 0 : alturaValue,
+                },
+            }));
+        } else {
+            setOfficeData((prevData) => ({
+                ...prevData,
+                ubicacion: {
+                    ...prevData.ubicacion,
+                    [name]: value,
+                },
+            }));
+        }
+    };
+    const handleTimeChange = (type: 'inicio' | 'fin', value: string) => {
+        const updatedHorarioAtencion = officeData.horarioAtencion.map((horario) => ({
+            ...horario,
+            [type === 'inicio' ? 'horaInicio' : 'horaFin']: `${value}:00`,
+        }));
         setOfficeData((prevData) => ({
             ...prevData,
-            horarioAtencion: prevData.horarioAtencion.map((horario, idx) => {
-                if (idx === index) {
-                    return {
-                        ...horario,
-                        [name!]: value,
-                    };
-                }
-                return horario;
-            }),
+            horarioAtencion: updatedHorarioAtencion,
         }));
     };
-
     const handleSelectChange = (index: number, event: SelectChangeEvent<string>) => {
-        const { name, value } = event.target;
+        const { value } = event.target;
+        const updatedHorarioAtencion = officeData.horarioAtencion.map((horario, i) =>
+            i === index ? { ...horario, diaSemana: value } : horario
+        );
         setOfficeData((prevData) => ({
             ...prevData,
-            horarioAtencion: prevData.horarioAtencion.map((horario, idx) => {
-                if (idx === index) {
-                    return {
-                        ...horario,
-                        [name!]: value,
-                    };
-                }
-                return horario;
-            }),
+            horarioAtencion: updatedHorarioAtencion,
         }));
     };
-
+    const handleRemoveHorario = (index: number) => {
+        const updatedHorarioAtencion = officeData.horarioAtencion.filter((_, i) => i !== index);
+        setOfficeData((prevData) => ({
+            ...prevData,
+            horarioAtencion: updatedHorarioAtencion,
+        }));
+    };
     const handleAddHorario = () => {
         setOfficeData((prevData) => ({
             ...prevData,
-            horarioAtencion: [...prevData.horarioAtencion, initialHorario],
+            horarioAtencion: [
+                ...prevData.horarioAtencion,
+                { diaSemana: '', horaInicio: '', horaFin: '' },
+            ],
         }));
     };
-
-    const handleRemoveHorario = (index: number) => {
-        setOfficeData((prevData) => ({
-            ...prevData,
-            horarioAtencion: prevData.horarioAtencion.filter((_, idx) => idx !== index),
-        }));
+    const getFormattedDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const dataToSend = {
-            ...officeData,
-            medico: {
-                ...officeData.medico,
-                dni:
-                    typeof officeData.medico.dni === 'string'
-                        ? parseInt(officeData.medico.dni)
-                        : officeData.medico.dni,
-            },
-        };
-        try {
-            console.log('Data a enviar:', dataToSend);
-            //await saveOffice(dataToSend);
-            alert('Office saved successfully!');
-        } catch (error) {
-            console.error('Error saving office:', error);
-            alert('Failed to save office. Please try again.');
+    const generateTimeOptions = () => {
+        const options: JSX.Element[] = [];
+        for (let hour = 0; hour < 24; hour++) {
+            for (let minute = 0; minute < 60; minute += 15) {
+                const hourStr = String(hour).padStart(2, '0');
+                const minuteStr = String(minute).padStart(2, '0');
+                options.push(
+                    <MenuItem key={`${hourStr}:${minuteStr}`} value={`${hourStr}:${minuteStr}`}>
+                        {`${hourStr}:${minuteStr}`}
+                    </MenuItem>
+                );
+            }
         }
+        return options;
     };
 
     return (
-        <Card sx={{ maxWidth: 600, mx: 70, my: 'auto' }}>
+        <Card sx={{ maxWidth: 700, mx: 90, my: 5 }}>
             <CardHeader
-                title="Agregar nuevo Consultorio"
-                subheader="Carga de nuevo consultorio en el sistema"
+                title="Crear Consultorio"
+                subheader="Información requerida para crear un nuevo consultorio"
                 sx={{ textAlign: 'center', mb: 2 }}
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
-                       
                         <Grid item xs={6}>
-                            <TextField
-                                id="calle"
-                                label="Calle"
-                                variant="outlined"
-                                placeholder="Ingrese la calle del consultorio.."
-                                fullWidth
-                                value={officeData.ubicacion.calle}
-                                onChange={handleLocationChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
+                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
+                                <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                    Calle
+                                </InputLabel>
+                                <OutlinedInput
+                                    name="calle"
+                                    value={officeData.ubicacion.calle}
+                                    onChange={handleLocationChange}
+                                    sx={{ my: 1, maxHeight: 40 }}
+                                    placeholder="Ingrese la calle del consultorio.."
+                                />
+                            </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
-                                id="altura"
-                                label="Altura"
-                                variant="outlined"
-                                placeholder="Ingrese la altura del consultorio.."
-                                fullWidth
-                                type="text"
-                                value={
-                                    officeData.ubicacion.altura !== undefined
-                                        ? officeData.ubicacion.altura.toString()
-                                        : ''
-                                }
-                                onChange={handleLocationChange}
-                                InputLabelProps={{ shrink: true }}
-                                inputProps={{
-                                    inputMode: 'numeric',
-                                    pattern: '[0-9]*',
-                                    style: {
-                                        MozAppearance: 'textfield',
-                                        appearance: 'textfield',
-                                    },
-                                }}
-                            />
+                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
+                                <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                    Altura
+                                </InputLabel>
+                                <OutlinedInput
+                                    name="altura"
+                                    type="text"
+                                    value={
+                                        officeData.ubicacion.altura !== undefined &&
+                                        officeData.ubicacion.altura !== 0
+                                            ? officeData.ubicacion.altura.toString()
+                                            : ''
+                                    }
+                                    onChange={handleLocationChange}
+                                    sx={{ my: 1, maxHeight: 40 }}
+                                    placeholder="Ingrese la altura del consultorio.."
+                                    inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*',
+                                        min: 1,
+                                    }}
+                                />
+                            </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
-                                id="ciudad"
-                                label="Ciudad"
-                                variant="outlined"
-                                placeholder="Ingrese la ciudad del consultorio.."
-                                fullWidth
-                                value={officeData.ubicacion.ciudad}
-                                onChange={handleLocationChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
+                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
+                                <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                    Ciudad
+                                </InputLabel>
+                                <OutlinedInput
+                                    name="ciudad"
+                                    value={officeData.ubicacion.ciudad}
+                                    onChange={handleLocationChange}
+                                    sx={{ my: 1, maxHeight: 40 }}
+                                    placeholder="Ingrese la ciudad del consultorio.."
+                                />
+                            </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
-                                id="provincia"
-                                label="Provincia"
-                                variant="outlined"
-                                placeholder="Ingrese la provincia del consultorio.."
-                                fullWidth
-                                value={officeData.ubicacion.provincia}
-                                onChange={handleLocationChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
+                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
+                                <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                    Provincia
+                                </InputLabel>
+                                <OutlinedInput
+                                    name="provincia"
+                                    value={officeData.ubicacion.provincia}
+                                    onChange={handleLocationChange}
+                                    sx={{ my: 1, maxHeight: 40 }}
+                                    placeholder="Ingrese la provincia del consultorio.."
+                                />
+                            </FormControl>
                         </Grid>
 
                         {officeData.horarioAtencion.map((horario, index) => (
-                            <Grid container spacing={2} key={index} my={2} ml={3}>
-                                <Grid item xs={4}>
+                            <Grid
+                                container
+                                spacing={1}
+                                key={index}
+                                mx={8}
+                                my={1}
+                                justifyContent={'center'}>
+                                <Grid item xs={3}>
                                     <FormControl fullWidth variant="outlined">
-                                        <InputLabel>Día de la Semana</InputLabel>
+                                        <InputLabel
+                                            shrink
+                                            sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                            Día de la Semana
+                                        </InputLabel>
                                         <Select
                                             name="diaSemana"
                                             value={horario.diaSemana}
-                                            onChange={(event: SelectChangeEvent<string>) =>
-                                                handleSelectChange(index, event)
-                                            }
-                                            label="Día de la Semana">
+                                            sx={{ my: 1, maxHeight: 40 }}
+                                            onChange={(event) => handleSelectChange(index, event)}>
                                             <MenuItem value="LUNES">LUNES</MenuItem>
                                             <MenuItem value="MARTES">MARTES</MenuItem>
-                                            <MenuItem value="MIÉRCOLES">MIERCOLES</MenuItem>
+                                            <MenuItem value="MIERCOLES">MIÉRCOLES</MenuItem>
                                             <MenuItem value="JUEVES">JUEVES</MenuItem>
                                             <MenuItem value="VIERNES">VIERNES</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={2.5}>
-                                    <TextField
-                                        name="horaInicio"
-                                        label="Hora de Inicio"
-                                        variant="outlined"
-                                        type="time"
-                                        fullWidth
-                                        value={horario.horaInicio}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                            handleHorarioChange(index, event)
-                                        }
-                                        InputLabelProps={{ shrink: true }}
-                                    />
+                                <Grid item xs={3}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel
+                                            htmlFor={`select-hora-inicio-${index}`}
+                                            sx={{ fontWeight: 'bold', fontSize: '16px' }}
+                                            shrink>
+                                            Hora Inicio
+                                        </InputLabel>
+                                        <Select
+                                            labelId={`select-hora-inicio-label-${index}`}
+                                            id={`select-hora-inicio-${index}`}
+                                            value={horario.horaInicio.substring(0, 5)}
+                                            sx={{ my: 1, maxHeight: 40 }}
+                                            onChange={(e) =>
+                                                handleTimeChange('inicio', e.target.value as string)
+                                            }>
+                                            {generateTimeOptions()}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                                <Grid item xs={2.5}>
-                                    <TextField
-                                        name="horaFin"
-                                        label="Hora de Fin"
-                                        variant="outlined"
-                                        type="time"
-                                        fullWidth
-                                        value={horario.horaFin}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                            handleHorarioChange(index, event)
-                                        }
-                                        InputLabelProps={{ shrink: true }}
-                                    />
+                                <Grid item xs={3}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel
+                                            htmlFor={`select-hora-fin-${index}`}
+                                            sx={{ fontWeight: 'bold', fontSize: '16px' }}
+                                            shrink>
+                                            Hora Fin
+                                        </InputLabel>
+                                        <Select
+                                            labelId={`select-hora-fin-label-${index}`}
+                                            id={`select-hora-fin-${index}`}
+                                            value={horario.horaFin.substring(0, 5)}
+                                            sx={{ my: 1, maxHeight: 40 }}
+                                            onChange={(e) =>
+                                                handleTimeChange('fin', e.target.value as string)
+                                            }>
+                                            {generateTimeOptions()}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                                <Grid item xs={2.5}>
+                                <Grid item xs={1}>
                                     <IconButton
                                         aria-label="delete"
+                                        onClick={() => handleRemoveHorario(index)}
                                         size="large"
-                                        onClick={() => handleRemoveHorario(index)}>
-                                        <DeleteIcon fontSize="inherit" />
+                                        sx={{ '&:hover': { color: 'red' } }}>
+                                        <DeleteIcon />
                                     </IconButton>
                                 </Grid>
                             </Grid>
                         ))}
-                        <Grid container justifyContent="center">
-                            <Grid item>
-                                <Button variant="outlined" color="error" onClick={handleAddHorario}>
-                                    Agregar Horario
+
+                        <Grid item xs={4}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleAddHorario}
+                                sx={{ mx: 25, width: '100%' }}>
+                                Agregar Horario
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <FormControl component="fieldset">
+                                <h4 style={{ marginBottom: '0' }}>
+                                    Seleccione una opción para médico:
+                                </h4>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        marginBottom: '10px',
+                                    }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={createNewMedico}
+                                                onChange={handleCheckboxChange}
+                                                name="createNewMedico"
+                                                sx={{ borderRadius: '100%' }}
+                                            />
+                                        }
+                                        label="Crear Nuevo Médico"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={selectExistingMedico}
+                                                onChange={handleCheckboxChange}
+                                                name="selectExistingMedico"
+                                            />
+                                        }
+                                        label="Seleccionar Médico Existente"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={!createNewMedico && !selectExistingMedico}
+                                                onChange={handleNoMedicoSelection}
+                                                name="noMedico"
+                                                sx={{ borderRadius: '50%' }}
+                                            />
+                                        }
+                                        label="No asociar ningún Médico"
+                                        sx={{ ml: 2 }}
+                                    />
+                                </div>
+                                <div style={{ width: '70%', margin: 'auto' }}>
+                                    {selectExistingMedico && (
+                                        <Select
+                                            value={selectedMedicoId}
+                                            onChange={handleSelectExistingMedicoChange}
+                                            fullWidth
+                                            variant="outlined"
+                                            sx={{ width: '100%' }}>
+                                            {existingMedicos.map((medico) => (
+                                                <MenuItem key={medico.id} value={medico.id}>
+                                                    {`${medico.nombre} ${medico.apellido}`}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    )}
+                                </div>
+                                <div>
+                                    {createNewMedico && (
+                                        <Grid container spacing={1}>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Nombre
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="nombre"
+                                                        value={medicoData.nombre}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el nombre del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Apellido
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="apellido"
+                                                        value={medicoData.apellido}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el apellido del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Teléfono
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="telefono"
+                                                        value={medicoData.telefono}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el teléfono del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Email
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="email"
+                                                        value={medicoData.email}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el email del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        DNI
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="dni"
+                                                        type="text"
+                                                        value={medicoData.dni}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el DNI del médico"
+                                                        inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Fecha de Nacimiento
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="fechaNacimiento"
+                                                        type="date"
+                                                        value={medicoData.fechaNacimiento}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese la fecha de nacimiento del médico"
+                                                        inputProps={{
+                                                            max: getFormattedDate(new Date()),
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        CUIL
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="cuil"
+                                                        value={medicoData.cuil}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese el CUIL del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{ my: 0.5 }}>
+                                                    <InputLabel
+                                                        shrink
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontSize: '16px',
+                                                        }}>
+                                                        Especialidad
+                                                    </InputLabel>
+                                                    <OutlinedInput
+                                                        name="especialidad"
+                                                        value={medicoData.especialidad}
+                                                        onChange={handleMedicoDataChange}
+                                                        sx={{ my: 1, maxHeight: 40 }}
+                                                        placeholder="Ingrese la especialidad del médico"
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
+                                    )}
+                                </div>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
+                                <Button type="submit" variant="contained" color="primary">
+                                    Crear Consultorio
                                 </Button>
-                            </Grid>
-                        </Grid>
-                         <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                                <InputLabel
-                                    htmlFor="nombre"
-                                    shrink
-                                    sx={{
-                                        transform: 'translateY(-18px)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                    }}>
-                                    Nombre del Médico
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="nombre"
-                                    value={officeData.medico.nombre}
-                                    onChange={handleChange}
-                                    placeholder="Ingrese el nombre del médico.."
-                                    inputProps={{ 'aria-label': 'Nombre del Médico' }}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                                <InputLabel
-                                    htmlFor="apellido"
-                                    shrink
-                                    sx={{
-                                        transform: 'translateY(-18px)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                    }}>
-                                    Apellido del Médico
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="apellido"
-                                    value={officeData.medico.apellido}
-                                    onChange={handleChange}
-                                    placeholder="Ingrese el apellido del médico.."
-                                    inputProps={{ 'aria-label': 'Apellido del Médico' }}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                                <InputLabel
-                                    htmlFor="teléfono"
-                                    shrink
-                                    sx={{
-                                        transform: 'translateY(-18px)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                        my: 0.5,
-                                    }}>
-                                    Teléfono del Médico
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="teléfono"
-                                    value={officeData.medico.telefono}
-                                    onChange={handleChange}
-                                    placeholder="Ingrese el teléfono del médico.."
-                                    inputProps={{ 'aria-label': 'Teléfono del Médico' }}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                                <InputLabel
-                                    htmlFor="email"
-                                    shrink
-                                    sx={{
-                                        transform: 'translateY(-18px)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                        my: 0.5,
-                                    }}>
-                                    Email del Médico
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="email"
-                                    value={officeData.medico.email}
-                                    onChange={handleChange}
-                                    placeholder="Ingrese el email del médico.."
-                                    inputProps={{ 'aria-label': 'Email del Médico' }}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                                <InputLabel
-                                    htmlFor="dni"
-                                    shrink
-                                    sx={{
-                                        transform: 'translateY(-18px)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                        my: 0.5,
-                                    }}>
-                                    Dni del Médico
-                                </InputLabel>
-                                <OutlinedInput
-                                    id="dni"
-                                    type="text"
-                                    placeholder="Ingrese el DNI del médico.."
-                                    value={officeData.medico.dni ?? ''}
-                                    onChange={handleChange}
-                                    inputProps={{
-                                        inputMode: 'numeric',
-                                        style: { textAlign: 'left' },
-                                    }}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel htmlFor="fechaNacimiento">
-                                    Fecha de Nacimiento del Médico
-                                </InputLabel>
-                                <Input
-                                    id="fechaNacimiento"
-                                    type="date" // Mantenido como type="date" para mostrar el calendario
-                                    value={officeData.medico.fechaNacimiento}
-                                    onChange={handleChange}
-                                    inputProps={{
-                                        min: '1900-01-01', // Opcional: Establecer límite inferior
-                                        max: '2050-12-31', // Opcional: Establecer límite superior
-                                    }}
-                                />
-                            </FormControl>
-                            {/* <TextField
-                                id="fechaNacimiento"
-                                label="Fecha de Nacimiento del Médico"
-                                variant="outlined"
-                                type="date"
-                                fullWidth
-                                value={officeData.medico.fechaNacimiento}
-                                onChange={handleChange}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />  */}
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                id="cuil"
-                                label="CUIL del Médico"
-                                variant="outlined"
-                                placeholder="Ingrese el cuil del médico.."
-                                fullWidth
-                                value={officeData.medico.cuil}
-                                onChange={handleChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                id="especialidad"
-                                label="Especialidad del Médico"
-                                variant="outlined"
-                                placeholder="Ingrese la especialidad del médico.."
-                                fullWidth
-                                value={officeData.medico.especialidad}
-                                onChange={handleChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
+                            </CardActions>
                         </Grid>
                     </Grid>
-                    <CardActions>
-                        <Grid container justifyContent="flex-end">
-                            <Grid item>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{
-                                        bgcolor: '#000',
-                                        '&:hover': {
-                                            bgcolor: '#fff',
-                                            color: '#000',
-                                            boxShadow: '1px 0px 1px 3px rgba(0,0,0,0.25)',
-                                        },
-                                    }}>
-                                    Guardar Consultorio
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </CardActions>
                 </form>
             </CardContent>
         </Card>
     );
 };
 
-export default AddNewOfficeForm;
+export default ConsultorioForm;
