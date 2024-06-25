@@ -26,5 +26,13 @@
         "titleBar.inactiveBackground": "#6a1b9a99",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#6A1B9A"
+    "peacock.color": "#6A1B9A",
+    "cSpell.words": [
+        "Atencion",
+        "codigo",
+        "cuil",
+        "telefono",
+        "ubicacion",
+        "Ubicacion"
+    ]
 }
