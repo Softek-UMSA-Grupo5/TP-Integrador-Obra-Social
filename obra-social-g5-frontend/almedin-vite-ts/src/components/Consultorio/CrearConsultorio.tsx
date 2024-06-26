@@ -217,7 +217,7 @@ const ConsultorioForm: React.FC = () => {
     };
 
     return (
-        <Card sx={{ maxWidth: 700, mx: 90, my: 5 }}>
+        <Card sx={{ mx:90, maxWidth: 700 ,my: 5, fontFamily: 'Roboto',alignContent: 'center' }}>
             <CardHeader
                 title="Crear Consultorio"
                 subheader="Información requerida para crear un nuevo consultorio"

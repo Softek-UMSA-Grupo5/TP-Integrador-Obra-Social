@@ -57,7 +57,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
                         name="calle"
                         value={ubicacion.calle}
                         onChange={handleInputChange}
-                        sx={{ my: 2, maxHeight: 40 }}
+                        sx={{ my: 1, maxHeight: 40 }}
                         placeholder="Ingrese la calle del consultorio.."
                         required
                         error={!!errors.calle}
