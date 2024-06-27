@@ -44,12 +44,25 @@ public class SocioController {
 	@GET
 	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
-	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
+	@Operation(summary = "Obtener socio por id", description ="Se obtendrá una lista de todos los socios")
 	public Response getAll() throws CustomServerException{
 		
 		List<SocioResponseDto> socios = socioService.getSocios().stream().map(socioFactory::createResponseFromEntity).collect(Collectors.toList());
 		
 		return Response.ok(socios).build();
+		
+	}
+	
+	@GET
+	@Path("/{id}")
+	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
+	public Response getSocioById( @Parameter(required = true, description = "id del socio") @PathParam("id") Long id ) throws CustomServerException{
+		
+		SocioResponseDto socio = socioFactory.createResponseFromEntity(socioService.getSocioById(id));
+		
+		return Response.ok(socio).build();
 		
 	}
 	

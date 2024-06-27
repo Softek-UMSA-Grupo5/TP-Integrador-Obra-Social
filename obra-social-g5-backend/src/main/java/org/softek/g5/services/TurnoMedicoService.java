@@ -1,7 +1,6 @@
 package org.softek.g5.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,48 +144,40 @@ public class TurnoMedicoService {
 	}
 
 	@Transactional
-	public List<TurnoMedico> persistTurnoMedico(List<TurnoMedicoCreateRequestDto> dtos)
-			throws CustomServerException {
+	public TurnoMedico persistTurnoMedico(TurnoMedicoCreateRequestDto dto) throws CustomServerException {
 
 		try {
 
-			List<TurnoMedico> response = new ArrayList<>();
+			DataValidator.validateDtoFields(dto);
 
-			for (TurnoMedicoCreateRequestDto dto : dtos) {
-
-				DataValidator.validateDtoFields(dto);
-
-				if (!TurnoMedicoValidator.validateRequestDto(dto)) {
-					throw new InvalidDataRequest("Los datos de turno medico enviados son erroneos");
-				}
-
-				TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);
-				Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(turnoMedico.getCodigo());
-				if (optionalturnoMedico.isPresent()) {
-					throw new EntityExistException("Este turno ya está ocupado");
-				}
-
-				Medico medico = medicoRepository.findById(dto.getMedicoId());
-
-				if (medico == null) {
-					throw new EntityNotFoundException("No se encontró al medico");
-				}
-
-				Socio socio = socioRepository.findById(dto.getSocioId());
-
-				if (socio == null) {
-					throw new EntityNotFoundException("No se encontró al socio");
-				}
-
-				turnoMedico.setMedico(medico);
-				turnoMedico.setSocio(socio);
-
-				turnoMedico.persist();
-
-				response.add(turnoMedico);
+			if (!TurnoMedicoValidator.validateRequestDto(dto)) {
+				throw new InvalidDataRequest("Los datos de turno medico enviados son erroneos");
 			}
 
-			return response;
+			TurnoMedico turnoMedico = turnoMedicoFactory.createEntityFromDto(dto);
+			Optional<TurnoMedico> optionalturnoMedico = turnoMedicoRepository.findByCodigo(turnoMedico.getCodigo());
+			if (optionalturnoMedico.isPresent()) {
+				throw new EntityExistException("Este turno ya está ocupado");
+			}
+
+			Medico medico = medicoRepository.findById(dto.getMedicoId());
+
+			if (medico == null) {
+				throw new EntityNotFoundException("No se encontró al medico");
+			}
+
+			Socio socio = socioRepository.findById(dto.getSocioId());
+
+			if (socio == null) {
+				throw new EntityNotFoundException("No se encontró al socio");
+			}
+
+			turnoMedico.setMedico(medico);
+			turnoMedico.setSocio(socio);
+
+			turnoMedico.persist();
+
+			return turnoMedico;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al guardar el turno médico");
@@ -210,7 +201,7 @@ public class TurnoMedicoService {
 			if (turnoMedico == null) {
 				throw new EntityNotFoundException("Turno médico no encontrado");
 			}
-			
+
 			Medico medico = medicoRepository.findById(dto.getMedicoId());
 
 			if (medico == null) {
@@ -238,21 +229,22 @@ public class TurnoMedicoService {
 	}
 
 	@Transactional
-	public void deleteTurnoMedico(String codigo) throws CustomServerException{
-		
+	public void deleteTurnoMedico(String codigo) throws CustomServerException {
+
 		try {
-			
+
 			int updatedRows = this.turnoMedicoRepository.update("estado = ?1, estaDisponible = ?2 WHERE codigo = ?3",
 					TurnoMedicoEstadoEnum.CANCELADA, 1, codigo);
-			recetaMedicaService.deleteRecetaMedica(turnoMedicoRepository.findByCodigo(codigo).get().getRecetaMedica().getCodigo());
+			recetaMedicaService
+					.deleteRecetaMedica(turnoMedicoRepository.findByCodigo(codigo).get().getRecetaMedica().getCodigo());
 			if (updatedRows == 0) {
 				throw new EntityNotFoundException("turnoMedico no encontrado");
 			}
-			
-		} catch(CustomServerException e) {
+
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al eliminar el turno médico");
 		}
-		
+
 	}
 
 }
