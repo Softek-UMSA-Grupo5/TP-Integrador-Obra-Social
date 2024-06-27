@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, FormControl, InputLabel, OutlinedInput, FormHelperText } from '@mui/material';
-import { Medico } from '../../types/Medico';
+import { Medico } from '../../models/Medico';
 import { maxLengthValidation, requiredValidation } from '../../utils/ConsultorioUtils';
 
 interface MedicoFormularioNuevoProps {
@@ -109,10 +109,10 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
     };
 
     return (
-        <Grid container spacing={1}>
+        <Grid container spacing={1} >
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
                         Nombre
                     </InputLabel>
                     <OutlinedInput
@@ -120,7 +120,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         value={medicoData.nombre}
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el nombre del médico"
+                        placeholder="Nombre"
                         required
                         error={!!errors.nombre}
                     />
@@ -131,7 +131,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
                         Apellido
                     </InputLabel>
                     <OutlinedInput
@@ -139,7 +139,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         value={medicoData.apellido}
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el apellido del médico"
+                        placeholder="Apellido"
                         required
                         error={!!errors.apellido}
                     />
@@ -150,7 +150,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
                         Teléfono
                     </InputLabel>
                     <OutlinedInput
@@ -159,7 +159,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         onChange={handleInputChange}
                         onBlur={handleTelefonoBlur}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el teléfono del médico sin 0 ni 15.."
+                        placeholder="Teléfono"
                         required
                         error={!!errors.telefono}
                     />
@@ -170,7 +170,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
                         Email
                     </InputLabel>
                     <OutlinedInput
@@ -178,7 +178,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         value={medicoData.email}
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el email del médico"
+                        placeholder="Email"
                         required
                         error={!!errors.email}
                     />
@@ -189,8 +189,8 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        DNI
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                        N° de Documento
                     </InputLabel>
                     <OutlinedInput
                         name="dni"
@@ -202,7 +202,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         }
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el DNI del médico sin puntos.."
+                        placeholder="N° de Documento"
                         inputProps={{
                             inputMode: 'numeric',
                             pattern: '[0-9]*',
@@ -218,7 +218,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Fecha de Nacimiento
                     </InputLabel>
                     <OutlinedInput
@@ -227,7 +227,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         value={medicoData.fechaNacimiento}
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese la fecha de nacimiento del médico"
+                        placeholder="Fecha de nacimiento"
                         required
                         error={!!errors.fechaNacimiento}
                     />
@@ -238,8 +238,8 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        CUIL
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                        CUIL/T
                     </InputLabel>
                     <OutlinedInput
                         name="cuil"
@@ -247,7 +247,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         onChange={handleInputChange}
                         onBlur={handleCuilBlur}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese el CUIL del médico sin guiones.."
+                        placeholder="CUIL/T"
                         required
                         error={!!errors.cuil}
                     />
@@ -258,7 +258,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    <InputLabel shrink sx={{fontSize: '16px' }}>
                         Especialidad
                     </InputLabel>
                     <OutlinedInput
@@ -266,7 +266,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                         value={medicoData.especialidad}
                         onChange={handleInputChange}
                         sx={{ my: 1.5, maxHeight: 40 }}
-                        placeholder="Ingrese la especialidad del médico"
+                        placeholder="Especialidad"
                         required
                         error={!!errors.especialidad}
                     />

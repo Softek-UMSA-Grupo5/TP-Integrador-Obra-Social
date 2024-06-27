@@ -32,6 +32,7 @@ export interface MedicoResponseDto {
     fechaNacimiento: string;
     estaEliminado: boolean;
     especialidad: string;
+    consultoriosId: number[];
 }
 export interface MedicoRequestDto {
   nombre: string;

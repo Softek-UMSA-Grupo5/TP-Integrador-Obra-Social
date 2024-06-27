@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { addMedico, getAllMedicos } from '../../axios/MedicoApi';
 import { createConsultorio } from '../../axios/ConsultorioApi';
-import { MedicoRequestDto, MedicoResponseDto } from '../../types/Medico';
-import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../types/Consultorio';
+import { MedicoRequestDto, MedicoResponseDto } from '../../models/Medico';
+import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../models/Consultorio';
 import UbicacionForm from './UbicacionForm';
 import HorarioForm from './HorarioForm';
 import MedicoExistenteSelect from './MedicoExistenteSelect';
@@ -116,14 +116,11 @@ const ConsultorioForm: React.FC = () => {
 
                 await addMedico([medicoToCreate]);
 
-                console.log('Consultorio y médico creados correctamente.');
                 alert('Consultorio y médico creados correctamente.');
             } else {
-                console.log('Consultorio creado correctamente.');
                 alert('Consultorio creado correctamente.');
             }
         } catch (error) {
-            console.error('Error al crear el consultorio y/o médico:', error);
             alert('Error al crear el consultorio y/o médico. Por favor, inténtelo nuevamente.');
         }
     };
@@ -217,7 +214,7 @@ const ConsultorioForm: React.FC = () => {
     };
 
     return (
-        <Card sx={{ mx:90, maxWidth: 700 ,my: 5, fontFamily: 'Roboto',alignContent: 'center' }}>
+        <Card style={{ width: '100%', height: '100%', textAlign: 'center' }}>
             <CardHeader
                 title="Crear Consultorio"
                 subheader="Información requerida para crear un nuevo consultorio"
@@ -225,7 +222,7 @@ const ConsultorioForm: React.FC = () => {
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1} style={{ width: '70%', margin: 'auto' }}>
                         <UbicacionForm
                             ubicacion={officeData.ubicacion}
                             handleLocationChange={handleLocationChange}
@@ -243,19 +240,13 @@ const ConsultorioForm: React.FC = () => {
                                 <h4 style={{ marginBottom: '0' }}>
                                     Seleccione una opción para médico:
                                 </h4>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        marginBottom: '10px',
-                                    }}>
+                                <div>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
                                                 checked={createNewMedico}
                                                 onChange={handleCheckboxChange}
                                                 name="createNewMedico"
-                                                sx={{ borderRadius: '100%' }}
                                             />
                                         }
                                         label="Crear Nuevo Médico"
@@ -276,11 +267,9 @@ const ConsultorioForm: React.FC = () => {
                                                 checked={!createNewMedico && !selectExistingMedico}
                                                 onChange={handleNoMedicoSelection}
                                                 name="noMedico"
-                                                sx={{ borderRadius: '50%' }}
                                             />
                                         }
                                         label="No asociar ningún Médico"
-                                        sx={{ ml: 2 }}
                                     />
                                 </div>
                                 <div style={{ width: '70%', margin: 'auto' }}>
@@ -305,7 +294,7 @@ const ConsultorioForm: React.FC = () => {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sm={12} md={3} mx={{md: '35%', sm: 0}} padding={0}>
                             <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Crear Consultorio

@@ -10,7 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Horario, HorarioDiaSemanaEnum } from '../../types/Horario';
+import { Horario, HorarioDiaSemanaEnum } from '../../models/Horario';
 import { generateTimeOptions } from '../../utils/ConsultorioUtils';
 
 interface HorarioFormProps {
@@ -63,7 +63,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
         <>
             {horarioAtencion.map((horario, index) => (
                 <Grid container spacing={1} key={index} mx={8} my={1} justifyContent="center">
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={12} md={3}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                                 Día de la Semana
@@ -83,7 +83,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={12} md={3}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel
                                 htmlFor={`select-hora-inicio-${index}`}
@@ -103,7 +103,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={12} md={3}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel
                                 htmlFor={`select-hora-fin-${index}`}
@@ -123,7 +123,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={1}>
+                    <Grid item xs={12} sm={12} md={1} alignContent={'center'}>
                         <IconButton
                             aria-label="delete"
                             onClick={() => handleRemoveHorarioWrapper(index)}
@@ -134,12 +134,11 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                     </Grid>
                 </Grid>
             ))}
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={12} md={3} mx={{md: '35%', sm: 0}} padding={0}>
                 <Button
                     variant="outlined"
                     color="primary"
-                    onClick={handleAddHorario}
-                    sx={{ mx: 25, width: '100%', mt: 2 }}>
+                    onClick={handleAddHorario}>
                     Agregar Horario
                 </Button>
             </Grid>

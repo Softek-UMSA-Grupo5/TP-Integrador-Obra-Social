@@ -1,17 +1,13 @@
 import React from 'react';
-import AddNewOfficeForm from './components/Consultorio/CrearConsultorio';
+import { BrowserRouter } from 'react-router-dom';
+import { Router } from './routes/Router';
 
 const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header"> 
-      </header>
-      <main>
-        <AddNewOfficeForm />
-      </main>
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <Router />
+        </BrowserRouter>
+    );
 };
-
 
 export default App;

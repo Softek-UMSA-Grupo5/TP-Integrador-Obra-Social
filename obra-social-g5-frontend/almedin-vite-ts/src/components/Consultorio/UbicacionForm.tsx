@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Grid, FormControl, InputLabel, OutlinedInput, FormHelperText } from '@mui/material';
-import { Ubicacion } from '../../types/Ubicacion';
+import { Grid, FormControl, OutlinedInput, FormHelperText, InputLabel } from '@mui/material';
+import { Ubicacion } from '../../models/Ubicacion';
 import { requiredValidation } from '../../utils/ConsultorioUtils';
 
 interface UbicacionFormProps {
@@ -47,18 +47,16 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
     };
 
     return (
-        <Grid container spacing={2} sx={{ margin: 'auto', alignItems: 'center' }}>
+        <Grid container spacing={1}>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        Calle
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Calle</InputLabel>
                     <OutlinedInput
                         name="calle"
                         value={ubicacion.calle}
                         onChange={handleInputChange}
-                        sx={{ my: 1, maxHeight: 40 }}
-                        placeholder="Ingrese la calle del consultorio.."
+                        sx={{ my: 1.5, maxHeight: 40 }}
+                        placeholder="Calle"
                         required
                         error={!!errors.calle}
                     />
@@ -69,9 +67,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        Altura
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Altura o numeración</InputLabel>
                     <OutlinedInput
                         name="altura"
                         type="text"
@@ -81,12 +77,12 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
                                 : ''
                         }
                         onChange={handleInputChange}
-                        sx={{ my: 1, maxHeight: 40 }}
-                        placeholder="Ingrese la altura del consultorio.."
+                        sx={{ my: 1.5, maxHeight: 40 }}
+                        placeholder="Altura o numeración"
                         inputProps={{
                             inputMode: 'numeric',
                             pattern: '[0-9]*',
-                            min: 1,
+                            min: -1,
                         }}
                         required
                         error={!!errors.altura || !!tempError}
@@ -98,15 +94,13 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        Ciudad
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Ciudad</InputLabel>
                     <OutlinedInput
                         name="ciudad"
                         value={ubicacion.ciudad}
                         onChange={handleInputChange}
-                        sx={{ my: 1, maxHeight: 40 }}
-                        placeholder="Ingrese la ciudad del consultorio.."
+                        sx={{ my: 1.5, maxHeight: 40 }}
+                        placeholder="Ciudad"
                         required
                         error={!!errors.ciudad}
                     />
@@ -117,15 +111,13 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                        Provincia
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Provincia</InputLabel>
                     <OutlinedInput
                         name="provincia"
                         value={ubicacion.provincia}
                         onChange={handleInputChange}
-                        sx={{ my: 1, maxHeight: 40 }}
-                        placeholder="Ingrese la provincia del consultorio.."
+                        sx={{ my: 1.5, maxHeight: 40 }}
+                        placeholder="Provincia"
                         required
                         error={!!errors.provincia}
                     />
