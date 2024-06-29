@@ -9,7 +9,7 @@ import org.softek.g5.security.PBKDF2Encoder;
 import org.softek.g5.security.TokenUtils;
 import org.softek.g5.security.usuario.dto.UsuarioLoginDto;
 import org.softek.g5.security.usuario.dto.UsuarioRequestDto;
-import org.softek.g5.security.usuario.dto.UsuarioTokenDto;
+import org.softek.g5.security.usuario.dto.UsuarioResponseDto;
 import org.softek.g5.validation.DataValidator;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -31,7 +31,7 @@ public class UsuarioService {
 	public String issuer;
 
 	@Transactional
-	public UsuarioTokenDto login(UsuarioLoginDto dto) throws CustomServerException {
+	public UsuarioResponseDto login(UsuarioLoginDto dto) throws CustomServerException {
 		try {
 
 			DataValidator.validateDtoFields(dto);
@@ -42,10 +42,13 @@ public class UsuarioService {
 			if (optionalUsuario.isEmpty())
 				throw new EntityNotFoundException("Nombre de usuario o contraseña incorrecta");
 
-			UsuarioTokenDto response = new UsuarioTokenDto();
+			UsuarioResponseDto response = new UsuarioResponseDto();
 			Usuario usuario = optionalUsuario.get();
 
 			try {
+				response.setUsername(usuario.getUsername());
+				response.setEmail(usuario.getEmail());
+				response.setRol(usuario.getRol());
 				response.setToken(TokenUtils.generateToken(usuario.getUsername(), usuario.getRol(), duration, issuer));
 			} catch (Exception e) {
 				e.printStackTrace();

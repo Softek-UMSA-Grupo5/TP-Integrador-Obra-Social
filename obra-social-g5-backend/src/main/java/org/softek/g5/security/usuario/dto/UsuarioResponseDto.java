@@ -1,5 +1,7 @@
 package org.softek.g5.security.usuario.dto;
 
+import org.softek.g5.security.usuario.UsuarioRolesEnum;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +15,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsuarioTokenDto {
+public class UsuarioResponseDto {
 
+	private UsuarioRolesEnum rol;
+	private String username;
+	private String email;
 	private String token;
 	
 }

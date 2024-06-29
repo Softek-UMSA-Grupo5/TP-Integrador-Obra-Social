@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useUser } from '../../assets/contexts/UserContext';
 
 const pages = ['Sobre Nosotros', 'Servicios', 'Testimonios', 'Contacto'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -21,7 +22,8 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    const [isLogin, setIsLogin] = React.useState<null | HTMLElement>(null);
+    const [isLogin, setIsLogin] = React.useState<true | false>(false);
+    const { user } = useUser();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -39,13 +41,13 @@ function ResponsiveAppBar() {
     };
 
     React.useEffect(() => {
-      const token = localStorage.getItem('token');
-      if(!token){
+        const token = localStorage.getItem('token');
+        if (token && user) {
+            setIsLogin(true);
+            return;
+        }
         setIsLogin(false);
-        return;
-      }
-      setIsLogin(true);
-    }, [])
+    }, []);
 
     return (
         <AppBar position="static">
@@ -135,9 +137,11 @@ function ResponsiveAppBar() {
                     {!isLogin && (
                         <Box sx={{ flexGrow: 0 }}>
                             <Paper elevation={3}>
-                                <Button variant="outlined" color='primary'>
-                                    <Link to="/login">Login</Link>
-                                </Button>
+                                <Link to="/login">
+                                    <Button variant="outlined" color="primary">
+                                        Login
+                                    </Button>
+                                </Link>
                             </Paper>
                         </Box>
                     )}

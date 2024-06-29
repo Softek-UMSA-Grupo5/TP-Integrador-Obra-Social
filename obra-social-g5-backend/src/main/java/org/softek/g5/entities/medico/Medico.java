@@ -5,12 +5,15 @@ import java.util.List;
 import org.softek.g5.entities.consultorio.Consultorio;
 import org.softek.g5.entities.persona.Persona;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
+import org.softek.g5.security.usuario.Usuario;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -33,6 +36,10 @@ public class Medico extends Persona{
 	
 	@OneToMany(mappedBy="medico", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Consultorio> consultorios;
+	
+	@OneToOne
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
 	
 	@Builder
 	public Medico(Long id, String nombre, String apellido, String telefono, String email, int dni, String cuil,

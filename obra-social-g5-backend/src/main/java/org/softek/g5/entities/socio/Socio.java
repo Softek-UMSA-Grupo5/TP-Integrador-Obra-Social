@@ -5,6 +5,7 @@ import java.util.List;
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.persona.Persona;
 import org.softek.g5.entities.turnoMedico.TurnoMedico;
+import org.softek.g5.security.usuario.Usuario;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,7 +13,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -38,6 +41,10 @@ public class Socio extends Persona{
 	@JsonIgnore
 	@OneToMany(mappedBy="socio", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TurnoMedico> turnos;
+	
+	@OneToOne
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
 	
 	@Builder
 	public Socio(Long id, String nombre, String apellido, String telefono, String email, int dni, String cuil,
