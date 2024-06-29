@@ -16,14 +16,14 @@ import {
     Box,
 } from '@mui/material';
 import { UsuarioRequestDto, UsuarioRolesEnum } from '../../models/Usuario';
-import { registrarUsuario } from '../../assets/axios/UsuarioApi';
+import { registrarUsuario } from '../../axios/UsuarioApi';
 import MedicoNuevoForm from '../crearConsultorio/MedicoNuevoForm';
 import ConsultorioSelect from '../crearConsultorio/ConsultorioSelect';
 import { MedicoResponseDto } from '../../models/Medico';
 import { ConsultorioResponseDto } from '../../models/Consultorio';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { getAllConsultorios } from '../../assets/axios/ConsultorioApi';
-import { getAllMedicos, addMedico, updateMedico } from '../../assets/axios/MedicoApi';
+import { getAllConsultorios } from '../../axios/ConsultorioApi';
+import { getAllMedicos, addMedico, updateMedico } from '../../axios/MedicoApi';
 import MedicoExistenteSelect from '../crearConsultorio/MedicoExistenteSelect';
 
 const formatRol = (rol: UsuarioRolesEnum) => rol.replace('ROL_', '').toLowerCase();

@@ -13,8 +13,8 @@ import {
     Box,
     Typography,
 } from '@mui/material';
-import { addMedico, getAllMedicos } from '../../assets/axios/MedicoApi';
-import { createConsultorio } from '../../assets/axios/ConsultorioApi';
+import { addMedico, getAllMedicos } from '../../axios/MedicoApi';
+import { createConsultorio } from '../../axios/ConsultorioApi';
 import { MedicoRequestDto, MedicoResponseDto } from '../../models/Medico';
 import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../models/Consultorio';
 import UbicacionForm from './UbicacionForm';
