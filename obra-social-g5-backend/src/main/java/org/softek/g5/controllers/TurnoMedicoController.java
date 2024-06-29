@@ -139,10 +139,10 @@ public class TurnoMedicoController {
 	@APIResponses({ @APIResponse(responseCode = "201", description = "Turnos médicos añadidos y persistidos"),
 			@APIResponse(responseCode = "500", description = "Error al añadir y persistir los turnos médicos") })
 	@Transactional
-	public Response addTurnoMedico(@Valid List<TurnoMedicoCreateRequestDto> dtos) throws CustomServerException {
+	public Response addTurnoMedico(@Valid TurnoMedicoCreateRequestDto dto) throws CustomServerException {
 		
-		List<TurnoMedicoResponseDto> response = turnoMedicoService.persistTurnoMedico(dtos).stream()
-				.map(turnoMedicoFactory::createResponseFromEntity).collect(Collectors.toList());;
+		TurnoMedicoResponseDto response = turnoMedicoFactory
+				.createResponseFromEntity(turnoMedicoService.persistTurnoMedico(dto));
 		
 		return Response.status(Response.Status.CREATED).entity(response).build();
 		

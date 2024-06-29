@@ -4,7 +4,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.softek.g5.security.usuario.dto.UsuarioLoginDto;
 import org.softek.g5.security.usuario.dto.UsuarioRequestDto;
-import org.softek.g5.security.usuario.dto.UsuarioTokenDto;
+import org.softek.g5.security.usuario.dto.UsuarioResponseDto;
 
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.PermitAll;
@@ -34,7 +34,7 @@ public class UsuarioController {
 	@Operation(summary = "Iniciar sesión", description = "Permite el un usuario inicie sesión")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public UsuarioTokenDto login(@Valid UsuarioLoginDto dto) {
+	public UsuarioResponseDto login(@Valid UsuarioLoginDto dto) {
 		return usuarioService.login(dto);
 	}
 	
