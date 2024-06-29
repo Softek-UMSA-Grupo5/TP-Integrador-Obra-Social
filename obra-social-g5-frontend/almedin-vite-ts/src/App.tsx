@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { Router } from './routes/Router';
+import { UserProvider } from './assets/contexts/UserContext';
 
 const App: React.FC = () => {
     return (
-        <BrowserRouter>
+        <UserProvider>
             <Router />
-        </BrowserRouter>
+        </UserProvider>
     );
 };
 

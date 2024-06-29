@@ -10,7 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Horario, HorarioDiaSemanaEnum } from '../../models/Horario';
+import { Horario, HorarioDiaSemanaEnum } from '../../assets/models/Horario';
 import { generateTimeOptions } from '../../utils/ConsultorioUtils';
 
 interface HorarioFormProps {

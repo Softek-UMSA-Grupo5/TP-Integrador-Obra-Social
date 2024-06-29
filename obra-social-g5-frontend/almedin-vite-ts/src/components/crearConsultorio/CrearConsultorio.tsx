@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import { addMedico, getAllMedicos } from '../../assets/axios/MedicoApi';
 import { createConsultorio } from '../../assets/axios/ConsultorioApi';
-import { MedicoRequestDto, MedicoResponseDto } from '../../models/Medico';
-import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../models/Consultorio';
+import { MedicoRequestDto, MedicoResponseDto } from '../../assets/models/Medico';
+import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../assets/models/Consultorio';
 import UbicacionForm from './UbicacionForm';
 import HorarioForm from './HorarioForm';
 import MedicoExistenteSelect from './MedicoExistenteSelect';

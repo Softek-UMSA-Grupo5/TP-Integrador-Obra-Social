@@ -13,17 +13,21 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../assets/contexts/UserContext';
 
 const pages = ['Sobre Nosotros', 'Servicios', 'Testimonios', 'Contacto'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = {
+    ROL_ADMIN: ['Registrar socio', 'turnos', 'medicos', 'usuarios'],
+    ROL_SOCIO: ['Mis turnos', 'Solicitar turno medico', 'Cartilla especialistas'],
+};
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [isLogin, setIsLogin] = React.useState<true | false>(false);
     const { user } = useUser();
+    const navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -39,6 +43,15 @@ function ResponsiveAppBar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if(window.location.href != '/'){
+            navigate('/');
+        }
+        location.reload();
+    }
 
     React.useEffect(() => {
         const token = localStorage.getItem('token');
@@ -168,11 +181,14 @@ function ResponsiveAppBar() {
                                 }}
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}>
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                {settings[user?.rol].map((setting, index) => (
+                                    <MenuItem key={index} onClick={handleCloseUserMenu}>
                                         <Typography textAlign="center">{setting}</Typography>
                                     </MenuItem>
                                 ))}
+                                <MenuItem onClick={handleLogout}>
+                                    <Typography textAlign="center">Cerrar Sesión</Typography>
+                                </MenuItem>
                             </Menu>
                         </Box>
                     )}

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Grid, Select, MenuItem } from '@mui/material';
-import { ConsultorioResponseDto } from '../../models/Consultorio';
+import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface ConsultorioSelectProps {

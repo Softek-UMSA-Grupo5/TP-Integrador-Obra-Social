@@ -4,8 +4,8 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Consultorio, TurnoMedico } from '../../types';
 import { Dayjs } from 'dayjs';
-import { generateTimeSlots } from '../../assets/utils/generateTimeSlots';
-import { formatearFecha } from '../../assets/utils/formatearFecha';
+import { generateTimeSlots } from '../../utils/generateTimeSlots';
+import { formatearFecha } from '../../utils/formatearFecha';
 
 interface Props {
     calendarValue: Dayjs | null;

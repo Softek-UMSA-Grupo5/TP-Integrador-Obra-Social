@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Grid, Select, MenuItem, FormControl } from '@mui/material';
-import { MedicoResponseDto } from '../../models/Medico';
+import { MedicoResponseDto } from '../../assets/models/Medico';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface MedicoSeleccionExistenteProps {

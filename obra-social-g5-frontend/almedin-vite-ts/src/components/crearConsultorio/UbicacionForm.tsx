@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, FormControl, OutlinedInput, FormHelperText, InputLabel } from '@mui/material';
-import { Ubicacion } from '../../models/Ubicacion';
+import { Ubicacion } from '../../assets/models/Ubicacion';
 import { requiredValidation } from '../../utils/ConsultorioUtils';
 
 interface UbicacionFormProps {

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { TextField, Button, Typography, Link, Container, Box } from '@mui/material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { login } from '../../assets/axios/usuarios';
 import { useNavigate } from 'react-router-dom';
-import tieneCamposVacios from '../../assets/utils/tieneCamposVacios';
+import tieneCamposVacios from '../../utils/tieneCamposVacios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUser } from '../../assets/contexts/UserContext';
+import { login } from '../../assets/axios/UsuarioApi';
 
 const json : any = {
     username: '',
@@ -33,7 +33,6 @@ const UserLogin = () => {
                 localStorage.setItem('token', response.token);
                 setUser({
                     username: response.username,
-                    email: response.email,
                     rol: response.rol
                 });
             })
