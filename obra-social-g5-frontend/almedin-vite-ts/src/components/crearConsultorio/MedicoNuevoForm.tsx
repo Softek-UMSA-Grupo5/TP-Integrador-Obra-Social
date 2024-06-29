@@ -5,15 +5,12 @@ import { maxLengthValidation, requiredValidation } from '../../utils/Consultorio
 
 interface MedicoFormularioNuevoProps {
     medicoData: Medico;
-    handleMedicoDataChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    setMedicoData: React.Dispatch<React.SetStateAction<Medico>>;
 }
 
-const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
-    medicoData,
-    handleMedicoDataChange,
-}) => {
+const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, setMedicoData }) => {
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [tempError, setTempError] = useState<string>('');
+    const [tempError] = useState<string>('');
 
     const validateField = (fieldName: string, value: string | number | undefined) => {
         let error = '';
@@ -40,12 +37,6 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                 break;
             case 'dni':
                 error = requiredValidation(value as string | undefined) ?? '';
-                if (!error && isNaN(Number(value))) {
-                    setTempError('Ingrese solo números');
-                    setTimeout(() => {
-                        setTempError('');
-                    }, 2000);
-                }
                 break;
             default:
                 break;
@@ -60,7 +51,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
 
-        if (name === 'dni' && /[a-zA-Z]/.test(value)) {
+        if (name === 'dni' && /[^\d]/.test(value)) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 dni: 'El DNI debe contener solo números',
@@ -71,19 +62,34 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
                     dni: '',
                 }));
             }, 2000);
-        } else {
-            handleMedicoDataChange(event);
-            validateField(name, value);
+            return;
         }
+
+        if (
+            ((name === 'nombre' || name === 'apellido') && value.length > 20) ||
+            (name === 'especialidad' && value.length > 50) ||
+            (name === 'telefono' && value.length > 10) ||
+            (name === 'cuil' && value.length > 15)
+        ) {
+            return;
+        }
+
+        setMedicoData((prevData) => ({
+            ...prevData,
+            [name]: name === 'dni' ? (isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10)) : value,
+        }));
+
+        validateField(name, value);
     };
+
     const handleCuilBlur = (event: React.FocusEvent<HTMLInputElement>) => {
         const { value } = event.target;
 
-        if (value.trim().length !== 11) {
+        if (value.trim().length < 8 || value.trim().length > 15) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 cuil: 'CUIL inválido.',
-            })); 
+            }));
         } else {
             setErrors((prevErrors) => ({
                 ...prevErrors,
@@ -91,6 +97,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             }));
         }
     };
+
 
     const handleTelefonoBlur = (event: React.FocusEvent<HTMLInputElement>) => {
         const { value } = event.target;
@@ -109,10 +116,10 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
     };
 
     return (
-        <Grid container spacing={1} >
+        <Grid container spacing={1}>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Nombre
                     </InputLabel>
                     <OutlinedInput
@@ -131,7 +138,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Apellido
                     </InputLabel>
                     <OutlinedInput
@@ -150,7 +157,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Teléfono
                     </InputLabel>
                     <OutlinedInput
@@ -170,7 +177,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Email
                     </InputLabel>
                     <OutlinedInput
@@ -189,7 +196,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         N° de Documento
                     </InputLabel>
                     <OutlinedInput
@@ -238,7 +245,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         CUIL/T
                     </InputLabel>
                     <OutlinedInput
@@ -258,7 +265,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{fontSize: '16px' }}>
+                    <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Especialidad
                     </InputLabel>
                     <OutlinedInput

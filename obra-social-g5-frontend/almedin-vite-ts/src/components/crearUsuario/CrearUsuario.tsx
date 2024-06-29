@@ -13,17 +13,18 @@ import {
     Typography,
     FormControlLabel,
     Checkbox,
+    Box,
 } from '@mui/material';
 import { UsuarioRequestDto, UsuarioRolesEnum } from '../../models/Usuario';
 import { registrarUsuario } from '../../axios/UsuarioApi';
-import MedicoNuevoForm from '../Consultorio/MedicoNuevoForm';
-import ConsultorioSelect from '../Consultorio/ConsultorioSelect';
+import MedicoNuevoForm from '../crearConsultorio/MedicoNuevoForm';
+import ConsultorioSelect from '../crearConsultorio/ConsultorioSelect';
 import { MedicoResponseDto } from '../../models/Medico';
 import { ConsultorioResponseDto } from '../../models/Consultorio';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { getAllConsultorios } from '../../axios/ConsultorioApi';
 import { getAllMedicos, addMedico, updateMedico } from '../../axios/MedicoApi';
-import MedicoExistenteSelect from '../Consultorio/MedicoExistenteSelect';
+import MedicoExistenteSelect from '../crearConsultorio/MedicoExistenteSelect';
 
 const formatRol = (rol: UsuarioRolesEnum) => rol.replace('ROL_', '').toLowerCase();
 const UsuarioForm: React.FC = () => {
@@ -37,9 +38,17 @@ const UsuarioForm: React.FC = () => {
     const [showMedicoOptions, setShowMedicoOptions] = useState<boolean>(false);
     const [isExistingMedico, setIsExistingMedico] = useState<boolean>(false);
     const [isNewMedico, setIsNewMedico] = useState<boolean>(false);
-    const [medicoData, setMedicoData] = useState<MedicoResponseDto>({
-        id: 0,
-        estaEliminado: false,
+    const [medicoData, setMedicoData] = useState<{
+        nombre: string;
+        apellido: string;
+        telefono: string;
+        email: string;
+        dni: number;
+        fechaNacimiento: string;
+        cuil: string;
+        especialidad: string;
+        consultoriosId: number[];
+    }>({
         nombre: '',
         apellido: '',
         telefono: '',
@@ -100,13 +109,6 @@ const UsuarioForm: React.FC = () => {
         }
     };
 
-    const handleMedicoDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setMedicoData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
@@ -162,17 +164,43 @@ const UsuarioForm: React.FC = () => {
     return (
         <Card style={{ width: '100%', height: '100%' }}>
             <CardHeader
-                title="Registrar Usuario"
-                subheader="Ingresa los datos para crear un usuario"
-                sx={{ textAlign: 'center', fontFamily: 'Roboto' }}
+                title={
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            borderBottom: 2,
+                            borderColor: 'gray.200',
+                            pb: 4,
+                            width: '100%',
+                        }}>
+                        <Typography
+                            variant="h4"
+                            component="h1"
+                            sx={{
+                                fontWeight: 'bold',
+                                color: 'primary.main',
+                                textAlign: { xs: 'center', sm: 'left' },
+                            }}>
+                            Almedin
+                        </Typography>
+                        <Box
+                            sx={{ textAlign: { xs: 'center', sm: 'right' }, mt: { xs: 2, sm: 0 } }}>
+                            <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+                                Registro de Usuario
+                            </Typography>
+                        </Box>
+                    </Box>
+                }
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2} p={5}>
                         <Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel>
-                                Nombre de Usuario</InputLabel>
+                                <InputLabel>Nombre de Usuario</InputLabel>
                                 <OutlinedInput
                                     name="username"
                                     placeholder="Nombre de usuario"
@@ -185,8 +213,7 @@ const UsuarioForm: React.FC = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel>
-                                Constraseña</InputLabel>
+                                <InputLabel>Constraseña</InputLabel>
                                 <OutlinedInput
                                     name="password"
                                     type="password"
@@ -194,27 +221,26 @@ const UsuarioForm: React.FC = () => {
                                     value={usuarioData.password}
                                     onChange={handleInputChange}
                                     sx={{ my: 1.5, maxHeight: 40 }}
+                                    required
                                 />
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel>
-                                Email</InputLabel>
+                                <InputLabel>Email</InputLabel>
                                 <OutlinedInput
                                     name="email"
                                     value={usuarioData.email}
                                     onChange={handleInputChange}
                                     sx={{ my: 1.5, maxHeight: 40 }}
                                     placeholder="Email"
+                                    required
                                 />
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel sx={{  fontSize: '16px' }}>
-                                    Roles
-                                </InputLabel>
+                                <InputLabel sx={{ fontSize: '16px' }}>Roles</InputLabel>
                                 <Select
                                     value={selectedRol}
                                     onChange={handleSelectChange}
@@ -230,7 +256,10 @@ const UsuarioForm: React.FC = () => {
                         </Grid>
                         {showMedicoOptions && (
                             <>
-                                <Grid item xs={12}>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
@@ -240,7 +269,7 @@ const UsuarioForm: React.FC = () => {
                                                 color="primary"
                                             />
                                         }
-                                        label="Seleccionar Médico ya existente"
+                                        label="Médico existente"
                                     />
                                     <FormControlLabel
                                         control={
@@ -251,7 +280,7 @@ const UsuarioForm: React.FC = () => {
                                                 color="primary"
                                             />
                                         }
-                                        label="Crear Nuevo Médico"
+                                        label="Nuevo Médico"
                                     />
                                 </Grid>
                                 {isExistingMedico && (
@@ -290,7 +319,7 @@ const UsuarioForm: React.FC = () => {
                                     <>
                                         <MedicoNuevoForm
                                             medicoData={medicoData}
-                                            handleMedicoDataChange={handleMedicoDataChange}
+                                            setMedicoData={setMedicoData}
                                         />
                                         <Grid item xs={12}>
                                             <ConsultorioSelect
@@ -305,23 +334,27 @@ const UsuarioForm: React.FC = () => {
                                 )}
                             </>
                         )}
+                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                sx={{ width: 300 }}>
+                                Registrar
+                            </Button>
+                        </Grid>
                         {error && (
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
                                 <Typography color="error">{error}</Typography>
                             </Grid>
                         )}
                         {success && (
-                            <Grid item xs={12} mx={20}>
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
                                 <Typography color="primary">
                                     Usuario registrado con éxito
                                 </Typography>
                             </Grid>
                         )}
-                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button type="submit" variant="contained" color="primary">
-                                Registrar
-                            </Button>
-                        </Grid>
                     </Grid>
                 </form>
             </CardContent>

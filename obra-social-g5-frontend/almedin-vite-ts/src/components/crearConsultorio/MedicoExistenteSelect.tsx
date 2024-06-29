@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Select, MenuItem, FormControl } from '@mui/material';
 import { MedicoResponseDto } from '../../models/Medico';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -14,6 +14,15 @@ const MedicoExistenteSelect: React.FC<MedicoSeleccionExistenteProps> = ({
     selectedMedicoId,
     handleSelectExistingMedicoChange,
 }) => {
+    useEffect(() => {
+        if (!selectedMedicoId && existingMedicos.length > 0) {
+            handleSelectExistingMedicoChange({
+                target: {
+                    value: existingMedicos[0].id,
+                },
+            } as SelectChangeEvent<number>);
+        }
+    }, [existingMedicos, selectedMedicoId, handleSelectExistingMedicoChange]);
     return (
         <Grid item xs={12}>
             <div>

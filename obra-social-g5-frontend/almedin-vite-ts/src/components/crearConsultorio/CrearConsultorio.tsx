@@ -10,6 +10,8 @@ import {
     FormControlLabel,
     Checkbox,
     SelectChangeEvent,
+    Box,
+    Typography,
 } from '@mui/material';
 import { addMedico, getAllMedicos } from '../../axios/MedicoApi';
 import { createConsultorio } from '../../axios/ConsultorioApi';
@@ -58,6 +60,8 @@ const ConsultorioForm: React.FC = () => {
     const [createNewMedico, setCreateNewMedico] = useState(false);
     const [selectExistingMedico, setSelectExistingMedico] = useState(false);
     const [selectedMedicoId, setSelectedMedicoId] = useState<number | undefined>(undefined);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMedicos = async () => {
@@ -96,6 +100,8 @@ const ConsultorioForm: React.FC = () => {
     };
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setError(null);
+        setSuccess(null);
 
         try {
             const consultorioResponse: ConsultorioResponseDto = await createConsultorio(officeData);
@@ -116,40 +122,12 @@ const ConsultorioForm: React.FC = () => {
 
                 await addMedico([medicoToCreate]);
 
-                alert('Consultorio y médico creados correctamente.');
+                setSuccess('Consultorio y médico creados correctamente.');
             } else {
-                alert('Consultorio creado correctamente.');
+                setSuccess('Consultorio creado correctamente.');
             }
         } catch (error) {
-            alert('Error al crear el consultorio y/o médico. Por favor, inténtelo nuevamente.');
-        }
-    };
-    const handleMedicoDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        if ((name === 'nombre' || name === 'apellido') && value.length > 20) {
-            return;
-        }
-        if (name === 'especialidad' && value.length > 50) {
-            return;
-        }
-        if (name === 'telefono' && value.length > 10) {
-            return;
-        }
-         if (name === 'cuil' && value.length > 11) {
-            return;
-        }
-
-        if (name === 'dni') {
-            const dniValue = value === '' ? 0 : parseInt(value, 10);
-            setMedicoData((prevData) => ({
-                ...prevData,
-                dni: isNaN(dniValue) ? 0 : dniValue,
-            }));
-        } else {
-            setMedicoData((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
+            setError('Error al crear el consultorio y/o médico. Por favor, inténtelo nuevamente.');
         }
     };
 
@@ -216,9 +194,36 @@ const ConsultorioForm: React.FC = () => {
     return (
         <Card style={{ width: '100%', height: '100%', textAlign: 'center' }}>
             <CardHeader
-                title="Crear Consultorio"
-                subheader="Información requerida para crear un nuevo consultorio"
-                sx={{ textAlign: 'center', mb: 2 }}
+                title={
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            borderBottom: 2,
+                            borderColor: 'gray.200',
+                            pb: 4,
+                            width: '100%',
+                        }}>
+                        <Typography
+                            variant="h4"
+                            component="h1"
+                            sx={{
+                                fontWeight: 'bold',
+                                color: 'primary.main',
+                                textAlign: { xs: 'center', sm: 'left' },
+                            }}>
+                            Almedin
+                        </Typography>
+                        <Box
+                            sx={{ textAlign: { xs: 'center', sm: 'right' }, mt: { xs: 2, sm: 0 } }}>
+                            <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+                                Registro de Consultorio
+                            </Typography>
+                        </Box>
+                    </Box>
+                }
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
@@ -249,7 +254,7 @@ const ConsultorioForm: React.FC = () => {
                                                 name="createNewMedico"
                                             />
                                         }
-                                        label="Crear Nuevo Médico"
+                                        label="Nuevo Médico"
                                     />
                                     <FormControlLabel
                                         control={
@@ -259,7 +264,7 @@ const ConsultorioForm: React.FC = () => {
                                                 name="selectExistingMedico"
                                             />
                                         }
-                                        label="Seleccionar Médico Existente"
+                                        label="Médico Existente"
                                     />
                                     <FormControlLabel
                                         control={
@@ -269,7 +274,7 @@ const ConsultorioForm: React.FC = () => {
                                                 name="noMedico"
                                             />
                                         }
-                                        label="No asociar ningún Médico"
+                                        label="No asociar Médico"
                                     />
                                 </div>
                                 <div style={{ width: '70%', margin: 'auto' }}>
@@ -287,20 +292,30 @@ const ConsultorioForm: React.FC = () => {
                                     {createNewMedico && (
                                         <MedicoNuevoForm
                                             medicoData={medicoData}
-                                            handleMedicoDataChange={handleMedicoDataChange}
+                                            setMedicoData={setMedicoData}
                                         />
                                     )}
                                 </div>
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={12} md={3} mx={{md: '35%', sm: 0}} padding={0}>
+                        <Grid item xs={12} sm={12} md={3} mx={{ md: '35%', sm: 0 }} padding={0}>
                             <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Crear Consultorio
                                 </Button>
                             </CardActions>
                         </Grid>
+                        {error && (
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                <Typography color="error">{error}</Typography>
+                            </Grid>
+                        )}
+                        {success && (
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                <Typography color="primary">{success}</Typography>
+                            </Grid>
+                        )}
                     </Grid>
                 </form>
             </CardContent>

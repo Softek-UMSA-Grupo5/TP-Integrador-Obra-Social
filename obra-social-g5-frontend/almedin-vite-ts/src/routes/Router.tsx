@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom"
-import ConsultorioForm from "../components/Consultorio/CrearConsultorio"
-import UsuarioForm from "../components/Usuario/UsuarioForm"
+import ConsultorioForm from "../components/crearConsultorio/CrearConsultorio"
+import UsuarioForm from "../components/crearUsuario/CrearUsuario"
 
 export const Router = () => {
     return (
         <Routes>
             <Route path="/consultorio" element={<ConsultorioForm/>}></Route>
-            <Route path="/usuarios" element={<UsuarioForm/>}></Route>
+        <Route path="/usuario" element={<UsuarioForm/>}></Route>
         </Routes>
     )
 }
