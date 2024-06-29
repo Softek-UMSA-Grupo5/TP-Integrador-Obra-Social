@@ -66,7 +66,7 @@ public class UsuarioService {
 
 			Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(dto.getUsername());
 
-			if (optionalUsuario.isEmpty()) {
+			if (optionalUsuario.isPresent()) {
 				throw new EntityNotFoundException("Ya existe un usuario con este nombre");
 			}
 
