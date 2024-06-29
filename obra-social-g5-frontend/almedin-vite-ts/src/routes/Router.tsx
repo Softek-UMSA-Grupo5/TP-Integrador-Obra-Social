@@ -1,4 +1,3 @@
-import { Route, Routes } from "react-router-dom"
 import ConsultorioForm from "../components/crearConsultorio/CrearConsultorio"
 import UsuarioForm from "../components/crearUsuario/CrearUsuario"
 import LandingPage from '../components/landingPage/LandingPage';
