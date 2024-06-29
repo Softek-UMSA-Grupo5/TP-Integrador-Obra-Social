@@ -47,9 +47,32 @@ public class UsuarioService {
 
 			try {
 				response.setUsername(usuario.getUsername());
-				response.setEmail(usuario.getEmail());
 				response.setRol(usuario.getRol());
 				response.setToken(TokenUtils.generateToken(usuario.getUsername(), usuario.getRol(), duration, issuer));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return response;
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al acceder un usuario");
+		}
+
+	}
+	
+	@Transactional
+	public UsuarioResponseDto refreshToken(UsuarioResponseDto dto) throws CustomServerException {
+		try {
+
+			DataValidator.validateDtoFields(dto);
+
+			Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(dto.getUsername());
+
+			UsuarioResponseDto response = dto;
+
+			try {
+				response.setToken(TokenUtils.generateToken(dto.getUsername(), dto.getRol(), duration, issuer));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

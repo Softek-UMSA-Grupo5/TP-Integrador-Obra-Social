@@ -8,22 +8,24 @@ import MedicoSelect from './MedicoSelect';
 import DateSelector from './DateSelector';
 import MotivoConsulta from './motivoConsulta';
 import dayjs, { Dayjs } from 'dayjs';
-import { formatearFecha } from '../../assets/utils/formatearFecha.js';
-import { getMedicos } from '../../assets/axios/medicos.js';
-import { getConsultorios } from '../../assets/axios/consultorios.js';
-import { getSocioById } from '../../assets/axios/socios.js';
-import { getUbicaciones } from '../../assets/axios/ubicaciones.js';
-import { getTurnosMedicos, postTurnoMedico } from '../../assets/axios/turnosMedicos.js';
-import { Medico, Socio, Consultorio, Ubicacion, TurnoMedico } from '../../types.js';
-
-const token = localStorage.getItem('token');
+import { formatearFecha } from '../../utils/formatearFecha.js';
+import { getAllMedicos } from '../../assets/axios/MedicoApi.js';
+import { getAllConsultorios } from '../../assets/axios/ConsultorioApi.js';
+import { getSocioById } from '../../assets/axios/SocioApi.js';
+import { getUbicaciones } from '../../assets/axios/UbicacionApi.js';
+import { getTurnosMedicos, postTurnoMedico } from '../../assets/axios/TurnoMedicoApi.js';
+import { MedicoResponseDto } from '../../assets/models/Medico.js';
+import { SocioResponse } from '../../assets/models/Socio.js';
+import { ConsultorioResponseDto } from '../../assets/models/Consultorio.js';
+import { UbicacionResponseDto } from '../../assets/models/Ubicacion.js';
+import { TurnoMedicoRequest, TurnoMedicoResponse } from '../../assets/models/TurnoMedico.js';
 
 function AppointmentCard() {
-    const [medicos, setMedicos] = React.useState<Medico[]>([]);
-    const [consultorios, setConsultorios] = React.useState<Consultorio[]>([]);
-    const [socio, setSocio] = React.useState<Socio>();
-    const [turnosMedicos, setTurnosMedicos] = React.useState<TurnoMedico[]>([]);
-    const [ubicaciones, setUbicaciones] = React.useState<Ubicacion[]>([]);
+    const [medicos, setMedicos] = React.useState<MedicoResponseDto[]>([]);
+    const [consultorios, setConsultorios] = React.useState<ConsultorioResponseDto[]>([]);
+    const [socio, setSocio] = React.useState<SocioResponse>();
+    const [turnosMedicos, setTurnosMedicos] = React.useState<TurnoMedicoResponse[]>([]);
+    const [ubicaciones, setUbicaciones] = React.useState<UbicacionResponseDto[]>([]);
 
     const [solicitante, setSolicitante] = React.useState<string>('Para mí');
     const [selectedBeneficiario, setSelectedBeneficiario] = React.useState<string>('');
@@ -37,7 +39,7 @@ function AppointmentCard() {
     const [motivo, setMotivo] = React.useState<string>('');
     const [calendarValue, setCalendarValue] = React.useState<Dayjs | null>(dayjs(Date.now()));
 
-    const json: TurnoMedico = {
+    const json: TurnoMedicoRequest = {
         fecha: selectedDate,
         hora: +selectedHorario.split(':')[0],
         minutos: +selectedHorario.split(':')[1],
@@ -50,19 +52,19 @@ function AppointmentCard() {
 
     React.useEffect(() => {
         const fetchData = async () => {
-          try {
-            getMedicos(token).then(response => setMedicos(response));
-            getConsultorios(token).then(response => setConsultorios(response));
-            getSocioById(1, token).then(response => setSocio(response));
-            getUbicaciones(token).then(response => setUbicaciones(response));
-            getTurnosMedicos(token).then(response => setTurnosMedicos(response));
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
+            try {
+                getAllMedicos().then((response) => setMedicos(response));
+                getAllConsultorios().then((response) => setConsultorios(response));
+                getSocioById(1).then((response) => setSocio(response));
+                getUbicaciones().then((response) => setUbicaciones(response));
+                getTurnosMedicos().then((response) => setTurnosMedicos(response));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
-    
+
         fetchData();
-      }, []); 
+    }, []);
 
     const handleSelectedBeneficiario = (event: SelectChangeEvent<string>) =>
         setSelectedBeneficiario(event.target.value);
@@ -80,7 +82,8 @@ function AppointmentCard() {
         setSolicitante((event.target as HTMLInputElement).value);
     const handleSelectedHorario = (event: SelectChangeEvent<string>) =>
         setSelectedHorario(event.target.value as string);
-    const handleMotivo = (event: ChangeEvent<{ value: string }>) => setMotivo(event.target.value as string);
+    const handleMotivo = (event: ChangeEvent<{ value: string }>) =>
+        setMotivo(event.target.value as string);
 
     const handleSelectedDate = (newValue: Dayjs | null) => {
         setCalendarValue(newValue);
@@ -88,7 +91,7 @@ function AppointmentCard() {
     };
 
     const submitTurno = async () => {
-        await postTurnoMedico(json, token);
+        await postTurnoMedico(json);
     };
 
     return (
@@ -106,10 +109,10 @@ function AppointmentCard() {
                     handleRadioChange={handleRadioChange}
                 />
 
-                <BeneficiariosSelect 
+                <BeneficiariosSelect
                     solicitante={solicitante}
                     socio={socio}
-                    selectedBeneficiario={selectedBeneficiario} 
+                    selectedBeneficiario={selectedBeneficiario}
                     handleSelectedBeneficiario={handleSelectedBeneficiario}
                 />
 

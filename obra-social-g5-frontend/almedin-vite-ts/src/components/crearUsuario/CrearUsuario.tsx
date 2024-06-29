@@ -15,12 +15,12 @@ import {
     Checkbox,
     Box,
 } from '@mui/material';
-import { UsuarioRequestDto, UsuarioRolesEnum } from '../../models/Usuario';
+import { UsuarioRequestDto, UsuarioRolesEnum } from '../../assets/models/Usuario';
 import { registrarUsuario } from '../../assets/axios/UsuarioApi';
 import MedicoNuevoForm from '../crearConsultorio/MedicoNuevoForm';
 import ConsultorioSelect from '../crearConsultorio/ConsultorioSelect';
-import { MedicoResponseDto } from '../../models/Medico';
-import { ConsultorioResponseDto } from '../../models/Consultorio';
+import { MedicoResponseDto } from '../../assets/models/Medico';
+import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { getAllConsultorios } from '../../assets/axios/ConsultorioApi';
 import { getAllMedicos, addMedico, updateMedico } from '../../assets/axios/MedicoApi';

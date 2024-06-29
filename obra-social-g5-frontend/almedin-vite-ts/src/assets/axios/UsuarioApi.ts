@@ -1,5 +1,6 @@
 import api from './api';
-import { UsuarioRequestDto, UsuarioRolesEnum } from '../models/Usuario';
+import { UsuarioLoginDto, UsuarioRequestDto, UsuarioRolesEnum, UsuarioTokenRefresh } from '../models/Usuario';
+import { User } from '../contexts/UserContext';
 
 /* export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRolesEnum): Promise<void> => {
     try {
@@ -18,3 +19,21 @@ export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRoles
         throw new Error('Error al registrar el usuario');
     }
 };
+
+export async function login(json: UsuarioLoginDto) {
+    try {
+        const response = await api.post(`/usuarios/login`, json);
+        return response.data;
+    } catch (error) {
+        console.log('Error al logear usuario: ', error);
+    }
+}
+
+export async function refreshToken(json: User){
+    try {
+        const response = await api.post(`/usuarios/refresh`, json);
+        return response.data;
+    } catch (error) {
+        console.log('Error al refrescar token: ', error);
+    }
+}

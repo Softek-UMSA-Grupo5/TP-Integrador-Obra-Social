@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, FormControl, InputLabel, OutlinedInput, FormHelperText } from '@mui/material';
-import { Medico } from '../../models/Medico';
+import { Medico } from '../../assets/models/Medico';
 import { maxLengthValidation, requiredValidation } from '../../utils/ConsultorioUtils';
 
 interface MedicoFormularioNuevoProps {

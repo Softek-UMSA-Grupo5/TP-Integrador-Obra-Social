@@ -19,7 +19,6 @@ public class UsuarioResponseDto {
 
 	private UsuarioRolesEnum rol;
 	private String username;
-	private String email;
 	private String token;
 	
 }

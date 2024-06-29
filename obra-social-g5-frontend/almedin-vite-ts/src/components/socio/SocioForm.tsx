@@ -1,5 +1,5 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
-import { formatearFecha } from '../../assets/utils/formatearFecha';
+import { formatearFecha } from '../../utils/formatearFecha';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 

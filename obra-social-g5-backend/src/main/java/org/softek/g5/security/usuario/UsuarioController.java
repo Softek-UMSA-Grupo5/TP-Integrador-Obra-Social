@@ -27,27 +27,37 @@ public class UsuarioController {
 
 	@Inject
 	UsuarioService usuarioService;
-	
+
 	@PermitAll
 	@POST
 	@Path("/login")
 	@Operation(summary = "Iniciar sesión", description = "Permite el un usuario inicie sesión")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public UsuarioResponseDto login(@Valid UsuarioLoginDto dto) {
-		return usuarioService.login(dto);
+	public Response login(@Valid UsuarioLoginDto dto) {
+		return Response.ok(usuarioService.login(dto)).build();
 	}
-	
+
+	@POST
+	@Path("/refresh")
+	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN", "ROL_SOCIO", "ROL_MEDICO" })
+	@Operation(summary = "refresca el token", description = "Devuelve un token nuevo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response refreshToken(@Valid UsuarioResponseDto dto) {
+		return Response.ok(usuarioService.refreshToken(dto)).build();
+	}
+
 	@POST
 	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Operation(summary = "Registrar usuario", description = "Permite registrar un usuario")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registrarSocio(@Valid UsuarioRequestDto dto
-			, @Parameter(required = true, description = "Rol de usuario") @QueryParam("Rol Usuario") UsuarioRolesEnum rol) {
+	public Response registrarSocio(@Valid UsuarioRequestDto dto,
+			@Parameter(required = true, description = "Rol de usuario") @QueryParam("Rol Usuario") UsuarioRolesEnum rol) {
 		usuarioService.registrarUsuario(dto, rol);
 		return Response.ok().build();
 	}
-	
+
 	@DELETE
 	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Operation(summary = "Eliminar usuario", description = "Permite eliminar un usuario")
@@ -56,7 +66,7 @@ public class UsuarioController {
 		usuarioService.eliminarUsuario(dto);
 		return Response.ok().build();
 	}
-	
+
 	@PUT
 	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Operation(summary = "Restaurar usuario", description = "Permite restaurar un usuario eliminado")
@@ -65,5 +75,5 @@ public class UsuarioController {
 		usuarioService.restaurarUsuario(dto);
 		return Response.ok().build();
 	}
-	
+
 }
