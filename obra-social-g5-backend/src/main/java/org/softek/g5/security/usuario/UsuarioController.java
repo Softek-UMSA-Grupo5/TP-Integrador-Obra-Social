@@ -2,9 +2,15 @@ package org.softek.g5.security.usuario;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.softek.g5.entities.medico.MedicoFactory;
+import org.softek.g5.entities.recepcionista.RecepcionistaFactory;
+import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.security.usuario.dto.UsuarioLoginDto;
 import org.softek.g5.security.usuario.dto.UsuarioRequestDto;
 import org.softek.g5.security.usuario.dto.UsuarioResponseDto;
+import org.softek.g5.services.MedicoService;
+import org.softek.g5.services.RecepcionistaService;
+import org.softek.g5.services.SocioService;
 
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.PermitAll;
@@ -27,6 +33,24 @@ public class UsuarioController {
 
 	@Inject
 	UsuarioService usuarioService;
+	
+	@Inject
+	MedicoService medicoService;
+	
+	@Inject
+	MedicoFactory medicoFactory;
+	
+	@Inject
+	SocioService socioService;
+	
+	@Inject
+	SocioFactory socioFactory;
+	
+	@Inject
+	RecepcionistaService recepcionistaService;
+	
+	@Inject
+	RecepcionistaFactory recepcionistaFactory;
 
 	@PermitAll
 	@POST
@@ -74,6 +98,26 @@ public class UsuarioController {
 	public Response restaurarUsuario(@Valid UsuarioRequestDto dto) throws Exception {
 		usuarioService.restaurarUsuario(dto);
 		return Response.ok().build();
+	}
+	
+	@POST
+	@Path("/info")
+	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_SOCIO", "ROL_MEDICO" })
+	@Operation(summary = "Devuelve información del usuario", description = "Devuelve información del usuario")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getUserInfo(@Valid UsuarioResponseDto dto) {
+		switch(dto.getRol()) {
+		case ROL_SOCIO:
+			return Response.ok(socioFactory.createResponseFromEntity(socioService.getSocioByUser(dto.getId()))).build();
+		case ROL_MEDICO:
+			return Response.ok(medicoFactory.createResponseFromEntity(medicoService.getMedicoByUser(dto.getId()))).build();
+		case ROL_RECEPCIONISTA:
+			return Response.ok(recepcionistaFactory.createResponseFromEntity(recepcionistaService.getRecepcionistaByUser(dto.getId()))).build();
+		default:
+			break;
+		}
+		return Response.noContent().build();
 	}
 
 }

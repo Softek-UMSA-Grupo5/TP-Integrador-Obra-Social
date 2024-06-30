@@ -46,6 +46,7 @@ public class UsuarioService {
 			Usuario usuario = optionalUsuario.get();
 
 			try {
+				response.setId(usuario.getId());
 				response.setUsername(usuario.getUsername());
 				response.setRol(usuario.getRol());
 				response.setToken(TokenUtils.generateToken(usuario.getUsername(), usuario.getRol(), duration, issuer));

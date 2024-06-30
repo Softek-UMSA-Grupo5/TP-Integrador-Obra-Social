@@ -44,7 +44,7 @@ public class TurnoMedicoController {
 	TurnoMedicoFactory turnoMedicoFactory;
 
 	@GET
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los turnos médicos", description = "Devuelve una lista de todos los turnos médicos")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Lista de turnos médicos"),
@@ -60,7 +60,7 @@ public class TurnoMedicoController {
 
 	@GET
 	@Path("/{codigo}")
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener el turno médico por código", description = "Devuelve el turno médico según el código proporcionado")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turno médico encontrado"),
@@ -78,7 +78,7 @@ public class TurnoMedicoController {
 
 	@GET
 	@Path("/{idSocio}")
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener los turnos médicos de un socio", description = "Devuelve los turnos médicos de un soció según el id proporcionado")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turnos médicos encontrados"),
@@ -96,7 +96,7 @@ public class TurnoMedicoController {
 
 	@GET
 	@Path("/{idMedico}")
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener los turnos médicos realizados por un médico", description = "Devuelve los turnos médicos realizados por un médico según el id proporcionado")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turnos médicos encontrados"),
@@ -115,7 +115,7 @@ public class TurnoMedicoController {
 	@GET
 	@Path("fechas")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO" })
 	@Operation(summary = "Obtener todas los turnos médicos entre dos fechas", description = "Devuelve una lista de todos los turnos médicos emitidos entre las dos fechas proporcionadas")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Lista de turnos médicos"),
 			@APIResponse(responseCode = "500", description = "Error al obtener las recetas médicas") })
@@ -132,7 +132,7 @@ public class TurnoMedicoController {
 	}
 
 	@POST
-	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Añadir turnos médicos", description = "Añade y persiste una lista de turnos médicos")
@@ -151,7 +151,7 @@ public class TurnoMedicoController {
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Operation(summary = "Actualizar turno médico", description = "Actualiza un turno médico existente")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turno médico actualizado"),
 			@APIResponse(responseCode = "500", description = "Error al actualizar el turno médico") })
@@ -163,7 +163,7 @@ public class TurnoMedicoController {
 
 	@DELETE
 	@Path("/{codigo}")
-	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Operation(summary = "Eliminar turno médico", description = "Elimina un turno médico existente")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Turno médico eliminado"),
 			@APIResponse(responseCode = "500", description = "Error al eliminar el turno médico") })

@@ -18,8 +18,12 @@ import { useUser } from '../../assets/contexts/UserContext';
 
 const pages = ['Sobre Nosotros', 'Servicios', 'Testimonios', 'Contacto'];
 const settings = {
-    ROL_ADMIN: ['Registrar socio', 'turnos', 'medicos', 'usuarios'],
+    ROL_ADMIN: [
+        {nombre: 'Solicitar turno médico', href: '/crearturnomedico'},
+    ],
     ROL_SOCIO: ['Mis turnos', 'Solicitar turno medico', 'Cartilla especialistas'],
+    ROL_MEDICO:[],
+    ROL_RECEPCIONISTA: [],
 };
 
 function ResponsiveAppBar() {
@@ -44,14 +48,18 @@ function ResponsiveAppBar() {
         setAnchorElUser(null);
     };
 
+    const handleNavigate = (href: string) => {
+        navigate(href);
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        if(window.location.href != '/'){
+        if (window.location.href != '/') {
             navigate('/');
         }
         location.reload();
-    }
+    };
 
     React.useEffect(() => {
         const token = localStorage.getItem('token');
@@ -181,9 +189,12 @@ function ResponsiveAppBar() {
                                 }}
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}>
+                                <MenuItem onClick={() => handleNavigate('/')}>
+                                    <Typography textAlign="center">Home</Typography>
+                                </MenuItem>
                                 {settings[user?.rol].map((setting, index) => (
-                                    <MenuItem key={index} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                    <MenuItem key={index} onClick={() => handleNavigate(setting.href)}>
+                                        <Typography textAlign="center">{setting.nombre}</Typography>
                                     </MenuItem>
                                 ))}
                                 <MenuItem onClick={handleLogout}>

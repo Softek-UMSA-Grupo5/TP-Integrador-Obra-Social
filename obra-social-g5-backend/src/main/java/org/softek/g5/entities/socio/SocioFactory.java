@@ -41,6 +41,7 @@ public class SocioFactory {
 				.estaEliminado(false)
 				.beneficiarios(null)
 				.turnos(null)
+				.usuario(null)
 				.build();
 	}
 	
@@ -57,6 +58,7 @@ public class SocioFactory {
 				.nroAfiliado(socio.getNroAfiliado())
 				.estaEliminado(socio.getEstaEliminado())
 				.beneficiarios(createListBeneficiarioDtoFromEntity(socio.getBeneficiarios()))
+				.usuario(socio.getUsuario().getId())
 				.build();
 	}
 	

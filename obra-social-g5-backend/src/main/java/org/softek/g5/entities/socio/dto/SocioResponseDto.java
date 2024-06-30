@@ -29,5 +29,6 @@ public class SocioResponseDto {
 	private String nroAfiliado;
 	protected Boolean estaEliminado;
 	private List<BeneficiarioResponseDto> beneficiarios;
+	private Long usuario;
 	
 }

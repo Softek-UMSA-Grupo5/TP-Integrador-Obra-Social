@@ -5,7 +5,7 @@ import { Box } from '@mui/material/';
 
 function CrearTurnoMedico() {
     return (
-        <Box sx={{ maxWidth: 700, margin: 'auto' }}>
+        <Box sx={{ maxWidth: 700, margin: 'auto', my: 5 }}>
             <Card variant="outlined">
                 <AppointmentCard />
             </Card>

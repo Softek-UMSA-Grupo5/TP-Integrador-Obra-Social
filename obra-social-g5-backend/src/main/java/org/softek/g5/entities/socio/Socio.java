@@ -49,10 +49,11 @@ public class Socio extends Persona{
 	@Builder
 	public Socio(Long id, String nombre, String apellido, String telefono, String email, int dni, String cuil,
 			Date fechaNacimiento, Boolean estaEliminado, @NotNull String nroAfiliado, List<Beneficiario> beneficiarios,
-			List<TurnoMedico> turnos) {
+			List<TurnoMedico> turnos, Usuario usuario) {
 		super(id, nombre, apellido, telefono, email, dni, cuil, fechaNacimiento, estaEliminado);
 		this.nroAfiliado = nroAfiliado;
 		this.beneficiarios = beneficiarios;
 		this.turnos = turnos;
+		this.usuario = usuario;
 	}
 }

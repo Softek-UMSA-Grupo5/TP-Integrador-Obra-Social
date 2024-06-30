@@ -43,7 +43,7 @@ public class BeneficiarioController {
 	BeneficiarioFactory beneficiarioFactory;
 	
 	@GET
-	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los beneficiarios", description ="Se obtendrá una lista de todos los beneficiarios")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() throws CustomServerException{
@@ -56,7 +56,7 @@ public class BeneficiarioController {
 	}
 
 	@POST
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un beneficiario", description ="Se creará un beneficiario")
@@ -73,7 +73,7 @@ public class BeneficiarioController {
 	}
 
 	@PUT
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Operation(summary = "Actualizar un beneficiario", description ="Se actualizará un beneficiario")
 	@Transactional
 	@Path("/{dni}")
@@ -89,7 +89,7 @@ public class BeneficiarioController {
 	}
 
 	@DELETE
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Operation(summary = "Eliminar un beneficiario", description ="Se eliminará un beneficiario")
 	@Transactional
 	@Path("/{id}")

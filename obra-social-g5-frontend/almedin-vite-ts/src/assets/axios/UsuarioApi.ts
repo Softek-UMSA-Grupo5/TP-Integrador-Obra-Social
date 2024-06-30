@@ -37,3 +37,12 @@ export async function refreshToken(json: User){
         console.log('Error al refrescar token: ', error);
     }
 }
+
+export async function getUserInfo(json: User){
+    try {
+        const response = await api.post(`/usuarios/info`, json);
+        return response.data;
+    } catch (error) {
+        console.log('Error al obtener info de usuario: ', error);
+    }
+}

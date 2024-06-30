@@ -17,6 +17,7 @@ import lombok.Setter;
 @Builder
 public class UsuarioResponseDto {
 
+	private Long id;
 	private UsuarioRolesEnum rol;
 	private String username;
 	private String token;

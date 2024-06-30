@@ -32,6 +32,7 @@ const UserLogin = () => {
             .then((response) => {
                 localStorage.setItem('token', response.token);
                 setUser({
+                    id: response.id,
                     username: response.username,
                     rol: response.rol
                 });

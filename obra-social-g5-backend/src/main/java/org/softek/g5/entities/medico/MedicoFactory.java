@@ -37,6 +37,7 @@ public class MedicoFactory {
 				.consultorios(null)
 				.turnos(null)
 				.estaEliminado(false)
+				.usuario(null)
 				.build();
 	}
 	
@@ -52,6 +53,7 @@ public class MedicoFactory {
 				.fechaNacimiento(medico.getFechaNacimiento())
 				.especialidad(medico.getEspecialidad())
 				.estaEliminado(medico.getEstaEliminado())
+				.usuario(medico.getUsuario().getId())
 				.build();
 	}
 	

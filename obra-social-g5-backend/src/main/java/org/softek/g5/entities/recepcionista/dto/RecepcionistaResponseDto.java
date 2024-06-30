@@ -1,4 +1,4 @@
-package org.softek.g5.entities.medico.dto;
+package org.softek.g5.entities.recepcionista.dto;
 
 import java.sql.Date;
 
@@ -13,8 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MedicoResponseDto {
-	
+public class RecepcionistaResponseDto {
+
 	private Long id;
 	private String nombre;
 	private String apellido;
@@ -24,7 +24,6 @@ public class MedicoResponseDto {
 	private String cuil;
 	private Date fechaNacimiento;
 	private Boolean estaEliminado;
-	private String especialidad;
 	private Long usuario;
-	
+
 }

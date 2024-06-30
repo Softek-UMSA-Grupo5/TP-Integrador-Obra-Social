@@ -72,6 +72,21 @@ public class ConsultorioService {
 		}
 
 	}
+	
+	public List<Consultorio> getConsultorioByMedico(Long id) throws CustomServerException {
+
+		try {
+			List<Consultorio> listConsultorio = consultorioRepository.findByMedico(id);	
+			if (listConsultorio.isEmpty()) {
+				throw new EntityNotFoundException("Consultorio no encontrado con medico id: " + id);
+			}
+			
+			return listConsultorio;
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener el consultorio por código");
+		}
+
+	}
 
 	@Transactional
 	public Consultorio createConsultorio(@Valid ConsultorioCreateRequestDto dto)

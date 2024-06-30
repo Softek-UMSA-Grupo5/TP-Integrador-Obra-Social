@@ -40,7 +40,7 @@ public class ConsultorioController {
 	private final ConsultorioService consultorioService;
 
 	@GET
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los consultorios", description = "Se obtendrá una lista de todos los consultorios disponibles")
 	@APIResponse(responseCode = "200", description = "Lista de Consultorios")
@@ -56,7 +56,7 @@ public class ConsultorioController {
 	}
 
 	@GET
-	@RolesAllowed({ "ROL_ADMIN", "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener consultorio por código", description = "Se obtendrá un consultorio por su código")
@@ -68,9 +68,23 @@ public class ConsultorioController {
 				.toDto(consultorioService.getConsultorioByCodigo(codigo));
 		return Response.ok(consultorio).build();
 	}
+	
+	@GET
+	@RolesAllowed({ "ROL_MEDICO", "ROL_RECEPCIONISTA" })
+	@Path("/{medicoId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(summary = "Obtener consultorios por medico", description = "Se obtendrá los consultorios por su medico")
+	@APIResponse(responseCode = "200", description = "Consultorio por medico")
+	@APIResponse(responseCode = "404", description = "No se encuentra consultorio con ese medico")
+	@APIResponse(responseCode = "500", description = "Error interno del servidor")
+	public Response getConsultorioByMedico(@PathParam("medicoId") Long id) {
+		List<ConsultorioResponseDto> consultorios = consultorioService.getConsultorioByMedico(id).stream()
+				.map(ConsultorioFactory::toDto).collect(Collectors.toList());
+		return Response.ok(consultorios).build();
+	}
 
 	@POST
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Transactional
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear consultorio", description = "Se creará un nuevo consultorio")
@@ -86,7 +100,7 @@ public class ConsultorioController {
 	}
 
 	@PUT
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Transactional
 	@Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
 	@APIResponse(responseCode = "204", description = "Consultorio actualizado")
@@ -99,7 +113,7 @@ public class ConsultorioController {
 	}
 
 	@DELETE
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/{id}")
 	@Transactional
 	@Operation(summary = "Eliminar consultorio", description = "Se marcará un consultorio como eliminado")
@@ -112,7 +126,7 @@ public class ConsultorioController {
 	}
 
 	@PUT
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/restore/{id}")
 	@Transactional
 	@Operation(summary = "Restaurar consultorio", description = "Se restaurará un consultorio eliminado")

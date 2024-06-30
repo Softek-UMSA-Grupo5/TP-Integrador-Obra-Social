@@ -42,7 +42,7 @@ public class SocioController {
 	SocioFactory socioFactory;
 	
 	@GET
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener socio por id", description ="Se obtendrá una lista de todos los socios")
 	public Response getAll() throws CustomServerException{
@@ -55,7 +55,7 @@ public class SocioController {
 	
 	@GET
 	@Path("/{id}")
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
 	public Response getSocioById( @Parameter(required = true, description = "id del socio") @PathParam("id") Long id ) throws CustomServerException{
@@ -67,7 +67,7 @@ public class SocioController {
 	}
 	
 	@POST
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
@@ -80,7 +80,7 @@ public class SocioController {
 	}
 	
 	@PUT
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Operation(summary = "Actualizar un socio", description ="Se actualizará un socio")
 	@Transactional
 	public Response update(SocioUpdateRequestDto dto) throws CustomServerException{
@@ -91,7 +91,7 @@ public class SocioController {
 	}
 	
 	@DELETE
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un socio", description ="Se eliminará un socio")
 	@Transactional

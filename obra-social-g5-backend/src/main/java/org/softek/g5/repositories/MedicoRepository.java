@@ -16,4 +16,8 @@ public class MedicoRepository implements PanacheRepositoryBase<Medico, Long>{
 	public Medico findByDniMedico(int dni) {
 		return find("dni", dni).firstResult();
 	}
+	
+	public Optional<Medico> findByUser(Long id) {
+		return find("usuario.id = ?1", id).firstResultOptional();
+	}
 }

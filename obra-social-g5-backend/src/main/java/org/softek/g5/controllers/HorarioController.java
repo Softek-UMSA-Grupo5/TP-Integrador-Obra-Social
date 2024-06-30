@@ -33,7 +33,7 @@ public class HorarioController {
 	HorarioService horarioService;
 
 	@GET
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horarios", description = "Se obtendrá una lista de horarios")
 	@APIResponse(responseCode = "200", description = "Lista de horarios")
@@ -46,7 +46,7 @@ public class HorarioController {
 	}
 
 	@GET
-	@RolesAllowed({ "ROL_ADMIN", "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horario", description = "Se obtendrá un horario en particular")
@@ -60,7 +60,7 @@ public class HorarioController {
 	}
 
 	@PUT
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Transactional
 	@Operation(summary = "Actualiza horario", description = "Se actualizará un horario en particular")
 	@APIResponse(responseCode = "200", description = "Horario actualizado con éxito")
@@ -73,7 +73,7 @@ public class HorarioController {
 	}
 
 	@PUT
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/restore/{id}")
 	@Transactional
 	@Operation(summary = "Restaurar horario", description = "Se restaurará un horario eliminado en particular")
@@ -89,7 +89,7 @@ public class HorarioController {
 	}
 
 	@DELETE
-	@RolesAllowed({ "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/{id}")
 	@Transactional
 	@Operation(summary = "Borrar horario", description = "Se borrará un horario por soft delete")
