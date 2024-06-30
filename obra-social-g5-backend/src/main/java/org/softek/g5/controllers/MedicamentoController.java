@@ -43,7 +43,7 @@ public class MedicamentoController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO", "ROL_SOCIO"})
 	@Operation(summary = "Obtener medicamentos", description = "devuelve una lista de medicamentos")
 	@APIResponse(responseCode = "200", description = "lista de medicamentos")
 	@APIResponse(responseCode = "404", description = "no hay medicamentos registrados")
@@ -59,7 +59,7 @@ public class MedicamentoController {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO"  })
 	@Operation(summary = "Obtener medicamento por id", description = "devuelve el medicamento con el id proporcionado")
 	@APIResponse(responseCode = "200", description = "medicamento encontrado")
 	@APIResponse(responseCode = "404", description = "no se encontró el medicamento")
@@ -74,7 +74,7 @@ public class MedicamentoController {
 	@GET
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Obtener medicamento por codigo", description = "devuelve los medicamentos con el código proporcionado")
 	@APIResponse(responseCode = "200", description = "lista de medicamentos")
 	@APIResponse(responseCode = "404", description = "no se encontrarón medicamentos")
@@ -90,7 +90,7 @@ public class MedicamentoController {
 	@GET
 	@Path("/{receta}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO"  })
 	@Operation(summary = "Obtener medicamento por receta", description = "devuelve los medicamentos con la receta proporcionada")
 	@APIResponse(responseCode = "200", description = "lista de medicamentos")
 	@APIResponse(responseCode = "404", description = "no se encontrarón medicamentos")
@@ -106,7 +106,7 @@ public class MedicamentoController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed("ROL_ADMIN")
+	@RolesAllowed({"ROL_MEDICO"} )
 	@Operation(summary = "Añadir medicamentos", description = "Añade y persiste una lista de medicamentos")
 	@APIResponse(responseCode = "201", description = "lista de medicamentos añadido y persistido")
 	@APIResponse(responseCode = "500", description = "No se pudo añadir y persistir la lista de medicamentos por un error del servidor")
@@ -122,7 +122,7 @@ public class MedicamentoController {
 
 	@PUT
 	@Path("/{codigo}")
-	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Actualizar medicamento", description = "Actualiza un medicamento de una receta")
 	@APIResponse(responseCode = "200", description = "medicamento actualizado")
 	@APIResponse(responseCode = "500", description = "No se pudo actualizar el medicamento por un error del servidor")
@@ -137,7 +137,7 @@ public class MedicamentoController {
 
 	@DELETE
 	@Path("/{codigo}")
-	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Eliminar medicamento", description = "Elimina un medicamento de una receta")
 	@APIResponse(responseCode = "200", description = "medicamento eliminado")
 	@APIResponse(responseCode = "500", description = "No se pudo eliminar el medicamento por un error del servidor")

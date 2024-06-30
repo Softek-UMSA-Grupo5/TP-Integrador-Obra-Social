@@ -52,6 +52,35 @@ public class MedicoService {
 			throw new CustomServerException("Error al obtener los médicos");
 		}
 	}
+	
+	public Medico getMedicoById(Long id) throws CustomServerException {
+		try {
+			Optional<Medico> optionalMedico = medicoRepository.findByIdOptional(id);
+
+			if (optionalMedico.isEmpty()) {
+				throw new EntityNotFoundException("No hay registros de Socio con ese usuario");
+			}
+			return optionalMedico.get();
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los socios");
+		}
+	}
+	
+	@Transactional
+	public Medico getMedicoByUser(Long id) throws CustomServerException {
+		try {
+			Optional<Medico> optionalMedico = medicoRepository.findByUser(id);
+
+			if (optionalMedico.isEmpty()) {
+				throw new EntityNotFoundException("No hay registros de Socio con ese usuario");
+			}
+			return optionalMedico.get();
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los socios");
+		}
+	}
 
 	@Transactional
 	public List<Medico> persistMedico(List<MedicoRequestDto> dtos) throws CustomServerException {

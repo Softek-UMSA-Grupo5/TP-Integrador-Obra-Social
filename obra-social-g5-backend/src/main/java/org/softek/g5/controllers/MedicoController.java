@@ -41,7 +41,7 @@ public class MedicoController {
 	MedicoFactory medicoFactory;
 	
 	@GET
-	@RolesAllowed({"ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los médicos especialistas", description ="Se obtendrá una lista de todos los médicos especialistas")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() throws CustomServerException{
@@ -52,8 +52,21 @@ public class MedicoController {
 		
 	}
 	
+	@GET
+	@RolesAllowed({"ROL_MEDICO", "ROL_RECEPCIONISTA"})
+	@Path("/{id}")
+	@Operation(summary = "Obtener especialista por id", description ="Se obtendrá el especialista por id")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMedicoByid(@Parameter(required = true, description = "id del medicamento") @PathParam("id") Long id) throws CustomServerException{
+		
+		MedicoResponseDto medico = medicoFactory.createResponseFromEntity(medicoService.getMedicoById(id));
+		
+		return Response.ok(medico).build();
+		
+	}
+	
 	@POST
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un médico especialista", description ="Se creará un médico especialista")
@@ -67,7 +80,7 @@ public class MedicoController {
 	}
 	
 	@PUT
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed("ROL_RECEPCIONISTA")
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un médico especialista", description ="Se actualizará un médico especialista")
 	@Transactional
@@ -80,7 +93,7 @@ public class MedicoController {
 	}
 	
 	@DELETE
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed("ROL_RECEPCIONISTA")
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un médico especialista", description ="Se eliminará un médico especialista")
 	@Transactional

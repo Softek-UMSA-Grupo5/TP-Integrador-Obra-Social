@@ -35,7 +35,7 @@ public class UbicacionController {
     private final UbicacionService ubicacionService;
 
     @GET
-	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicaciones", description ="Se obtendrá una lista de ubicaciones")
     public Response getAllUbicaciones() {
@@ -48,7 +48,7 @@ public class UbicacionController {
     }
     
     @GET
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
     @Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicación", description ="Se obtendrá una ubicación en particular")
@@ -61,7 +61,7 @@ public class UbicacionController {
     }
 
     @POST
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Crear ubicación", description ="Se creará una ubicación en particular")
@@ -71,7 +71,7 @@ public class UbicacionController {
     }
 
     @PUT
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
     @Path("/{codigo}")
     @Transactional
     @Operation(summary = "Actualizar ubicación", description ="Se actualizará una ubicación en particular")
@@ -82,7 +82,7 @@ public class UbicacionController {
     }
 
     @PUT
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
     @Path("/restore/{id}")
     @Transactional
     @Operation(summary = "Restaurar ubicación", description ="Se restaurará una ubicación en particular")
@@ -92,7 +92,7 @@ public class UbicacionController {
     }
 
     @DELETE
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
     @Path("/{id}")
     @Transactional
     @Operation(summary = "Eliminar ubicación", description ="Se eliminará una ubicación por soft delete")

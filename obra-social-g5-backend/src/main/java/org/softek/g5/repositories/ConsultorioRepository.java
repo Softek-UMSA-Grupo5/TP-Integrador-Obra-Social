@@ -33,5 +33,9 @@ public class ConsultorioRepository implements PanacheRepository<Consultorio>{
 	 public List<Consultorio> findByCodigo(Long id) {
 			return find("consultorio.id = ?1 AND estaEliminado = 0", id).list();
 		}
+	 
+	 public List<Consultorio> findByMedico(Long id) {
+			return find("medico.id = ?1 AND estaEliminado = 0", id).list();
+		}
 
 }

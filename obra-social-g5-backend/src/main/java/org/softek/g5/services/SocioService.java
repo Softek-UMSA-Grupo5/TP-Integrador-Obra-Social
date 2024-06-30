@@ -70,6 +70,21 @@ public class SocioService {
 			throw new CustomServerException("Error al obtener los socios");
 		}
 	}
+	
+	@Transactional
+	public Socio getSocioByUser(Long id) throws CustomServerException {
+		try {
+			Optional<Socio> optionalSocio = socioRepository.findByUser(id);
+
+			if (optionalSocio.isEmpty()) {
+				throw new EntityNotFoundException("No hay registros de Socio con ese usuario");
+			}
+			return optionalSocio.get();
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los socios");
+		}
+	}
 
 	@Transactional
 	public Socio persistSocio(SocioRequestDto dto) throws CustomServerException {

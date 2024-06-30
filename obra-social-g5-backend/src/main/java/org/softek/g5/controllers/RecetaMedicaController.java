@@ -46,7 +46,7 @@ public class RecetaMedicaController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Obtener todas las recetas médicas", description = "Devuelve una lista de todas las recetas médicas")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Lista de recetas médicas"),
 			@APIResponse(responseCode = "500", description = "Error al obtener las recetas médicas") })
@@ -63,7 +63,7 @@ public class RecetaMedicaController {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO", "ROL_SOCIO" })
 	@Operation(summary = "Obtener la receta médica por id", description = "Devuelve la receta médica según el id proporcionado")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Receta medica encontrada"),
 			@APIResponse(responseCode = "500", description = "Error al obtener la receta médica") })
@@ -81,7 +81,7 @@ public class RecetaMedicaController {
 	@GET
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Obtener la receta médica por código", description = "Devuelve la receta médica según el código proporcionado")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Receta medica encontrada"),
 			@APIResponse(responseCode = "500", description = "Error al obtener la receta médica") })
@@ -96,7 +96,7 @@ public class RecetaMedicaController {
 	@GET
 	@Path("fechas")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Obtener todas las recetas médicas entre dos fechas", description = "Devuelve una lista de todas las recetas médicas emitidas entre las dos fechas proporcionadas")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Lista de recetas médicas"),
 			@APIResponse(responseCode = "500", description = "Error al obtener las recetas médicas") })
@@ -114,7 +114,7 @@ public class RecetaMedicaController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Añadir receta médica", description = "Añade y persiste una receta médica")
 	@APIResponses({ @APIResponse(responseCode = "201", description = "Receta médica añadida y persistida"),
 			@APIResponse(responseCode = "500", description = "Error al añadir y persistir la receta médica") })
@@ -131,7 +131,7 @@ public class RecetaMedicaController {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Actualizar receta médica", description = "Actualiza una receta médica existente")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Receta médica actualizada"),
 			@APIResponse(responseCode = "500", description = "Error al actualizar la receta médica") })
@@ -144,7 +144,7 @@ public class RecetaMedicaController {
 
 	@DELETE
 	@Path("/{codigo}")
-	@RolesAllowed({ "ROL_MEDICO", "ROL_ADMIN" })
+	@RolesAllowed({ "ROL_MEDICO" })
 	@Operation(summary = "Eliminar receta médica", description = "Elimina una receta médica existente")
 	@APIResponses({ @APIResponse(responseCode = "200", description = "Receta médica eliminada"),
 			@APIResponse(responseCode = "500", description = "Error al eliminar la receta médica") })
