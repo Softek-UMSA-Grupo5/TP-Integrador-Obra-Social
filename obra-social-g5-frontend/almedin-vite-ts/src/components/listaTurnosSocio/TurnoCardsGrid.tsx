@@ -3,7 +3,7 @@ import TurnoCard from './TurnoCard';
 
 export default function TurnoCardsGrid(){
     return(
-        <Container>
+        <Container sx={{ marginBottom: '40px' }}>
             <Grid container spacing={2}>        
                 <Grid
                     item

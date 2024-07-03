@@ -1,4 +1,4 @@
-import { Avatar, Button, CardActions, CardHeader, Collapse, IconButton, IconButtonProps, styled} from '@mui/material';
+import { Avatar, Button, CardActions, CardHeader, Collapse, Dialog, DialogActions, DialogTitle, IconButton, IconButtonProps, styled} from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -24,11 +24,22 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
+
+
 export default function TurnoCard() {
   const [expanded, setExpanded] = React.useState(false);
-  
+  const [open, setOpen] = React.useState(false);
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -52,22 +63,33 @@ export default function TurnoCard() {
           <LocalOfferOutlinedIcon sx={{ fontSize:"medium" }} />Completado
         </Typography>
       </CardContent>
-      <CardActions sx={{ display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%' }}>
-        <div className='left-buttons' style={{ display:'flex', gap:'10px' }}>
-          <Button size="small" variant="contained" color='error'>Cancelar</Button>
-          <Button size="small" variant="outlined">Actualizar</Button>
-        </div>
-        <div className='right-button' style={{ display:'flex', justifyContent: 'flex-end' }}>
-          <ExpandMore
-            expand={expanded}
-            aria-expanded={expanded}
-            aria-label="Ver mas"
-            onClick={handleExpandClick}
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
-        </div>  
+      <CardActions>
+        <Button size="small" variant="contained" color='error' onClick={handleClickOpen}>Cancelar</Button>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"¿Desea cancelar este turno?"}
+          </DialogTitle>
+          <DialogActions>
+            <Button variant="outlined" onClick={handleClose}>Volver</Button>
+            <Button variant="outlined" onClick={handleClose} autoFocus>Aceptar</Button>
+          </DialogActions>
+        </Dialog>
+        <Button size="small" variant="outlined">Actualizar</Button>
+        <ExpandMore
+          expand={expanded}
+          aria-expanded={expanded}
+          aria-label="Ver mas"
+          onClick={handleExpandClick}
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
       </CardActions>
+
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography color="text.secondary" variant="body2">Motivo de consulta:</Typography>
