@@ -30,5 +30,6 @@ public class RecepcionistaRequestDto {
 	private Date fechaNacimiento;
 	@NotNull
 	private String cuil;
+	private Long usuarioId;
 
 }

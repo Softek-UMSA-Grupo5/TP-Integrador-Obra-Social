@@ -1,5 +1,7 @@
 import { FormControl, FormLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { Consultorio, Medico, Ubicacion } from '../../types';
+import { Consultorio } from '../../assets/models/Consultorio';
+import { Medico } from '../../assets/models/Medico';
+import { Ubicacion } from '../../assets/models/Ubicacion';
 
 interface Props {
     medicos: Medico[];
@@ -23,7 +25,7 @@ function ConsultorioSelect({
             medicos
                 .filter((m) => m.especialidad === selectedEspecialidad)
                 .map((m) => m.id)
-                .includes(c.medicoId)
+                .includes(c.medico)
         )
         .map((c) => c.ubicacion.id);
     const ubicacionSet = [...new Set(ubicacionList)];

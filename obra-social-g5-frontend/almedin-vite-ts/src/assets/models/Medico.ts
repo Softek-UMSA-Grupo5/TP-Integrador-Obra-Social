@@ -1,4 +1,5 @@
 export interface Medico {
+  id: number | undefined;
   nombre: string;
   apellido: string;
   telefono: string;
@@ -33,15 +34,17 @@ export interface MedicoResponseDto {
     estaEliminado: boolean;
     especialidad: string;
     consultoriosId: number[];
+    usuarioId?: number;
 }
 export interface MedicoRequestDto {
-  nombre: string;
-  apellido: string;
-  telefono: string;
-  email: string;
-  dni: number;
-  fechaNacimiento: string;
-  cuil: string;
-  especialidad: string;
-  consultoriosId?: number[];
+    nombre: string;
+    apellido: string;
+    telefono: string;
+    email: string;
+    dni: number;
+    fechaNacimiento: string;
+    cuil: string;
+    especialidad: string;
+    consultoriosId?: number[];
+    usuarioId?: number; // Asegúrate de incluir usuarioId aquí
 }

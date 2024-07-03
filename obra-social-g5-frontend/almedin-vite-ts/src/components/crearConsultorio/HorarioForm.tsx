@@ -51,10 +51,10 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
     const handleRemoveHorarioWrapper = (index: number) => {
         if (horarioAtencion.length > 1) {
             handleRemoveHorario(index);
-            setErrorMessage(''); 
+            setErrorMessage('');
             setErrorVisible(false);
         } else {
-            setErrorMessage('No se pueden borrar todos los horarios.'); 
+            setErrorMessage('No se pueden borrar todos los horarios.');
             setErrorVisible(true);
         }
     };
@@ -62,7 +62,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
     return (
         <>
             {horarioAtencion.map((horario, index) => (
-                <Grid container spacing={1} key={index} mx={8} my={1} justifyContent="center">
+                <Grid container spacing={1} key={index} my={0.5} justifyContent="center">
                     <Grid item xs={12} sm={12} md={3}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel shrink sx={{ fontWeight: 'bold', fontSize: '16px' }}>
@@ -71,7 +71,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             <Select
                                 name="diaSemana"
                                 value={horario.diaSemana}
-                                sx={{ my: 1, maxHeight: 40 }}
+                                sx={{ my: 1.5, maxHeight: 40 }}
                                 onChange={(event) =>
                                     handleSelectChange(index, event.target.value as string)
                                 }>
@@ -95,7 +95,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                                 labelId={`select-hora-inicio-label-${index}`}
                                 id={`select-hora-inicio-${index}`}
                                 value={horario.horaInicio.substring(0, 5)}
-                                sx={{ my: 1, maxHeight: 40 }}
+                                sx={{ my: 1.5, maxHeight: 40 }}
                                 onChange={(e) =>
                                     handleTimeChange(index, 'inicio', e.target.value as string)
                                 }>
@@ -103,7 +103,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={3}>
+                    <Grid item xs={12} sm={12} md={3} my={0}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel
                                 htmlFor={`select-hora-fin-${index}`}
@@ -115,7 +115,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                                 labelId={`select-hora-fin-label-${index}`}
                                 id={`select-hora-fin-${index}`}
                                 value={horario.horaFin.substring(0, 5)}
-                                sx={{ my: 1, maxHeight: 40 }}
+                                sx={{ my: 1.5, maxHeight: 40 }}
                                 onChange={(e) =>
                                     handleTimeChange(index, 'fin', e.target.value as string)
                                 }>
@@ -123,7 +123,7 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={1} alignContent={'center'}>
+                    <Grid item xs={12} sm={12} md={1} alignContent={'center'} >
                         <IconButton
                             aria-label="delete"
                             onClick={() => handleRemoveHorarioWrapper(index)}
@@ -134,19 +134,20 @@ const HorarioForm: React.FC<HorarioFormProps> = ({
                     </Grid>
                 </Grid>
             ))}
-            <Grid item xs={12} sm={12} md={3} mx={{md: '35%', sm: 0}} padding={0}>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleAddHorario}>
+            
+            <Grid item xs={12} sm={12} md={3} mx={{ md: '40%', sm: 0 }} padding={0}>
+                <Button variant="outlined" color="primary" onClick={handleAddHorario}>
                     Agregar Horario
                 </Button>
             </Grid>
-            {errorMessage && (
-                <Typography variant="body1" color="error" sx={{ textAlign: 'center', my: -1 }}>
-                    {errorMessage}
-                </Typography>
-            )}
+            <Grid item xs={12}>
+                {errorMessage && (
+                    <Typography variant="body1" color="error" sx={{ textAlign: 'center'}}>
+                        {errorMessage}
+                    </Typography>
+                )}
+            </Grid>
+            
         </>
     );
 };
