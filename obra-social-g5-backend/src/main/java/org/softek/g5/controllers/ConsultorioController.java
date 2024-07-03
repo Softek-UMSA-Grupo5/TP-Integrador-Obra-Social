@@ -40,7 +40,7 @@ public class ConsultorioController {
 	private final ConsultorioService consultorioService;
 
 	@GET
-	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los consultorios", description = "Se obtendrá una lista de todos los consultorios disponibles")
 	@APIResponse(responseCode = "200", description = "Lista de Consultorios")
@@ -84,7 +84,7 @@ public class ConsultorioController {
 	}
 
 	@POST
-	@RolesAllowed({ "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Transactional
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear consultorio", description = "Se creará un nuevo consultorio")
@@ -100,7 +100,7 @@ public class ConsultorioController {
 	}
 
 	@PUT
-	@RolesAllowed({ "ROL_RECEPCIONISTA" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_ADMIN" })
 	@Transactional
 	@Operation(summary = "Actualizar consultorio", description = "Se actualizará un consultorio existente")
 	@APIResponse(responseCode = "204", description = "Consultorio actualizado")

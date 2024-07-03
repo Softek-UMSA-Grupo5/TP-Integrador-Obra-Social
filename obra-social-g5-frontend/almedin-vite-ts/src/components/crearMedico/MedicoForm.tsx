@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { Grid, FormControl, InputLabel, OutlinedInput, FormHelperText } from '@mui/material';
-import { Medico } from '../../assets/models/Medico';
+import { MedicoRequestDto } from '../../assets/models/Medico';
 import { maxLengthValidation, requiredValidation } from '../../utils/ConsultorioUtils';
 
 interface MedicoFormularioNuevoProps {
-    medicoData: Medico;
-    setMedicoData: React.Dispatch<React.SetStateAction<Medico>>;
+    medicoData: MedicoRequestDto;
+    setMedicoData: React.Dispatch<React.SetStateAction<MedicoRequestDto>>;
+    setRegisterUser: React.Dispatch<React.SetStateAction<boolean>>;
+    useMedicoEmail: boolean;
+    setUseMedicoEmail: React.Dispatch<React.SetStateAction<boolean>>;
+    usuarioEmail: string;
+    setUsuarioEmail: React.Dispatch<React.SetStateAction<string>>;
+    registerUser: boolean;
 }
 
-const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, setMedicoData }) => {
+const MedicoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, setMedicoData }) => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [tempError] = useState<string>('');
 
@@ -40,6 +46,13 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                 break;
             default:
                 break;
+        }
+        if (fieldName === 'fechaNacimiento') {
+            const currentDate = new Date();
+            const selectedDate = new Date(value as string);
+            if (selectedDate > currentDate) {
+                error = 'La fecha de nacimiento no puede ser mayor que la fecha actual';
+            }
         }
 
         setErrors((prevErrors) => ({
@@ -98,7 +111,6 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
         }
     };
 
-
     const handleTelefonoBlur = (event: React.FocusEvent<HTMLInputElement>) => {
         const { value } = event.target;
 
@@ -117,11 +129,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
 
     return (
         <Grid container spacing={1}>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        Nombre
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Nombre</InputLabel>
                     <OutlinedInput
                         name="nombre"
                         value={medicoData.nombre}
@@ -136,11 +146,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        Apellido
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Apellido</InputLabel>
                     <OutlinedInput
                         name="apellido"
                         value={medicoData.apellido}
@@ -155,11 +163,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        Teléfono
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Teléfono</InputLabel>
                     <OutlinedInput
                         name="telefono"
                         value={medicoData.telefono}
@@ -175,11 +181,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        Email
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Email</InputLabel>
                     <OutlinedInput
                         name="email"
                         value={medicoData.email}
@@ -194,11 +198,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        N° de Documento
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>N° de Documento</InputLabel>
                     <OutlinedInput
                         name="dni"
                         type="text"
@@ -223,7 +225,7 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
                     <InputLabel shrink sx={{ fontSize: '16px' }}>
                         Fecha de Nacimiento
@@ -243,11 +245,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        CUIL/T
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>CUIL/T</InputLabel>
                     <OutlinedInput
                         name="cuil"
                         value={medicoData.cuil}
@@ -263,11 +263,9 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
-                    <InputLabel shrink sx={{ fontSize: '16px' }}>
-                        Especialidad
-                    </InputLabel>
+                    <InputLabel sx={{ fontSize: '16px' }}>Especialidad</InputLabel>
                     <OutlinedInput
                         name="especialidad"
                         value={medicoData.especialidad}
@@ -286,4 +284,4 @@ const MedicoNuevoForm: React.FC<MedicoFormularioNuevoProps> = ({ medicoData, set
     );
 };
 
-export default MedicoNuevoForm;
+export default MedicoForm;

@@ -27,3 +27,10 @@ export const updateMedico = async (medicoId: number, medicoData: MedicoRequestDt
         throw new Error('Error al actualizar el médico');
     }
 };
+export const deleteMedico = async (medicoId: number): Promise<void> => {
+  try {
+    await api.delete(`/especialistas/${medicoId}`);
+  } catch (error) {
+    throw new Error('Error al eliminar el médico');
+  }
+};

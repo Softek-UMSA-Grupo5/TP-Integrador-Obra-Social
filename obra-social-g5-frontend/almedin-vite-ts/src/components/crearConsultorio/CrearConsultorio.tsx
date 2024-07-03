@@ -20,7 +20,8 @@ import { ConsultorioCreateRequest, ConsultorioResponseDto } from '../../assets/m
 import UbicacionForm from './UbicacionForm';
 import HorarioForm from './HorarioForm';
 import MedicoExistenteSelect from './MedicoExistenteSelect';
-import MedicoNuevoForm from './MedicoNuevoForm';
+import MedicoForm from '../crearMedico/MedicoForm';
+
 
 const ConsultorioForm: React.FC = () => {
     const [officeData, setOfficeData] = useState<ConsultorioCreateRequest>({
@@ -34,17 +35,7 @@ const ConsultorioForm: React.FC = () => {
         },
         medicoId: undefined,
     });
-    const [medicoData, setMedicoData] = useState<{
-        nombre: string;
-        apellido: string;
-        telefono: string;
-        email: string;
-        dni: number;
-        fechaNacimiento: string;
-        cuil: string;
-        especialidad: string;
-        consultoriosId: number[];
-    }>({
+    const [medicoData, setMedicoData] = useState<MedicoRequestDto>({
         nombre: '',
         apellido: '',
         telefono: '',
@@ -192,42 +183,20 @@ const ConsultorioForm: React.FC = () => {
     };
 
     return (
-        <Card style={{ width: '100%', height: '100%', textAlign: 'center' }}>
+    <Card style={{maxWidth:'100%', textAlign: 'center', boxShadow: 'none' }}>
             <CardHeader
                 title={
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            borderBottom: 2,
-                            borderColor: 'gray.200',
-                            pb: 4,
-                            width: '100%',
-                        }}>
-                        <Typography
-                            variant="h4"
-                            component="h1"
-                            sx={{
-                                fontWeight: 'bold',
-                                color: 'primary.main',
-                                textAlign: { xs: 'center', sm: 'left' },
-                            }}>
-                            Almedin
+                    <Box sx={{ textAlign: { xs: 'center'}, mt: { xs: 2, sm: 0 } }}>
+                        <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+                            Registro de Consultorios
                         </Typography>
-                        <Box
-                            sx={{ textAlign: { xs: 'center', sm: 'right' }, mt: { xs: 2, sm: 0 } }}>
-                            <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
-                                Registro de Consultorio
-                            </Typography>
-                        </Box>
                     </Box>
                 }
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
-                    <Grid container spacing={1} style={{ width: '70%', margin: 'auto' }}>
+                    <Grid
+                        container>
                         <UbicacionForm
                             ubicacion={officeData.ubicacion}
                             handleLocationChange={handleLocationChange}
@@ -241,10 +210,10 @@ const ConsultorioForm: React.FC = () => {
                         />
 
                         <Grid item xs={12}>
-                            <FormControl component="fieldset">
-                                <h4 style={{ marginBottom: '0' }}>
+                            <FormControl fullWidth>
+                                 <Typography variant="h6" component="h4" sx={{ my: 2, fontSize: '1rem' }}>
                                     Seleccione una opción para médico:
-                                </h4>
+                                </Typography>
                                 <div>
                                     <FormControlLabel
                                         control={
@@ -254,7 +223,7 @@ const ConsultorioForm: React.FC = () => {
                                                 name="createNewMedico"
                                             />
                                         }
-                                        label="Nuevo Médico"
+                                        label={<Typography sx={{ fontSize:{xs:'0.8rem', md:'0.9rem'} }}>Nuevo médico</Typography>}
                                     />
                                     <FormControlLabel
                                         control={
@@ -264,7 +233,7 @@ const ConsultorioForm: React.FC = () => {
                                                 name="selectExistingMedico"
                                             />
                                         }
-                                        label="Médico Existente"
+                                        label={<Typography sx={{ fontSize:{xs:'0.8rem', md:'0.9rem'} }}>Médico existente</Typography>}
                                     />
                                     <FormControlLabel
                                         control={
@@ -274,10 +243,10 @@ const ConsultorioForm: React.FC = () => {
                                                 name="noMedico"
                                             />
                                         }
-                                        label="No asociar Médico"
+                                        label={<Typography sx={{ fontSize:{xs:'0.8rem', md:'0.9rem'} }}>No asignar médico</Typography>}
                                     />
                                 </div>
-                                <div style={{ width: '70%', margin: 'auto' }}>
+                                <div style={{width: '100%', margin: 'auto' }}>
                                     {selectExistingMedico && (
                                         <MedicoExistenteSelect
                                             existingMedicos={existingMedicos}
@@ -290,16 +259,14 @@ const ConsultorioForm: React.FC = () => {
                                 </div>
                                 <div>
                                     {createNewMedico && (
-                                        <MedicoNuevoForm
-                                            medicoData={medicoData}
-                                            setMedicoData={setMedicoData}
-                                        />
+                                        <MedicoForm 
+                                        medicoData={medicoData} setMedicoData={setMedicoData} />
                                     )}
                                 </div>
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={12} md={3} mx={{ md: '35%', sm: 0 }} padding={0}>
+                        <Grid item xs={12} sm={12} md={3} mx={{ md: '40%', sm: 0 }} padding={0}>
                             <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Crear Consultorio

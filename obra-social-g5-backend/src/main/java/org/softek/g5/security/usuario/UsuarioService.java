@@ -101,6 +101,7 @@ public class UsuarioService {
 
 			String passwordEncript = passwordEncoder.encode(dto.getPassword());
 			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, dto.getEmail(), rol, false);
+			System.out.println("Usuario a persistir: " + usuario);
 			usuario.persist();
 
 		} catch (CustomServerException e) {
@@ -137,6 +138,12 @@ public class UsuarioService {
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al restaurar un usuario");
 		}
+	}
+
+	@Transactional
+	public Usuario getUsuarioByUsername(String username) {
+		Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
+		return optionalUsuario.orElse(null);
 	}
 
 }

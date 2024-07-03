@@ -23,3 +23,9 @@ export interface UsuarioLoginDto {
     username: string;
     password: string;
 }
+export interface UsuarioResponseDto {
+    id: number;
+    rol: UsuarioRolesEnum;
+    username: string;
+    token: string;
+}
