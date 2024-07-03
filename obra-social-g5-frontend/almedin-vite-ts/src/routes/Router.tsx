@@ -1,14 +1,15 @@
 import ConsultorioForm from "../components/crearConsultorio/CrearConsultorio"
-import UsuarioForm from "../components/crearUsuario/CrearUsuario"
+//import UsuarioForm from "../components/crearUsuario/CrearUsuario"
 import LandingPage from '../components/landingPage/LandingPage';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import UserLogin from '../components/userLogin/UserLogin';
 import CrearTurnoMedico from "../components/crearTurnoMedico/CrearTurnoMedico";
 import ResponsiveMain from "../components/landingPage/ResponsiveMain";
+import ListaMedicos from "../components/listaMedicos/ListaMedicos";
+import ListaTurnosSocio from "../components/listaTurnosSocio/ListaTurnosSocio";
 import AñadirSocio from "../components/socio/AñadirSocio";
 import AgregarMedicoFormulario from "../components/crearMedico/CrearMedico";
 import MedicosList from "../components/editarMedicos/Medicos";
-
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,11 @@ const router = createBrowserRouter([
             {
                 path: '/consultorios',
                 element: <ConsultorioForm />,
+            },
+           
+            {
+                path: '/turnos',
+                element: <ListaTurnosSocio />,
             },
             {
                 path: '/funcionarios',

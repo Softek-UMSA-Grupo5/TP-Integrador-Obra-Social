@@ -4,5 +4,5 @@ export interface HorarioAtencion {
     horaInicio: string;
     horaFin: string;
     estaEliminado: boolean;
-    codigo: String;
+    codigo: string;
 }
