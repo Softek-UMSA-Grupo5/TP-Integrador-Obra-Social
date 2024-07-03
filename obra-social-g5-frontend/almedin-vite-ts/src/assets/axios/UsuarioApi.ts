@@ -1,15 +1,7 @@
 import api from './api';
-import { UsuarioLoginDto, UsuarioRequestDto, UsuarioRolesEnum, UsuarioTokenRefresh } from '../models/Usuario';
+import { UsuarioLoginDto, UsuarioRequestDto, UsuarioRolesEnum } from '../models/Usuario';
 import { User } from '../contexts/UserContext';
 
-/* export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRolesEnum): Promise<void> => {
-    try {
-        const response = await api.post(`/usuarios?RolUsuario=${rol}`, dto);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error al registrar el usuario');
-    }
-}; */
 export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRolesEnum): Promise<void> => {
     try {
         const params = new URLSearchParams({ 'Rol Usuario': rol });
@@ -55,3 +47,12 @@ export async function updateUserPassword(json: UsuarioLoginDto, newPassword: str
         console.log('Error al actualizar contraseña de usuario: ', error);
     }
 }
+
+export const getUserByUsername = async (username: string) => {
+    try {
+        const response = await api.get(`/usuarios/${username}`);
+        return response.data;
+    } catch (error) {
+        throw new Error('Error al buscar el usuario por nombre de usuario');
+    }
+};

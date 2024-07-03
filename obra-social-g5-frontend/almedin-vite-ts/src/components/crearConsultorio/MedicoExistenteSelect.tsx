@@ -35,7 +35,7 @@ const MedicoExistenteSelect: React.FC<MedicoSeleccionExistenteProps> = ({
                         sx={{ width: '100%' }}>
                         {existingMedicos.map((medico) => (
                             <MenuItem key={medico.id} value={medico.id}>
-                                {`${medico.nombre} ${medico.apellido}`}
+                                {`${medico.nombre} ${medico.apellido}, ${medico.dni} , ${medico.especialidad}`}
                             </MenuItem>
                         ))}
                     </Select>

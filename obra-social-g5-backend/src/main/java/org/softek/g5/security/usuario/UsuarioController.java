@@ -1,5 +1,6 @@
 package org.softek.g5.security.usuario;
 
+import jakarta.ws.rs.*;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.softek.g5.entities.medico.MedicoFactory;
@@ -27,6 +28,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.Optional;
 
 @Path("/usuarios")
 @Blocking
@@ -79,6 +82,7 @@ public class UsuarioController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response registrarSocio(@Valid UsuarioRequestDto dto,
 			@Parameter(required = true, description = "Rol de usuario") @QueryParam("Rol Usuario") UsuarioRolesEnum rol) {
+		System.out.println("Rol recibido: " + rol);
 		usuarioService.registrarUsuario(dto, rol);
 		return Response.ok().build();
 	}
@@ -103,7 +107,7 @@ public class UsuarioController {
 	
 	@POST
 	@Path("/info")
-	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_SOCIO", "ROL_MEDICO" })
+	@RolesAllowed({ "ROL_RECEPCIONISTA", "ROL_SOCIO", "ROL_MEDICO", "ROL_ADMIN" })
 	@Operation(summary = "Devuelve información del usuario", description = "Devuelve información del usuario")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -132,4 +136,14 @@ public class UsuarioController {
 	}
 	
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{username}")
+	public Response getUsuarioByUsername(@PathParam("username") String username) {
+		Usuario usuario = usuarioService.getUsuarioByUsername(username);
+		if (usuario != null) {
+			return Response.ok(usuario).build();
+		}
+		return Response.status(Response.Status.NOT_FOUND).entity("{\"message\":\"Usuario no encontrado\"}").build();
+	}
 }

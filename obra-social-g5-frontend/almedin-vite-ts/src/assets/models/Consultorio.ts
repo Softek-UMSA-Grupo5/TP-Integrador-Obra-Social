@@ -1,6 +1,16 @@
 import { Horario, HorarioResponseDto } from "./Horario";
+import { Medico } from "./Medico";
 import { Ubicacion, UbicacionResponseDto } from "./Ubicacion";
 
+
+export interface Consultorio {
+    id: number;
+    horarioAtencion: Horario[];
+    ubicacion: Ubicacion;
+    estaEliminado: boolean;
+    codigo: string;
+    medico: Medico | null; // Medico puede ser nulo si no está asignado
+}
 export interface ConsultorioCreateRequest {
     id?: number;
     horarioAtencion: { diaSemana: string; horaInicio: string; horaFin: string }[];

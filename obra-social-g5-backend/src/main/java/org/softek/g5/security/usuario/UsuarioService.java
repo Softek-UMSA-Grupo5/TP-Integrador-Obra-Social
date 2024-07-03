@@ -166,4 +166,10 @@ public class UsuarioService {
 		}
 	}
 
+	@Transactional
+	public Usuario getUsuarioByUsername(String username) {
+		Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
+		return optionalUsuario.orElse(null);
+	}
+
 }

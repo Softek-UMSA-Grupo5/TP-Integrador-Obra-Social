@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Button,
     Select,
@@ -11,20 +11,16 @@ import {
     Grid,
     OutlinedInput,
     Typography,
-    FormControlLabel,
-    Checkbox,
     Box,
 } from '@mui/material';
 import { UsuarioRequestDto, UsuarioRolesEnum } from '../../assets/models/Usuario';
-import { registrarUsuario } from '../../assets/axios/UsuarioApi';
-import MedicoNuevoForm from '../crearConsultorio/MedicoNuevoForm';
-import ConsultorioSelect from '../crearConsultorio/ConsultorioSelect';
-import { MedicoResponseDto } from '../../assets/models/Medico';
-import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
+import { registrarUsuario, getUserByUsername } from '../../assets/axios/UsuarioApi';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { getAllConsultorios } from '../../assets/axios/ConsultorioApi';
-import { getAllMedicos, addMedico, updateMedico } from '../../assets/axios/MedicoApi';
-import MedicoExistenteSelect from '../crearConsultorio/MedicoExistenteSelect';
+import RecepcionistaForm from './CrearRecepcionista';
+import { RecepcionistaRequestDto } from '../../assets/models/Recepcionista';
+import { addRecepcionista } from '../../assets/axios/RecepcionistaApi';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const formatRol = (rol: UsuarioRolesEnum) => rol.replace('ROL_', '').toLowerCase();
 const UsuarioForm: React.FC = () => {
@@ -32,64 +28,24 @@ const UsuarioForm: React.FC = () => {
         username: '',
         password: '',
         email: '',
-        rol: UsuarioRolesEnum.ROL_SOCIO,
+        rol: UsuarioRolesEnum.ROL_ADMIN,
     });
-    const [selectedRol, setSelectedRol] = useState<UsuarioRolesEnum>(UsuarioRolesEnum.ROL_SOCIO);
-    const [showMedicoOptions, setShowMedicoOptions] = useState<boolean>(false);
-    const [isExistingMedico, setIsExistingMedico] = useState<boolean>(false);
-    const [isNewMedico, setIsNewMedico] = useState<boolean>(false);
-    const [medicoData, setMedicoData] = useState<{
-        nombre: string;
-        apellido: string;
-        telefono: string;
-        email: string;
-        dni: number;
-        fechaNacimiento: string;
-        cuil: string;
-        especialidad: string;
-        consultoriosId: number[];
-    }>({
+    const [selectedRol, setSelectedRol] = useState<UsuarioRolesEnum>(UsuarioRolesEnum.ROL_ADMIN);
+    const [isExistingRecepcionista] = useState<boolean>(false);
+    const [isNewRecepcionista, setIsNewRecepcionista] = useState<boolean>(false);
+
+    const [recepcionistaData, setRecepcionistaData] = useState<RecepcionistaRequestDto>({
         nombre: '',
         apellido: '',
         telefono: '',
         email: '',
         dni: 0,
-        fechaNacimiento: '',
+        fechaNacimiento: new Date(),
         cuil: '',
-        especialidad: '',
-        consultoriosId: [],
+        usuarioId: 0,
     });
-    const [consultorios, setConsultorios] = useState<ConsultorioResponseDto[]>([]);
-    const [selectedConsultorioId, setSelectedConsultorioId] = useState<number | undefined>(
-        undefined
-    );
-    const [medicos, setMedicos] = useState<MedicoResponseDto[]>([]);
-    const [selectedMedicoId, setSelectedMedicoId] = useState<number>(0);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<boolean>(false);
 
-    useEffect(() => {
-        fetchConsultorios();
-        fetchMedicos();
-    }, []);
-
-    const fetchConsultorios = async () => {
-        try {
-            const consultoriosData = await getAllConsultorios();
-            setConsultorios(consultoriosData);
-        } catch (error) {
-            console.error('Error al obtener los consultorios', error);
-        }
-    };
-
-    const fetchMedicos = async () => {
-        try {
-            const medicosData = await getAllMedicos();
-            setMedicos(medicosData);
-        } catch (error) {
-            console.error('Error al obtener los médicos', error);
-        }
-    };
+    const [showRecepcionistaOptions, setShowRecepcionistaOptions] = useState<boolean>(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -102,94 +58,54 @@ const UsuarioForm: React.FC = () => {
     const handleSelectChange = (e: SelectChangeEvent<UsuarioRolesEnum>) => {
         const { value } = e.target;
         setSelectedRol(value as UsuarioRolesEnum);
-        setShowMedicoOptions(value === UsuarioRolesEnum.ROL_MEDICO);
-        if (value !== UsuarioRolesEnum.ROL_MEDICO) {
-            setIsExistingMedico(false);
-            setIsNewMedico(false);
+        const isRecepcionista = value === UsuarioRolesEnum.ROL_RECEPCIONISTA;
+        setShowRecepcionistaOptions(isRecepcionista);
+
+        if (!isRecepcionista) {
+            setIsNewRecepcionista(false);
+        } else {
+            setIsNewRecepcionista(true);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setError(null);
-        setSuccess(false);
-
         try {
-            if (isNewMedico) {
-                const medicoNuevo = { ...medicoData, consultoriosId: [selectedConsultorioId!] };
-                await addMedico([medicoNuevo]);
-            } else if (isExistingMedico && selectedMedicoId !== undefined) {
-                const medicoExistente = medicos.find((medico) => medico.id === selectedMedicoId);
-                if (medicoExistente) {
-                    if (!medicoExistente.consultoriosId) {
-                        medicoExistente.consultoriosId = [];
-                    }
-                    if (!medicoExistente.consultoriosId.includes(selectedConsultorioId!)) {
-                        medicoExistente.consultoriosId.push(selectedConsultorioId!);
-                        await updateMedico(selectedMedicoId, medicoExistente);
-                    }
-                }
+            usuarioData.rol = isExistingRecepcionista
+                ? UsuarioRolesEnum.ROL_RECEPCIONISTA
+                : selectedRol;
+            await registrarUsuario(usuarioData, usuarioData.rol);
+
+            const usuarioResponse = await getUserByUsername(usuarioData.username);
+            const usuarioId = usuarioResponse.id;
+
+            if (isNewRecepcionista && showRecepcionistaOptions) {
+                const recepcionistaNuevo = {
+                    ...recepcionistaData,
+                    usuarioId,
+                };
+                await addRecepcionista(recepcionistaNuevo);
             }
 
-            if (isExistingMedico) {
-                await registrarUsuario(usuarioData, UsuarioRolesEnum.ROL_MEDICO);
-            } else {
-                await registrarUsuario(usuarioData, selectedRol);
-            }
-
-            setSuccess(true);
+            toast.success('Usuario registrado exitosamente', {
+                position: 'bottom-right',
+            });
         } catch (error) {
-            setError('Error al registrar el usuario');
-            console.error('Error:', error);
+            toast.error('Error al registrar el Usuario o Fucnionario', {
+                position: 'bottom-right',
+            });
         }
     };
-    const handleSelectConsultorioChange = (event: SelectChangeEvent<number>) => {
-        setSelectedConsultorioId(Number(event.target.value));
-    };
-
-    const handleSelectMedicoChange = (event: SelectChangeEvent<number>) => {
-        setSelectedMedicoId(Number(event.target.value));
-    };
-
-    const handleExistingMedicoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setIsExistingMedico(event.target.checked);
-        setIsNewMedico(false);
-    };
-
-    const handleNewMedicoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setIsNewMedico(event.target.checked);
-        setIsExistingMedico(false);
-    };
+    const allowedRoles = [UsuarioRolesEnum.ROL_ADMIN, UsuarioRolesEnum.ROL_RECEPCIONISTA];
 
     return (
-        <Card style={{ width: '100%', height: '100%' }}>
+        <Card style={{ width: '100%', boxShadow: 'none' }}>
             <CardHeader
                 title={
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            borderBottom: 2,
-                            borderColor: 'gray.200',
-                            pb: 4,
-                            width: '100%',
-                        }}>
-                        <Typography
-                            variant="h4"
-                            component="h1"
-                            sx={{
-                                fontWeight: 'bold',
-                                color: 'primary.main',
-                                textAlign: { xs: 'center', sm: 'left' },
-                            }}>
-                            Almedin
-                        </Typography>
-                        <Box
-                            sx={{ textAlign: { xs: 'center', sm: 'right' }, mt: { xs: 2, sm: 0 } }}>
+                    <Box>
+                        <Box sx={{ textAlign: 'center' }}>
                             <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
-                                Registro de Usuario
+                                Agregar Funcionario
                             </Typography>
                         </Box>
                     </Box>
@@ -197,7 +113,33 @@ const UsuarioForm: React.FC = () => {
             />
             <CardContent>
                 <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2} p={5}>
+                    <Grid container spacing={2} p={3}>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel sx={{ fontSize: '16px' }}>Rol del funcionario</InputLabel>
+                                <Select
+                                    value={selectedRol}
+                                    onChange={handleSelectChange}
+                                    sx={{ my: 1.5, maxHeight: 40 }}
+                                    input={<OutlinedInput />}>
+                                    {allowedRoles.map((rol) => (
+                                        <MenuItem key={rol} value={rol}>
+                                            {formatRol(rol)}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        {showRecepcionistaOptions && (
+                            <>
+                                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                    <RecepcionistaForm
+                                        recepcionistaData={recepcionistaData}
+                                        setRecepcionistaData={setRecepcionistaData}
+                                    />
+                                </Grid>
+                            </>
+                        )}
                         <Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel>Nombre de Usuario</InputLabel>
@@ -238,102 +180,6 @@ const UsuarioForm: React.FC = () => {
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel sx={{ fontSize: '16px' }}>Roles</InputLabel>
-                                <Select
-                                    value={selectedRol}
-                                    onChange={handleSelectChange}
-                                    sx={{ my: 1.5, maxHeight: 40 }}
-                                    input={<OutlinedInput />}>
-                                    {Object.values(UsuarioRolesEnum).map((rol) => (
-                                        <MenuItem key={rol} value={rol}>
-                                            {formatRol(rol)}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        {showMedicoOptions && (
-                            <>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                checked={isExistingMedico}
-                                                onChange={handleExistingMedicoChange}
-                                                name="existingMedico"
-                                                color="primary"
-                                            />
-                                        }
-                                        label="Médico existente"
-                                    />
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                checked={isNewMedico}
-                                                onChange={handleNewMedicoChange}
-                                                name="newMedico"
-                                                color="primary"
-                                            />
-                                        }
-                                        label="Nuevo Médico"
-                                    />
-                                </Grid>
-                                {isExistingMedico && (
-                                    <>
-                                        <Grid item xs={12}>
-                                            <InputLabel
-                                                shrink
-                                                sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                                                Medico{' '}
-                                            </InputLabel>
-                                            <MedicoExistenteSelect
-                                                existingMedicos={medicos}
-                                                selectedMedicoId={selectedMedicoId}
-                                                handleSelectExistingMedicoChange={
-                                                    handleSelectMedicoChange
-                                                }
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <InputLabel
-                                                shrink
-                                                sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-                                                Consultorio{' '}
-                                            </InputLabel>
-                                            <ConsultorioSelect
-                                                consultorios={consultorios}
-                                                selectedConsultorioId={selectedConsultorioId}
-                                                handleSelectConsultorioChange={
-                                                    handleSelectConsultorioChange
-                                                }
-                                            />
-                                        </Grid>
-                                    </>
-                                )}
-                                {isNewMedico && (
-                                    <>
-                                        <MedicoNuevoForm
-                                            medicoData={medicoData}
-                                            setMedicoData={setMedicoData}
-                                        />
-                                        <Grid item xs={12}>
-                                            <ConsultorioSelect
-                                                consultorios={consultorios}
-                                                selectedConsultorioId={selectedConsultorioId}
-                                                handleSelectConsultorioChange={
-                                                    handleSelectConsultorioChange
-                                                }
-                                            />
-                                        </Grid>
-                                    </>
-                                )}
-                            </>
-                        )}
                         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                             <Button
                                 type="submit"
@@ -343,20 +189,9 @@ const UsuarioForm: React.FC = () => {
                                 Registrar
                             </Button>
                         </Grid>
-                        {error && (
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography color="error">{error}</Typography>
-                            </Grid>
-                        )}
-                        {success && (
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography color="primary">
-                                    Usuario registrado con éxito
-                                </Typography>
-                            </Grid>
-                        )}
                     </Grid>
                 </form>
+                <ToastContainer />
             </CardContent>
         </Card>
     );
