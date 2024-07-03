@@ -14,6 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class UbicacionRequestDto {
+	
+	private Long id;
 	@NotBlank
     private String ciudad;
 	@NotBlank
@@ -23,4 +25,5 @@ public class UbicacionRequestDto {
     @NotNull
     private int altura;
     private String codigo;
+    
 }

@@ -13,6 +13,7 @@ import lombok.Setter;
 @Builder
 public class MedicamentoResponseDto {
 
+	private Long id;
 	private String codigo;
 	private String nombre;
     private String concentracion;
@@ -21,6 +22,6 @@ public class MedicamentoResponseDto {
     private String duracion;
     private String instrucciones;
     private Boolean estaEliminado;
-    private Long receta;
+    private Long recetaId;
 	
 }

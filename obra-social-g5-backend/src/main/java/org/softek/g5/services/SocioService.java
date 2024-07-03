@@ -1,17 +1,15 @@
 package org.softek.g5.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.softek.g5.entities.beneficiario.Beneficiario;
 import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
-import org.softek.g5.entities.beneficiario.dto.BeneficiarioRequestDto;
+import org.softek.g5.entities.beneficiario.dto.BeneficiarioUpdateRequestDto;
 import org.softek.g5.entities.socio.Socio;
 import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
-import org.softek.g5.entities.socio.dto.SocioResponseDto;
+import org.softek.g5.entities.socio.dto.SocioUpdateRequestDto;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
@@ -44,32 +42,56 @@ public class SocioService {
 	BeneficiarioRepository beneficiarioRepository;
 
 	@Transactional
-	public Collection<SocioResponseDto> getSocios() throws CustomServerException{
+	public List<Socio> getSocios() throws CustomServerException {
 		try {
-			Collection<Socio> socios = socioRepository.listAll();
-			Collection<SocioResponseDto> dtos = new ArrayList<>();
+			List<Socio> socios = socioRepository.listAll();
 
-			for (Socio s : socios) {
-				dtos.add(socioFactory.createResponseFromEntity(s));
-			}
-
-			if (dtos.isEmpty()) {
+			if (socios.isEmpty()) {
 				throw new EntityNotFoundException("No hay registros de Socio");
 			}
-			return dtos;
-			
-		}catch(CustomServerException e) {
+			return socios;
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los socios");
+		}
+	}
+	
+	@Transactional
+	public Socio getSocioById(Long id) throws CustomServerException {
+		try {
+			Socio socio = socioRepository.findById(id);
+
+			if (socio == null) {
+				throw new EntityNotFoundException("No hay registros de Socio");
+			}
+			return socio;
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al obtener los socios");
+		}
+	}
+	
+	@Transactional
+	public Socio getSocioByUser(Long id) throws CustomServerException {
+		try {
+			Optional<Socio> optionalSocio = socioRepository.findByUser(id);
+
+			if (optionalSocio.isEmpty()) {
+				throw new EntityNotFoundException("No hay registros de Socio con ese usuario");
+			}
+			return optionalSocio.get();
+
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al obtener los socios");
 		}
 	}
 
 	@Transactional
-	public SocioResponseDto persistSocio(SocioRequestDto dto) throws CustomServerException{
+	public Socio persistSocio(SocioRequestDto dto) throws CustomServerException {
 		try {
-			SocioResponseDto response = new SocioResponseDto();
-			
+
 			DataValidator.validateDtoFields(dto);
-			if(!SocioValidator.validateRequestDto(dto)) {
+			if (!SocioValidator.validateRequestDto(dto)) {
 				throw new InvalidDataRequest("Los datos enviados de socio son erróneos");
 			}
 
@@ -78,53 +100,51 @@ public class SocioService {
 			if (optionalSocio.isPresent()) {
 				throw new RuntimeException("Este socio ya existe");
 			}
-			
+
 			this.socioRepository.persist(socio);
 			this.beneficiarioService.persistBeneficiario(socio.getDni(), dto.getBeneficiarios());
-			
-			response = socioFactory.createResponseFromEntity(socio);
 
-			return response;
-		}catch(CustomServerException e) {
+			return socio;
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al crear los socios");
 		}
 	}
 
 	@Transactional
-	public SocioResponseDto updateSocio(Long id, SocioRequestDto dto) throws CustomServerException{
+	public Socio updateSocio(SocioUpdateRequestDto dto) throws CustomServerException {
 		try {
-			Optional<Socio> optionalSocio = Optional.of(socioRepository.findById(id));
-			if (optionalSocio.isPresent()) {
-				
-				DataValidator.validateDtoFields(dto);
-				if(!SocioValidator.validateRequestDto(dto)) {
-					throw new InvalidDataRequest("Los datos enviados de socio son erróneos");
-				}
-				
-				Socio socio = optionalSocio.get();
-				socio.setId(optionalSocio.get().getId());
-				socio.setApellido(dto.getApellido());
-				socio.setNombre(dto.getNombre());
-				socio.setCuil(dto.getCuil());
-				socio.setDni(dto.getDni());
-				socio.setEmail(dto.getEmail());
-				socio.setFechaNacimiento(dto.getFechaNacimiento());
-				socio.setTelefono(dto.getTelefono());
-				
-				for (BeneficiarioRequestDto d : dto.getBeneficiarios()) {
-					beneficiarioService.updateBeneficiario(d.getDni(), socio.getId(), d);
-				}
-				return this.socioFactory.createResponseFromEntity(socio);
-			} else {
+
+			DataValidator.validateDtoFields(dto);
+			if (!SocioValidator.validateRequestDto(dto)) {
+				throw new InvalidDataRequest("Los datos enviados de socio son erróneos");
+			}
+
+			Optional<Socio> optionalSocio = Optional.of(socioRepository.findById(dto.getId()));
+			if (optionalSocio.isEmpty()) {
 				throw new EntityNotFoundException("Socio no encontrado");
 			}
-		}catch(CustomServerException e) {
+
+			Socio socio = optionalSocio.get();
+			socio.setId(optionalSocio.get().getId());
+			socio.setApellido(dto.getApellido());
+			socio.setNombre(dto.getNombre());
+			socio.setCuil(dto.getCuil());
+			socio.setDni(dto.getDni());
+			socio.setEmail(dto.getEmail());
+			socio.setFechaNacimiento(dto.getFechaNacimiento());
+			socio.setTelefono(dto.getTelefono());
+
+			for (BeneficiarioUpdateRequestDto d : dto.getBeneficiarios()) {
+				beneficiarioService.updateBeneficiario(socio.getId(), d);
+			}
+			return socio;
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al actualizar los socios");
 		}
 	}
 
 	@Transactional
-	public void deleteSocio(Long id) throws CustomServerException{
+	public void deleteSocio(Long id) throws CustomServerException {
 		try {
 			int updatedRows = this.socioRepository.update("estaEliminado = true WHERE id = ?1", id);
 			if (updatedRows == 0) {
@@ -134,7 +154,7 @@ public class SocioService {
 			for (Beneficiario b : beneficiarios) {
 				beneficiarioService.deleteBeneficiario(b.getId(), id);
 			}
-		}catch(CustomServerException e) {
+		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al eliminar un socio");
 		}
 	}

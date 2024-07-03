@@ -19,13 +19,14 @@ import lombok.Setter;
 @Builder
 public class TurnoMedicoResponseDto {
 
+	private Long id;
 	private String codigo;
 	private LocalDate fecha;
 	private int hora;
 	private int minutos;
 	private TurnoMedicoEstadoEnum estado;
 	private String motivoConsulta;
-	private Long recetaMedica;
+	private Long recetaMedicaId;
 	private Boolean estaDisponible;
 	private Long medicoId;
 	private Long socioId;

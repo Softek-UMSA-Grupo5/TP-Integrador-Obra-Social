@@ -14,15 +14,8 @@ public class UbicacionFactory {
             .provincia(dto.getProvincia())
             .calle(dto.getCalle())
             .altura(dto.getAltura())
+            .estaEliminado(false)
             .build();
-    }
-    public static Ubicacion toEntityFromResponseDto(UbicacionResponseDto responseDto) {
-        return Ubicacion.builder()
-                .ciudad(responseDto.getCiudad())
-                .provincia(responseDto.getProvincia())
-                .calle(responseDto.getCalle())
-                .altura(responseDto.getAltura())
-                .build();
     }
     
      public static UbicacionResponseDto toDto(Ubicacion ubicacion) {
@@ -31,6 +24,7 @@ public class UbicacionFactory {
     	    }
     	 	
         return UbicacionResponseDto.builder()
+        		.id(ubicacion.getId())
             .codigo(ubicacion.getCodigo())
             .ciudad(ubicacion.getCiudad())
             .provincia(ubicacion.getProvincia())
@@ -41,10 +35,4 @@ public class UbicacionFactory {
 
         }
      
-     public static void updateEntity(Ubicacion ubicacion, UbicacionRequestDto dto) {
-            ubicacion.setCiudad(dto.getCiudad());
-            ubicacion.setProvincia(dto.getProvincia());
-            ubicacion.setCalle(dto.getCalle());
-            ubicacion.setAltura(dto.getAltura());
-        }
 }

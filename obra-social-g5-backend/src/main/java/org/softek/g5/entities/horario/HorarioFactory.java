@@ -19,6 +19,7 @@ public class HorarioFactory {
 
         public static HorarioResponseDto toDto(Horario horario) {
             return HorarioResponseDto.builder()
+            		.id(horario.getId())
                     .codigo(horario.getCodigo())
                     .diaSemana(horario.getDiaSemana())
                     .horaInicio(horario.getHoraInicio())
@@ -27,9 +28,4 @@ public class HorarioFactory {
                     .build();
         }
 
-        public static void updateEntity(Horario horario , HorarioRequestDto dto) {
-            horario.setDiaSemana(dto.getDiaSemana());
-            horario.setHoraInicio(dto.getHoraInicio());
-            horario.setHoraFin(dto.getHoraFin());
-        }
 }

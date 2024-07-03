@@ -12,10 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class UbicacionResponseDto {
+	
+	private Long id;
     private String ciudad;
     private String provincia;
     private String calle;
     private int altura;
     private boolean estaEliminado;
     private String codigo;
+    
 }

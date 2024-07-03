@@ -7,9 +7,7 @@ import org.softek.g5.entities.beneficiario.BeneficiarioFactory;
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
-import org.softek.g5.entities.turnoMedico.TurnoMedico;
 import org.softek.g5.entities.turnoMedico.TurnoMedicoFactory;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 import org.softek.g5.repositories.BeneficiarioRepository;
 import org.softek.g5.repositories.TurnoMedicoRepository;
 
@@ -43,11 +41,13 @@ public class SocioFactory {
 				.estaEliminado(false)
 				.beneficiarios(null)
 				.turnos(null)
+				.usuario(null)
 				.build();
 	}
 	
 	public SocioResponseDto createResponseFromEntity(Socio socio) {
 		return SocioResponseDto.builder()
+				.id(socio.getId())
 				.nombre(socio.getNombre())
 				.apellido(socio.getApellido())
 				.telefono(socio.getTelefono())
@@ -58,7 +58,7 @@ public class SocioFactory {
 				.nroAfiliado(socio.getNroAfiliado())
 				.estaEliminado(socio.getEstaEliminado())
 				.beneficiarios(createListBeneficiarioDtoFromEntity(socio.getBeneficiarios()))
-				.turnos(createListTurnoDtoFromEntity(socio.getTurnos()))
+				.usuario(socio.getUsuario().getId())
 				.build();
 	}
 	
@@ -73,14 +73,4 @@ public class SocioFactory {
     	return response;
     }
 	
-	public List<TurnoMedicoResponseDto> createListTurnoDtoFromEntity(List<TurnoMedico> turnos){
-		List<TurnoMedicoResponseDto> response = new ArrayList<>();
-		if(turnos == null) {
-			return response;
-		}
-    	for (TurnoMedico t : turnos) {
-    		response.add(turnoMedicoFactory.createResponseFromEntity(t));
-		}
-    	return response;
-    }
 }

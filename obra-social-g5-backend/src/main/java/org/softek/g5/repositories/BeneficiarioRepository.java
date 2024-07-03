@@ -10,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class BeneficiarioRepository implements PanacheRepositoryBase<Beneficiario, Long>{
+	
 	public List<Beneficiario> findBySocio(Long id) {
 		return find("socio.id = ?1 ", id).list();
 	}
@@ -17,4 +18,9 @@ public class BeneficiarioRepository implements PanacheRepositoryBase<Beneficiari
 	public Optional<Beneficiario> findByDniyIdSocio(int dniBeneficiario, Long idSocio) {
 		return find("dni = ?1 and socio.id = ?2", dniBeneficiario, idSocio).firstResultOptional();
 	}
+	
+	public Optional<Beneficiario> findByIdBeneficiarioAndIdSocio(Long idBeneficiario, Long idSocio) {
+		return find("id = ?1 and socio.id = ?2", idBeneficiario, idSocio).firstResultOptional();
+	}
+	
 }

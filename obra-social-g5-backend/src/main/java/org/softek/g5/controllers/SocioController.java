@@ -1,11 +1,14 @@
 package org.softek.g5.controllers;
-import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.softek.g5.entities.socio.SocioFactory;
 import org.softek.g5.entities.socio.dto.SocioRequestDto;
 import org.softek.g5.entities.socio.dto.SocioResponseDto;
+import org.softek.g5.entities.socio.dto.SocioUpdateRequestDto;
 import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.services.SocioService;
 
@@ -24,7 +27,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.ResponseBuilder;
 import lombok.AllArgsConstructor;
 
 @Path("/socios")
@@ -32,44 +34,69 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Tag(name="SocioController", description="Endpoints del servicio Socio")
 public class SocioController {
+	
 	@Inject
 	SocioService socioService;
 	
+	@Inject
+	SocioFactory socioFactory;
+	
 	@GET
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(summary = "Obtener socio por id", description ="Se obtendrá una lista de todos los socios")
+	public Response getAll() throws CustomServerException{
+		
+		List<SocioResponseDto> socios = socioService.getSocios().stream().map(socioFactory::createResponseFromEntity).collect(Collectors.toList());
+		
+		return Response.ok(socios).build();
+		
+	}
+	
+	@GET
+	@Path("/{id}")
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener todos los socios", description ="Se obtendrá una lista de todos los socios")
-	public Collection<SocioResponseDto> getAll() throws CustomServerException{
-		return this.socioService.getSocios();
+	public Response getSocioById( @Parameter(required = true, description = "id del socio") @PathParam("id") Long id ) throws CustomServerException{
+		
+		SocioResponseDto socio = socioFactory.createResponseFromEntity(socioService.getSocioById(id));
+		
+		return Response.ok(socio).build();
+		
 	}
 	
 	@POST
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un socio", description ="Se creará un socio")
 	@Transactional
-	public SocioResponseDto addSocio(@Valid SocioRequestDto dto) throws CustomServerException{
-		SocioResponseDto response = this.socioService.persistSocio(dto);
-		return response;
+	public Response addSocio(@Valid SocioRequestDto dto) throws CustomServerException{
+		
+		SocioResponseDto socio = socioFactory.createResponseFromEntity(socioService.persistSocio(dto));
+		return Response.ok(socio).build();
+		
 	}
 	
 	@PUT
-	@RolesAllowed({"ROL_ADMIN", "ROL_RECEPCIONISTA"})
-	@Path("/{id}")
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Operation(summary = "Actualizar un socio", description ="Se actualizará un socio")
 	@Transactional
-	public ResponseBuilder update(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id, SocioRequestDto dto) throws CustomServerException{
-		socioService.updateSocio(id, dto);
-		return Response.ok();
+	public Response update(SocioUpdateRequestDto dto) throws CustomServerException{
+		
+		socioService.updateSocio(dto);
+		return Response.ok().build();
+		
 	}
 	
 	@DELETE
-	@RolesAllowed({"ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Path("/{id}")
 	@Operation(summary = "Eliminar un socio", description ="Se eliminará un socio")
 	@Transactional
-	public void delete(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id) throws CustomServerException{
+	public Response delete(@Parameter(required = true, description = "Socio ID") @PathParam("id") Long id) throws CustomServerException{
 		this.socioService.deleteSocio(id);
+		return Response.ok().build();
 	}
 }

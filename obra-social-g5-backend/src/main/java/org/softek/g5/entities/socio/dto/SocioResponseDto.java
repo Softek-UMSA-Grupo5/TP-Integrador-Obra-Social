@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.util.List;
 
 import org.softek.g5.entities.beneficiario.dto.BeneficiarioResponseDto;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class SocioResponseDto {
+	
+	private Long id;
 	private String nombre;
 	private String apellido;
 	private String telefono;
@@ -28,5 +29,6 @@ public class SocioResponseDto {
 	private String nroAfiliado;
 	protected Boolean estaEliminado;
 	private List<BeneficiarioResponseDto> beneficiarios;
-	private List<TurnoMedicoResponseDto> turnos;
+	private Long usuario;
+	
 }

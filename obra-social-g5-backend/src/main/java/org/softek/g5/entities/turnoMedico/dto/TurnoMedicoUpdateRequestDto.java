@@ -1,0 +1,43 @@
+package org.softek.g5.entities.turnoMedico.dto;
+
+import java.time.LocalDate;
+
+import org.softek.g5.entities.recetaMedica.dto.RecetaMedicaUpdateRequestDto;
+import org.softek.g5.entities.turnoMedico.TurnoMedicoEstadoEnum;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TurnoMedicoUpdateRequestDto {
+
+	private Long id;
+	
+	private TurnoMedicoEstadoEnum estado;
+
+	private RecetaMedicaUpdateRequestDto recetaMedica;
+	
+	@NotNull
+	private LocalDate fecha;
+	@NotNull
+	private int hora;
+	@NotNull
+	private int minutos;
+	@NotNull
+	private String motivoConsulta;
+	@NotNull
+	private Long medicoId;
+	@NotNull
+	private Long socioId;
+	
+}

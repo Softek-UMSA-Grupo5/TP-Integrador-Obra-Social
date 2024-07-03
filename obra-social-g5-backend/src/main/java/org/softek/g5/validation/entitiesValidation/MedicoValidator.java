@@ -10,7 +10,7 @@ public class MedicoValidator {
 				&& DataValidator.validateString(dto.getEmail(), 3, 254)
 				&& DataValidator.validateInteger(dto.getDni(), 1, 99999999)
 				&& DataValidator.ValidateDate(dto.getFechaNacimiento())
-				&& DataValidator.validateString(dto.getCuil(), 11, 11)
+				&& DataValidator.validateString(dto.getCuil(), 8, 15)
 				&& DataValidator.validateString(dto.getEspecialidad(), 4, 50);
 	}
 }

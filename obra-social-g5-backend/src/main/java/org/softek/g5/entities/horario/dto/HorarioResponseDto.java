@@ -2,7 +2,7 @@ package org.softek.g5.entities.horario.dto;
 
 import java.time.LocalTime;
 
-import org.softek.g5.entities.horario.Horario;
+import org.softek.g5.entities.horario.HorarioDiaSemanaEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +16,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class HorarioResponseDto {
-    private Horario.DiaSemana diaSemana;
+	
+	private Long id;
+    private HorarioDiaSemanaEnum diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
     private boolean estaEliminado;
     private String codigo;
+    
 }

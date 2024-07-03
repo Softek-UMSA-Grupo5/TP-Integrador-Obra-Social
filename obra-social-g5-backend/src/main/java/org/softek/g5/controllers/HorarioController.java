@@ -1,13 +1,14 @@
 package org.softek.g5.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.softek.g5.entities.horario.dto.HorarioRequestDto;
+import org.softek.g5.entities.horario.HorarioFactory;
 import org.softek.g5.entities.horario.dto.HorarioResponseDto;
-import org.softek.g5.entities.ubicacion.dto.UbicacionRequestDto;
+import org.softek.g5.entities.horario.dto.HorarioUpdateRequestDto;
 import org.softek.g5.services.HorarioService;
 
 import io.smallrye.common.annotation.Blocking;
@@ -32,74 +33,73 @@ public class HorarioController {
 	HorarioService horarioService;
 
 	@GET
-	@RolesAllowed({"ROL_SOCIO", "ROL_ADMIN", "ROL_RECEPCIONISTA"})
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horarios", description = "Se obtendrá una lista de horarios")
 	@APIResponse(responseCode = "200", description = "Lista de horarios")
-	public List<HorarioResponseDto> getAllHorarios() {
-		return horarioService.getAllHorarios();
+	public Response getAllHorarios() {
+
+		List<HorarioResponseDto> horarios = horarioService.getAllHorarios().stream().map(HorarioFactory::toDto)
+				.collect(Collectors.toList());
+
+		return Response.ok(horarios).build();
 	}
 
 	@GET
-	@RolesAllowed({"ROL_ADMIN"})
-	@Path("/eliminados")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Operation(summary = "Obtener horarios eliminados", description = "Se obtendrá una Lista de horarios eliminados por soft delete")
-	@APIResponse(responseCode = "200", description = "Lista de horarios eliminados")
-	public List<HorarioResponseDto> getAllHorariosDeleted() {
-		return horarioService.getAllHorariosDeleted();
-	}
-
-	@GET
-	@RolesAllowed({"ROL_ADMIN","ROL_RECEPCIONISTA"})
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
 	@Path("/{codigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Obtener horario", description = "Se obtendrá un horario en particular")
 	@APIResponse(responseCode = "200", description = "Horario devuelto con éxito")
 	@APIResponse(responseCode = "404", description = "Horario no encontrado")
 	public Response getHorarioByCodigo(@PathParam("codigo") String codigo) {
-		HorarioResponseDto dto = horarioService.getHorarioByCodigo(codigo);
-		if (dto == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
+
+		HorarioResponseDto dto = HorarioFactory.toDto(horarioService.getHorarioByCodigo(codigo));
+
 		return Response.ok(dto).build();
 	}
 
 	@PUT
-	@RolesAllowed({"ROL_ADMIN"})
-    @Path("/{codigo}")
-    @Transactional
-    @Operation(summary = "Actualiza horario", description ="Se actualizará un horario en particular")
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
+	@Transactional
+	@Operation(summary = "Actualiza horario", description = "Se actualizará un horario en particular")
 	@APIResponse(responseCode = "200", description = "Horario actualizado con éxito")
 	@APIResponse(responseCode = "404", description = "Horario no encontrado")
-    public Response updateHorario(@PathParam("codigo") String codigo, @Valid HorarioRequestDto dto) {
-        HorarioResponseDto updatedDto = horarioService.updateHorario(codigo, dto);
-        if (updatedDto == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(updatedDto).build();
-    }
-	
+	public Response updateHorario(@Valid HorarioUpdateRequestDto dto) {
+
+		HorarioResponseDto updatedDto = HorarioFactory.toDto(horarioService.updateHorario(dto));
+
+		return Response.ok(updatedDto).build();
+	}
+
 	@PUT
-	@RolesAllowed({"ROL_ADMIN"})
-	@Path("/restore/{codigo}")
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
+	@Path("/restore/{id}")
 	@Transactional
 	@Operation(summary = "Restaurar horario", description = "Se restaurará un horario eliminado en particular")
 	@APIResponse(responseCode = "200", description = "Horario restaurado con éxito")
 	@APIResponse(responseCode = "404", description = "Horario no encontrado")
 	@APIResponse(responseCode = "400", description = "El horario no está eliminado")
-	public Response restoreHorario(@PathParam("codigo") String codigo) {
-		return horarioService.restoreHorario(codigo);
+	public Response restoreHorario(@PathParam("id") Long idHorario) {
+
+		horarioService.restoreHorario(idHorario);
+
+		return Response.ok().build();
+
 	}
 
 	@DELETE
-	@RolesAllowed({"ROL_ADMIN"})
-	@Path("/{codigo}")
+	@RolesAllowed({ "ROL_RECEPCIONISTA" })
+	@Path("/{id}")
 	@Transactional
 	@Operation(summary = "Borrar horario", description = "Se borrará un horario por soft delete")
 	@APIResponse(responseCode = "204", description = "Horario eliminado con éxito")
 	@APIResponse(responseCode = "404", description = "Horario no encontrado")
-	public Response deleteHorario(@PathParam("codigo") String codigo) {
-		return horarioService.deleteHorario(codigo);
+	public Response deleteHorario(@PathParam("id") Long idHorario) {
+
+		horarioService.deleteHorario(idHorario);
+
+		return Response.ok().build();
+
 	}
 }

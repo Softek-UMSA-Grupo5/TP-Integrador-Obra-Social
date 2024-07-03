@@ -1,10 +1,6 @@
 package org.softek.g5.entities.medico.dto;
 
 import java.sql.Date;
-import java.util.List;
-
-import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
-import org.softek.g5.entities.turnoMedico.dto.TurnoMedicoResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class MedicoResponseDto {
+	
+	private Long id;
 	private String nombre;
 	private String apellido;
 	private String telefono;
@@ -27,6 +25,6 @@ public class MedicoResponseDto {
 	private Date fechaNacimiento;
 	private Boolean estaEliminado;
 	private String especialidad;
-	private List<ConsultorioResponseDto> consultorios;
-	private List<TurnoMedicoResponseDto> turnos;
+	private Long usuario;
+	
 }
