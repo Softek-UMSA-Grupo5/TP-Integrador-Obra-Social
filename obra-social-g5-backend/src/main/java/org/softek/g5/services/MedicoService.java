@@ -14,6 +14,8 @@ import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
 import org.softek.g5.repositories.ConsultorioRepository;
 import org.softek.g5.repositories.MedicoRepository;
+import org.softek.g5.security.usuario.Usuario;
+import org.softek.g5.security.usuario.UsuarioRepository;
 import org.softek.g5.validation.DataValidator;
 import org.softek.g5.validation.entitiesValidation.MedicoValidator;
 
@@ -36,6 +38,8 @@ public class MedicoService {
 
 	@Inject
 	ConsultorioService consultorioService;
+	@Inject
+	UsuarioRepository usuarioRepository;
 
 	@Transactional
 	public List<Medico> getMedicosEspecialistas() throws CustomServerException {
@@ -87,7 +91,6 @@ public class MedicoService {
 		try {
 			List<Medico> response = new ArrayList<>();
 			for (MedicoRequestDto dto : dtos) {
-
 				DataValidator.validateDtoFields(dto);
 				if (!MedicoValidator.validateRequestDto(dto)) {
 					throw new InvalidDataRequest("Los datos enviados de médico son erróneos");
@@ -96,12 +99,9 @@ public class MedicoService {
 				Medico medico = medicoFactory.createEntityFromDto(dto);
 
 				Optional<Medico> optionalMedico = medicoRepository.findByDni(medico.getDni());
-
 				if (optionalMedico.isPresent()) {
 					throw new EntityExistException("Este médico ya existe");
 				}
-
-				medico.persist();
 
 				for (Long d : dto.getConsultoriosId()) {
 					Consultorio consultorio = consultorioRepository.findById(d);
@@ -111,6 +111,14 @@ public class MedicoService {
 					consultorio.setMedico(medico);
 				}
 
+				if (dto.getUsuarioId() != null) {
+					Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioRepository.findById(dto.getUsuarioId()));
+					optionalUsuario.ifPresent(medico::setUsuario);
+				} else {
+					medico.setUsuario(null);
+				}
+
+				medico.persist();
 				response.add(medico);
 			}
 			return response;
@@ -118,6 +126,7 @@ public class MedicoService {
 			throw new CustomServerException("Error al crear los médicos");
 		}
 	}
+
 
 	@Transactional
 	public Medico updateMedico(Long id, MedicoRequestDto dto) throws CustomServerException {
@@ -141,6 +150,15 @@ public class MedicoService {
 				medico.setFechaNacimiento(dto.getFechaNacimiento());
 				medico.setCuil(dto.getCuil());
 				medico.setEspecialidad(dto.getEspecialidad());
+
+				if (dto.getUsuarioId() != null) {
+					Usuario usuario = new Usuario();
+					usuario.setId(dto.getUsuarioId());
+					medico.setUsuario(usuario);
+				} else {
+					medico.setUsuario(null);
+				}
+
 				for (Long d : dto.getConsultoriosId()) {
 					Consultorio consultorio = consultorioRepository.findById(d);
 					if (consultorio == null) {

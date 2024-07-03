@@ -48,7 +48,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
 
     return (
         <Grid container spacing={1}>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
                     <InputLabel sx={{ fontSize: '16px' }}>Calle</InputLabel>
                     <OutlinedInput
@@ -65,7 +65,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
                     <InputLabel sx={{ fontSize: '16px' }}>Altura o numeración</InputLabel>
                     <OutlinedInput
@@ -92,7 +92,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
                     <InputLabel sx={{ fontSize: '16px' }}>Ciudad</InputLabel>
                     <OutlinedInput
@@ -109,7 +109,7 @@ const UbicacionForm: React.FC<UbicacionFormProps> = ({ ubicacion, handleLocation
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
                 <FormControl fullWidth variant="outlined" sx={{ my: 0.5 }}>
                     <InputLabel sx={{ fontSize: '16px' }}>Provincia</InputLabel>
                     <OutlinedInput

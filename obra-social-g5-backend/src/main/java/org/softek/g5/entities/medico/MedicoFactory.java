@@ -40,21 +40,28 @@ public class MedicoFactory {
 				.usuario(null)
 				.build();
 	}
-	
+
 	public MedicoResponseDto createResponseFromEntity(Medico medico) {
-		return MedicoResponseDto.builder()
-				.id(medico.getId())
-				.nombre(medico.getNombre())
-				.apellido(medico.getApellido())
-				.telefono(medico.getTelefono())
-				.email(medico.getEmail())
-				.dni(medico.getDni())
-				.cuil(medico.getCuil())
-				.fechaNacimiento(medico.getFechaNacimiento())
-				.especialidad(medico.getEspecialidad())
-				.estaEliminado(medico.getEstaEliminado())
-				.usuario(medico.getUsuario().getId())
-				.build();
+		MedicoResponseDto dto = new MedicoResponseDto();
+		dto.setId(medico.getId());
+		dto.setNombre(medico.getNombre());
+		dto.setApellido(medico.getApellido());
+		dto.setTelefono(medico.getTelefono());
+		dto.setEmail(medico.getEmail());
+		dto.setDni(medico.getDni());
+		dto.setCuil(medico.getCuil());
+		dto.setFechaNacimiento(medico.getFechaNacimiento());
+		dto.setEstaEliminado(medico.getEstaEliminado());
+		dto.setEspecialidad(medico.getEspecialidad());
+
+		if (medico.getUsuario() != null) {
+			dto.setUsuario(medico.getUsuario().getId());
+		} else {
+			dto.setUsuario(null);
+		}
+
+		return dto;
 	}
-	
+
+
 }

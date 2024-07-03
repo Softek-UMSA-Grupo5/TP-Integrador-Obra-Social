@@ -9,8 +9,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class RecepcionistaRepository implements PanacheRepositoryBase<Recepcionista, Long> {
-	public Optional<Recepcionista> findByDni(int dni) {
+	/*public Optional<Recepcionista> findByDni(int dni) {
 		return find("dni AND estaEliminado = 0", dni).firstResultOptional();
+	}*/
+	public Optional<Recepcionista> findByDni(int dni) {
+		return find("dni = ?1 AND estaEliminado = false", dni).firstResultOptional();
 	}
 
 	public Optional<Recepcionista> findByUser(Long id) {
