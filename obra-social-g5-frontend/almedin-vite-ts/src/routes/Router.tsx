@@ -7,6 +7,9 @@ import CrearTurnoMedico from "../components/crearTurnoMedico/CrearTurnoMedico";
 import ResponsiveMain from "../components/landingPage/ResponsiveMain";
 import ListaMedicos from "../components/listaMedicos/ListaMedicos";
 import ListaTurnosSocio from "../components/listaTurnosSocio/ListaTurnosSocio";
+import AñadirSocio from "../components/socio/AñadirSocio";
+import AgregarMedicoFormulario from "../components/crearMedico/CrearMedico";
+import MedicosList from "../components/editarMedicos/Medicos";
 
 const router = createBrowserRouter([
     {
@@ -25,13 +28,26 @@ const router = createBrowserRouter([
                 path: '/consultorios',
                 element: <ConsultorioForm />,
             },
-            {
-                path: '/especialistas',
-                element: <ListaMedicos />,
-            },
+           
             {
                 path: '/turnos',
                 element: <ListaTurnosSocio />,
+            },
+            {
+                path: '/funcionarios',
+                element: <UsuarioForm />,
+            },
+            {
+                path: '/socio',
+                element: <AñadirSocio />,
+            },
+            {
+                path:'/medicos',
+                element: <AgregarMedicoFormulario />,
+            },
+            {
+                path: '/listamedicos',
+                element: <MedicosList />,
             }
         ],
     },

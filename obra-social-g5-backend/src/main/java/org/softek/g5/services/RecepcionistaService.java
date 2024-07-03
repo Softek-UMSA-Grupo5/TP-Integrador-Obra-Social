@@ -11,6 +11,8 @@ import org.softek.g5.exceptions.CustomException.CustomServerException;
 import org.softek.g5.exceptions.CustomException.EntityNotFoundException;
 import org.softek.g5.exceptions.CustomException.InvalidDataRequest;
 import org.softek.g5.repositories.RecepcionistaRepository;
+import org.softek.g5.security.usuario.Usuario;
+import org.softek.g5.security.usuario.UsuarioRepository;
 import org.softek.g5.validation.DataValidator;
 import org.softek.g5.validation.entitiesValidation.RecepcionistaValidator;
 
@@ -26,6 +28,9 @@ public class RecepcionistaService {
 
 	@Inject
 	RecepcionistaFactory recepcionistaFactory;
+
+	@Inject
+	UsuarioRepository usuarioRepository;
 
 
 	@Transactional
@@ -86,6 +91,13 @@ public class RecepcionistaService {
 			Optional<Recepcionista> optionalRecepcionista = recepcionistaRepository.findByDni(recepcionista.getDni());
 			if (optionalRecepcionista.isPresent()) {
 				throw new RuntimeException("Este recepcionista ya existe");
+			}
+
+			if (dto.getUsuarioId() != null) {
+				Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioRepository.findById(dto.getUsuarioId()));
+				optionalUsuario.ifPresent(recepcionista::setUsuario);
+			} else {
+				recepcionista.setUsuario(null);
 			}
 
 			this.recepcionistaRepository.persist(recepcionista);

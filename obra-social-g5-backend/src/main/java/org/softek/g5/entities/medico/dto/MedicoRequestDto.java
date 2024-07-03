@@ -33,6 +33,7 @@ public class MedicoRequestDto {
 	private String cuil;
 	@NotNull
 	private String especialidad;
+	private Long usuarioId;
 	private List<Long> consultoriosId;
 	
 }

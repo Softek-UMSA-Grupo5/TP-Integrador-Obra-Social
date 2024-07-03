@@ -35,7 +35,7 @@ const ConsultorioSelect: React.FC<ConsultorioSelectProps> = ({
                 >
                     {consultorios.map((consultorio) => (
                         <MenuItem key={consultorio.id} value={consultorio.id}>
-                            {`${consultorio.ubicacion.ciudad}, ${consultorio.ubicacion.calle}`}
+                            {`${consultorio.ubicacion.provincia}, ${consultorio.ubicacion.ciudad}, ${consultorio.ubicacion.calle}, ${consultorio.ubicacion.altura}`}
                         </MenuItem>
                     ))}
                 </Select>
