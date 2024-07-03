@@ -46,3 +46,12 @@ export async function getUserInfo(json: User){
         console.log('Error al obtener info de usuario: ', error);
     }
 }
+
+export async function updateUserPassword(json: UsuarioLoginDto, newPassword: string){
+    try {
+        const response = await api.put(`/usuarios/${newPassword}`, json);
+        return response.data;
+    } catch (error) {
+        console.log('Error al actualizar contraseña de usuario: ', error);
+    }
+}

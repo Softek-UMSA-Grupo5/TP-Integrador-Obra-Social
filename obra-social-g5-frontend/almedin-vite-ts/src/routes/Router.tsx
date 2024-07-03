@@ -5,6 +5,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import UserLogin from '../components/userLogin/UserLogin';
 import CrearTurnoMedico from "../components/crearTurnoMedico/CrearTurnoMedico";
 import ResponsiveMain from "../components/landingPage/ResponsiveMain";
+import UpdatePassword from "../components/userLogin/UpdatePassword";
+import ForgotPassword from "../components/userLogin/ForgotPassword";
 
 const router = createBrowserRouter([
     {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: <UserLogin />,
+    },
+    {
+        path: '/usuarios/actualizarcontraseña',
+        element: <UpdatePassword />,
+    },
+    {
+        path: '/forgotpassword',
+        element: <ForgotPassword />,
     },
     
 ]);

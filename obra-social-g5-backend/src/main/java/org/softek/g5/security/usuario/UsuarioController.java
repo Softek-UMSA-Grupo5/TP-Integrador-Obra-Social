@@ -22,6 +22,7 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -119,5 +120,16 @@ public class UsuarioController {
 		}
 		return Response.noContent().build();
 	}
+	
+	@PUT
+	@Path("/{contraseñaNueva}")
+	@RolesAllowed({ "ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_SOCIO", "ROL_MEDICO" })
+	@Operation(summary = "Actualizar contraseña usuario", description = "Permite actualizar la contraseña de un usuario")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response actualizarContraseñaUsuario(@Valid UsuarioLoginDto dto, @PathParam("contraseñaNueva") String contraseñaNueva) throws Exception {
+		usuarioService.actualizarContraseña(dto, contraseñaNueva);
+		return Response.ok().build();
+	}
+	
 
 }
