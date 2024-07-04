@@ -1,8 +1,7 @@
 import * as React from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { InputLabel } from '@mui/material';
+import { InputLabel, Select, SelectChangeEvent } from '@mui/material';
 
 export default function EstadoSelect() {
   const [estado, setEstado] = React.useState('');

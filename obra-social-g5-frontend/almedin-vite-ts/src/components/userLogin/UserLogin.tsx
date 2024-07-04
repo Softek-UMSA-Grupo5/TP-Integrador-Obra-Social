@@ -119,7 +119,7 @@ const UserLogin = () => {
                         variant="contained"
                         color="primary"
                         onClick={submitLogin}>
-                        Iniciar Sesion
+                        Iniciar Sesión
                     </Button>
                     <div
                         style={{
@@ -127,7 +127,7 @@ const UserLogin = () => {
                             justifyContent: 'space-between',
                             marginTop: 10,
                         }}>
-                        <Link href="#" variant="body2">
+                        <Link href="/forgotpassword" variant="body2">
                             Olvidaste tu constraseña?
                         </Link>
                     </div>

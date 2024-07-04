@@ -50,6 +50,7 @@ public class UsuarioService {
 				response.setUsername(usuario.getUsername());
 				response.setRol(usuario.getRol());
 				response.setToken(TokenUtils.generateToken(usuario.getUsername(), usuario.getRol(), duration, issuer));
+				response.setPrimerInicioSesion(usuario.getPrimerInicioSesion());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -69,6 +70,9 @@ public class UsuarioService {
 			DataValidator.validateDtoFields(dto);
 
 			Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(dto.getUsername());
+			
+			if (optionalUsuario.isEmpty())
+				throw new EntityNotFoundException("Nombre de usuario o contraseña incorrecta");
 
 			UsuarioResponseDto response = dto;
 
@@ -100,8 +104,7 @@ public class UsuarioService {
 			DataValidator.validateDtoFields(dto);
 
 			String passwordEncript = passwordEncoder.encode(dto.getPassword());
-			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, dto.getEmail(), rol, false);
-			System.out.println("Usuario a persistir: " + usuario);
+			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, dto.getEmail(), rol, false, true);
 			usuario.persist();
 
 		} catch (CustomServerException e) {
@@ -137,6 +140,29 @@ public class UsuarioService {
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al restaurar un usuario");
+		}
+	}
+	
+	@Transactional
+	public void actualizarContraseña(UsuarioLoginDto dto, String contraseñaNueva) throws CustomServerException {
+		try {
+			Optional<Usuario> optionalUsuario = usuarioRepository.findUser(dto.getUsername(), passwordEncoder.encode(dto.getPassword()));
+			
+			System.out.println(optionalUsuario.get());
+			
+			if (optionalUsuario.isEmpty())
+				throw new EntityNotFoundException("Nombre de usuario o contraseña incorrecta");
+			
+			Usuario usuario = optionalUsuario.get();
+			
+			if(usuario.getPrimerInicioSesion() == true) usuario.setPrimerInicioSesion(false);
+			
+			String passwordEncript = passwordEncoder.encode(contraseñaNueva);
+			this.usuarioRepository.update(
+					"password = ?1 WHERE username = ?2", passwordEncript, dto.getUsername());
+
+		} catch (CustomServerException e) {
+			throw new CustomServerException("Error al actualizar contraseña de usuario");
 		}
 	}
 

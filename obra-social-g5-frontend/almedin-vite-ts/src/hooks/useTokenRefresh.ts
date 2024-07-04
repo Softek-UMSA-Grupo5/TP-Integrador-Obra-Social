@@ -8,22 +8,23 @@ const useTokenRefresh = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const interval = setInterval(
-            async () => {
-                try {
-                    refreshToken(user).then((response) =>
-                        localStorage.setItem('token', response.token)
-                    );
-                } catch (error) {
-                    localStorage.removeItem('token');
-                    navigate('/login');
-                }
-            },
-            15 * 60 * 1000
-        );
+        const refresh = async () => {
+            try {
+                const response = await refreshToken(user);
+                localStorage.setItem('token', response.token);
+            } catch (error) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                navigate('/');
+            }
+        };
+
+        refresh();
+
+        const interval = setInterval(refresh, 15 * 60 * 1000);
 
         return () => clearInterval(interval);
-    }, [navigate]);
+    }, [navigate, user]);
 };
 
 export default useTokenRefresh;
