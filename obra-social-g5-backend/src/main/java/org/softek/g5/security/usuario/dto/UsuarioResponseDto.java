@@ -21,5 +21,6 @@ public class UsuarioResponseDto {
 	private UsuarioRolesEnum rol;
 	private String username;
 	private String token;
+	private Boolean primerInicioSesion;
 	
 }

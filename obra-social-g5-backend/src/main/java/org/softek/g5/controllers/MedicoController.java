@@ -41,7 +41,7 @@ public class MedicoController {
 	MedicoFactory medicoFactory;
 	
 	@GET
-	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA", "ROL_ADMIN"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Operation(summary = "Obtener todos los médicos especialistas", description ="Se obtendrá una lista de todos los médicos especialistas")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() throws CustomServerException{
@@ -66,7 +66,7 @@ public class MedicoController {
 	}
 	
 	@POST
-	@RolesAllowed({"ROL_RECEPCIONISTA", "ROL_ADMIN"})
+	@RolesAllowed({"ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(summary = "Crear un médico especialista", description ="Se creará un médico especialista")
@@ -80,7 +80,7 @@ public class MedicoController {
 	}
 	
 	@PUT
-	@RolesAllowed({"ROL_RECEPCIONISTA", "ROL_ADMIN"})
+	@RolesAllowed("ROL_RECEPCIONISTA")
 	@Path("/{id}")
 	@Operation(summary = "Actualizar un médico especialista", description ="Se actualizará un médico especialista")
 	@Transactional

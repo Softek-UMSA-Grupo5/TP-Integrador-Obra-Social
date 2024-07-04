@@ -5,11 +5,13 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import UserLogin from '../components/userLogin/UserLogin';
 import CrearTurnoMedico from "../components/crearTurnoMedico/CrearTurnoMedico";
 import ResponsiveMain from "../components/landingPage/ResponsiveMain";
-import ListaMedicos from "../components/listaMedicos/ListaMedicos";
+import UpdatePassword from "../components/userLogin/UpdatePassword";
+import ForgotPassword from "../components/userLogin/ForgotPassword";
 import ListaTurnosSocio from "../components/listaTurnosSocio/ListaTurnosSocio";
 import AñadirSocio from "../components/socio/AñadirSocio";
 import AgregarMedicoFormulario from "../components/crearMedico/CrearMedico";
 import MedicosList from "../components/editarMedicos/Medicos";
+import UsuarioForm from "../components/crearUsuario/CrearUsuario";
 
 const router = createBrowserRouter([
     {
@@ -54,6 +56,14 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: <UserLogin />,
+    },
+    {
+        path: '/usuarios/actualizarcontraseña',
+        element: <UpdatePassword />,
+    },
+    {
+        path: '/forgotpassword',
+        element: <ForgotPassword />,
     },
     
 ]);

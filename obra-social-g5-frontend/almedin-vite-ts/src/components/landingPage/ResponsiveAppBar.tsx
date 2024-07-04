@@ -15,16 +15,9 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../assets/contexts/UserContext';
+import { settings } from '../../configurations/user.settings';
 
 const pages = ['Sobre Nosotros', 'Servicios', 'Testimonios', 'Contacto'];
-const settings = {
-    ROL_ADMIN: [
-        {nombre: 'Solicitar turno médico', href: '/crearturnomedico'},
-    ],
-    ROL_SOCIO: ['Mis turnos', 'Solicitar turno medico', 'Cartilla especialistas'],
-    ROL_MEDICO:[],
-    ROL_RECEPCIONISTA: [],
-};
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
