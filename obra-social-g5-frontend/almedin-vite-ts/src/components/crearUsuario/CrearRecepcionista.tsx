@@ -148,7 +148,7 @@ const RecepcionistaForm: React.FC<RecepcionistaFormProps> = ({
                             error={!!errors.apellido}
                         />
                         <FormHelperText sx={{ position: 'absolute', bottom: '-10px' }} error>
-                            {errors.telefono}
+                            {errors.apellido}
                         </FormHelperText>
                     </FormControl>
                 </Grid>

@@ -1,19 +1,16 @@
 export const settings = {
-    ROL_ADMIN: [{ nombre: 'Usuarios', href: '/usuarios' }],
+    ROL_ADMIN: [{ nombre: 'Agregar funcionario', href: '/funcionarios' }],
     ROL_SOCIO: [
-        { nombre: 'Mis turnos', href: '/turnosMedicos' },
+        { nombre: 'Mis turnos', href: '/turnos' },
         { nombre: 'Solicitar turno médico', href: '/solicitarTurnomedico'},
-        { nombre: 'Especialistas', href: '/especialistas'},
-        { nombre: 'Consultorios', href: '/econsultorios'},
+        { nombre: 'Especialistas', href: '/listamedicos'},
     ],
     ROL_MEDICO: [
-        { nombre: 'Mis turnos', href: '/turnosMedicos'},
-        { nombre: 'Mis consultorios', href: '/consultorios'},
+        { nombre: 'Mis turnos', href: '/turnos'}
     ],
     ROL_RECEPCIONISTA: [
-        { nombre: 'Socios', href: '/socios'},
-        { nombre: 'Especialistas', href: '/especialistas'},
-        { nombre: 'Consultorios', href: '/consultorios'},
-        { nombre: 'Registrar turno médico', href: '/solicitarTurnoMedico'},
+        { nombre: 'Socios', href: '/turnos'},
+        { nombre: 'Especialistas', href: '/turnos'},
+        { nombre: 'Turnos médicos', href: '/turnos' },
     ],
 };

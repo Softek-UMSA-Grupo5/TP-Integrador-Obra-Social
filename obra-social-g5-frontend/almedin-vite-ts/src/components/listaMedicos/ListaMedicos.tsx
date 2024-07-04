@@ -174,20 +174,6 @@ const existingConsultorios = [
 ];
 
 const ListaMedicos: React.FC = () => {
-    /*
-    const [existingMedicos, setExistingMedicos] = useState<MedicoResponseDto[]>([]);
-    useEffect(() => {
-        const fetchMedicos = async () => {
-            try {
-                const medicos = await getAllMedicos();
-                setExistingMedicos(medicos);
-            } catch (error) {
-                console.error('Error fetching medicos:', error);
-            }
-        };
-        fetchMedicos();
-    }, []);
-    */
     
     return (
         <Container sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
