@@ -13,7 +13,7 @@ import { MedicoResponseDto } from '../../assets/models/Medico';
 
 const ResponsiveMain = () => {
     const { user } = useUser();
-    const [usuario, setUsuario] = React.useState<SocioResponse | MedicoResponseDto | string>();
+    const [usuario, setUsuario] = React.useState<SocioResponse | MedicoResponseDto>();
 
     React.useEffect(() => {
         if (user) {
@@ -21,18 +21,14 @@ const ResponsiveMain = () => {
                 getUserInfo(user).then((response) => setUsuario(response));
                 return;
             }
-            setUsuario(user?.username);
         }
     }, []);
 
     return (
         <>
-            {!user && (
+            {!user ? (
                 <Box
                     sx={{
-                        backgroundImage: 'url(/hero-bg.jpg)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
                         py: 15,
                         color: 'black',
                         textAlign: 'center',
@@ -43,8 +39,7 @@ const ResponsiveMain = () => {
                     <SeccionTestimonios />
                     <ContactForm />
                 </Box>
-            )}
-            {user && (
+            ) : (
                 <Box
                     sx={{
                         backgroundImage: 'url(/hero-bg.jpg)',

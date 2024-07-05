@@ -91,7 +91,7 @@ public class UsuarioService {
 	}
 
 	@Transactional
-	public void registrarUsuario(UsuarioRequestDto dto, UsuarioRolesEnum rol) throws CustomServerException {
+	public UsuarioResponseDto registrarUsuario(UsuarioRequestDto dto, UsuarioRolesEnum rol) throws CustomServerException {
 
 		try {
 
@@ -106,6 +106,16 @@ public class UsuarioService {
 			String passwordEncript = passwordEncoder.encode(dto.getPassword());
 			Usuario usuario = new Usuario(null, dto.getUsername(), passwordEncript, dto.getEmail(), rol, false, true);
 			usuario.persist();
+			
+			UsuarioResponseDto response = new UsuarioResponseDto(
+					usuario.getId(),
+					usuario.getRol(),
+					usuario.getUsername(),
+					null,
+					usuario.getPrimerInicioSesion()
+					);
+			
+			return response;
 
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al registrar un usuario");

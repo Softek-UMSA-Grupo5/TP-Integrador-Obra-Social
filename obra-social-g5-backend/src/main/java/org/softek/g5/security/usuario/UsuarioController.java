@@ -82,9 +82,7 @@ public class UsuarioController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response registrarSocio(@Valid UsuarioRequestDto dto,
 			@Parameter(required = true, description = "Rol de usuario") @QueryParam("Rol Usuario") UsuarioRolesEnum rol) {
-		System.out.println("Rol recibido: " + rol);
-		usuarioService.registrarUsuario(dto, rol);
-		return Response.ok().build();
+		return Response.ok(usuarioService.registrarUsuario(dto, rol)).build();
 	}
 
 	@DELETE

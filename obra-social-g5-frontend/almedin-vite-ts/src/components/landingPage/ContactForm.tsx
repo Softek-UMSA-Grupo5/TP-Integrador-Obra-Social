@@ -2,7 +2,7 @@ import { Box, Button, Container, TextField, Typography } from '@mui/material';
 
 const ContactForm = () => {
     return (
-        <Box sx={{ backgroundColor: '#f9f9f9', py: 8 }}>
+        <Box id='contacto' sx={{ backgroundColor: '#f9f9f9', py: 8 }}>
             <Container maxWidth="lg">
                 <Typography variant="h4" gutterBottom align="center">
                     Ponerse en contacto
