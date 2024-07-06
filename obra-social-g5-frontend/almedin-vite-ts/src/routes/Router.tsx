@@ -10,8 +10,7 @@ import ForgotPassword from "../components/userLogin/ForgotPassword";
 import ListaTurnosSocio from "../components/listaTurnosSocio/ListaTurnosSocio";
 import AñadirSocio from "../components/socio/AñadirSocio";
 import AgregarMedicoFormulario from "../components/crearMedico/CrearMedico";
-import MedicosList from "../components/editarMedicos/Medicos";
-import UsuarioForm from "../components/crearUsuario/CrearUsuario";
+import UsuarioForm from "../layouts/CrearUsuario";
 
 const router = createBrowserRouter([
     {
@@ -46,10 +45,6 @@ const router = createBrowserRouter([
             {
                 path:'/medicos',
                 element: <AgregarMedicoFormulario />,
-            },
-            {
-                path: '/listamedicos',
-                element: <MedicosList />,
             }
         ],
     },

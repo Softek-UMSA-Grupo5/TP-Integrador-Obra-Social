@@ -1,0 +1,34 @@
+import React from 'react';
+import { Grid, Button, Typography } from '@mui/material';
+import HorarioItem from './HorarioItem';
+
+const HorarioList = ({ horarioAtencion, handleSelectChange, handleTimeChange, handleRemoveHorario, handleAddHorario, errorMessage }) => {
+    return (
+        <>
+            {horarioAtencion.map((horario, index) => (
+                <HorarioItem
+                    key={index}
+                    index={index}
+                    horario={horario}
+                    handleSelectChange={handleSelectChange}
+                    handleTimeChange={handleTimeChange}
+                    handleRemoveHorario={handleRemoveHorario}
+                />
+            ))}
+            <Grid container item xs={12} sm={12} md={3} mx={{ md: '40%', sm: 0 }} padding={0}>
+                <Button variant="outlined" color="primary" onClick={handleAddHorario}>
+                    Agregar Horario
+                </Button>
+            </Grid>
+            <Grid item xs={12}>
+                {errorMessage && (
+                    <Typography variant="body1" color="error" sx={{ textAlign: 'center' }}>
+                        {errorMessage}
+                    </Typography>
+                )}
+            </Grid>
+        </>
+    );
+};
+
+export default HorarioList;
