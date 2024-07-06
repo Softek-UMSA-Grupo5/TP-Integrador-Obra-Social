@@ -7,54 +7,65 @@ import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
 import React from 'react';
 
 interface MedicosExistentesProps {
-  existingMedicos: MedicoResponseDto[];
-  existingConsultorios: ConsultorioResponseDto[];
+    existingMedicos: MedicoResponseDto[];
+    existingConsultorios: ConsultorioResponseDto[];
 }
 
-const MedicoCard: React.FC<MedicosExistentesProps> = ({ existingMedicos, existingConsultorios }) => {
-  
-  const getConsultoriosPorMedico = (consultoriosId: number[]): ConsultorioResponseDto[] => {
-    return existingConsultorios.filter(consultorio => consultoriosId.includes(consultorio.id));
-  };
+const MedicoCard: React.FC<MedicosExistentesProps> = ({
+    existingMedicos,
+    existingConsultorios,
+}) => {
+    const getConsultoriosPorMedico = (consultoriosId: number): ConsultorioResponseDto[] => {
+        return existingConsultorios.filter(
+            (consultorio) => consultorio.medicoId === consultoriosId
+        );
+    };
 
-  return (
-    <>
-      {existingMedicos.map((medico) => (
-
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={3}
-        >
-          <Card>
-            <CardHeader
-              avatar={<Avatar>
-                <PersonIcon />
-              </Avatar>}
-              title={medico.nombre + " " + medico.apellido}
-              titleTypographyProps={{ fontWeight: "700", fontSize: "18px" }}
-              subheader={medico.especialidad}
-              subheaderTypographyProps={{ fontWeight: "500", fontSize: "16px" }} />
-            {getConsultoriosPorMedico(medico.consultoriosId).map(consultorio => (
-              <CardContent>
-                <Typography color="text.secondary" variant="body2" sx={{ display: "flex", alignItems: "flex-start", gap: "4px" }}>
-                  <LocationOnOutlinedIcon sx={{ fontSize: "medium" }} />{consultorio.ubicacion.calle} {consultorio.ubicacion.altura}, {consultorio.ubicacion.ciudad}, {consultorio.ubicacion.provincia}.
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {consultorio.horarioAtencion.map((horario, index) => (
-                      <li key={index} style={{ display: 'flex', gap: '4px' }}><AccessTimeIcon sx={{ fontSize: "medium" }} />{horario.diaSemana}: {horario.horaInicio} - {horario.horaFin}</li>
-                    ))}
-                  </ul>
-                </Typography>
-              </CardContent>
+    return (
+        <>
+            {existingMedicos.map((medico, index) => (
+                <Grid key={index} item xs={12} sm={6} md={3}>
+                    <Card>
+                        <CardHeader
+                            avatar={
+                                <Avatar>
+                                    <PersonIcon />
+                                </Avatar>
+                            }
+                            title={medico.nombre + ' ' + medico.apellido}
+                            titleTypographyProps={{ fontWeight: '700', fontSize: '18px' }}
+                            subheader={medico.especialidad}
+                            subheaderTypographyProps={{ fontWeight: '500', fontSize: '16px' }}
+                        />
+                        {getConsultoriosPorMedico(medico.id).map((consultorio) => (
+                            <CardContent>
+                                <Typography
+                                    color="text.secondary"
+                                    variant="body2"
+                                    sx={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+                                    <LocationOnOutlinedIcon sx={{ fontSize: 'medium' }} />
+                                    {consultorio.ubicacion.calle} {consultorio.ubicacion.altura},{' '}
+                                    {consultorio.ubicacion.ciudad},{' '}
+                                    {consultorio.ubicacion.provincia}.
+                                </Typography>
+                                <Typography color="text.secondary" variant="body2">
+                                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                                        {consultorio.horarioAtencion.map((horario, index) => (
+                                            <li key={index} style={{ display: 'flex', gap: '4px' }}>
+                                                <AccessTimeIcon sx={{ fontSize: 'medium' }} />
+                                                {horario.diaSemana}: {horario.horaInicio} -{' '}
+                                                {horario.horaFin}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </Typography>
+                            </CardContent>
+                        ))}
+                    </Card>
+                </Grid>
             ))}
-          </Card>
-        </Grid>
-      ))}
-    </>
-  );
-}
+        </>
+    );
+};
 
 export default MedicoCard;

@@ -26,7 +26,7 @@ export default function TurnoCardsGrid({estado}: props) {
                 })
             )
             .then(() => setIsLoaded(true));
-    }, [turnosMedicos]);
+    }, []); //falta actualizar la lista al cancelar turno
 
     return (
         <Container sx={{ marginBottom: '40px' }}>
