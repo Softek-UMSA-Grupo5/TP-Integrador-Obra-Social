@@ -1,5 +1,5 @@
 import api from './api';
-import { UsuarioLoginDto, UsuarioRequestDto, UsuarioRolesEnum } from '../models/Usuario';
+import { UsuarioLoginDto, UsuarioRequestDto, UsuarioResponseDto, UsuarioRolesEnum } from '../models/Usuario';
 import { User } from '../contexts/UserContext';
 
 export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRolesEnum): Promise<void> => {
@@ -12,7 +12,7 @@ export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRoles
     }
 };
 
-export async function login(json: UsuarioLoginDto) {
+export async function login(json: UsuarioLoginDto): Promise<UsuarioResponseDto|undefined> {
     try {
         const response = await api.post(`/usuarios/login`, json);
         return response.data;

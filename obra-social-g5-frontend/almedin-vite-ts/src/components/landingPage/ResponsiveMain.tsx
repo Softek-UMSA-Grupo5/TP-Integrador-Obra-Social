@@ -6,23 +6,9 @@ import SeccionServicios from './SeccionServicios';
 import SeccionTestimonios from './SeccionTestimonios';
 import { useUser } from '../../assets/contexts/UserContext';
 import SeccionBienvenida from './SeccionBienvenida';
-import React from 'react';
-import { SocioResponse } from '../../assets/models/Socio';
-import { getUserInfo } from '../../assets/axios/UsuarioApi';
-import { MedicoResponseDto } from '../../assets/models/Medico';
 
 const ResponsiveMain = () => {
     const { user } = useUser();
-    const [usuario, setUsuario] = React.useState<SocioResponse | MedicoResponseDto>();
-
-    React.useEffect(() => {
-        if (user) {
-            if (user.rol != 'ROL_ADMIN') {
-                getUserInfo(user).then((response) => setUsuario(response));
-                return;
-            }
-        }
-    }, []);
 
     return (
         <>
@@ -49,7 +35,7 @@ const ResponsiveMain = () => {
                         color: 'black',
                         textAlign: 'center',
                     }}>
-                    <SeccionBienvenida nombre={usuario?.nombre} apellido={usuario?.apellido} />
+                    <SeccionBienvenida nombre={user.userData.nombre} apellido={user.userData.apellido} />
                 </Box>
             )}
         </>

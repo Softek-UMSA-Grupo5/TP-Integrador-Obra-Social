@@ -88,7 +88,6 @@ const FuncionarioForm = () => {
             .then((response) => {
                 if (isRecepcionista) {
                     recepcionistaData.usuarioId = response.id;
-                    console.log(recepcionistaData);
                     addRecepcionista(recepcionistaData);
                 }
             })
@@ -98,7 +97,7 @@ const FuncionarioForm = () => {
                 })
             )
             .catch(() =>
-                toast.error('Error al registrar el Usuario o Fucnionario', {
+                toast.error('Error al registrar el Usuario o Funcionario', {
                     position: 'bottom-right',
                 })
             );

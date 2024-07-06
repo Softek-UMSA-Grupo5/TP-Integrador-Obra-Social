@@ -6,7 +6,7 @@ import tieneCamposVacios from '../../utils/tieneCamposVacios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUser } from '../../assets/contexts/UserContext';
-import { login } from '../../assets/axios/UsuarioApi';
+import { getUserInfo, login } from '../../assets/axios/UsuarioApi';
 
 const UserLogin = () => {
     const [username, setUsername] = React.useState<string>('');
@@ -14,22 +14,37 @@ const UserLogin = () => {
     const [emptyFields, setEmptyFields] = React.useState<string[]>([]);
     const { setUser } = useUser();
     const navigate = useNavigate();
+    const user = {
+        id: null,
+        rol: null,
+        username: null,
+        userData: null,
+    };
 
     const submitLogin = async () => {
-        let errors = tieneCamposVacios({username, password});
+        let errors = tieneCamposVacios({ username, password });
         if (errors.length !== 0) {
             setEmptyFields(errors);
             return;
         }
         try {
-            const response = await login({username, password});
-            localStorage.setItem('token', response.token);
-            setUser({
-                id: response.id,
-                username: response.username,
-                rol: response.rol,
-            });
-            navigate('/');
+            login({ username, password })
+                .then((response) => {
+                    localStorage.setItem('token', response.token);
+                    user.id = response?.id;
+                    user.rol = response?.rol;
+                    user.username = response?.username;
+                    getUserInfo({
+                        id: user.id,
+                        username: user.username,
+                        rol: user.rol,
+                    }).then(response => {
+                        user.userData = response;
+                        console.log(user);
+                        setUser(user);
+                    }).then(() => navigate('/'));
+                });
+            
         } catch (error) {
             toast.error('Usuario o Contraseña incorrecta', {
                 position: 'bottom-right',
