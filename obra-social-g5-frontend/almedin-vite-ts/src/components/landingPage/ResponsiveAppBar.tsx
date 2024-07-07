@@ -1,48 +1,136 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
+import { AppBar, Box ,Toolbar ,IconButton ,Typography ,Menu ,Container ,Avatar ,Button ,Tooltip ,MenuItem, Link as MuiLink, Paper } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../assets/contexts/UserContext';
-import { settings } from '../../configurations/user.settings';
+import { rolOptions, pages } from '../../configurations/pages.settings';
 
-const pages = ['Sobre Nosotros', 'Servicios', 'Testimonios', 'Contacto'];
-
-function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    const [isLogin, setIsLogin] = React.useState<true | false>(false);
+export default function ResponsiveAppBar() {
     const { user } = useUser();
-    const navigate = useNavigate();
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElUser(event.currentTarget);
-    };
+    return (
+        <AppBar position="static">
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    {!user && <NavMenuDesplegable />}
+                    <Logo xs={'flex'} md={'none'} flexGrow={1} />
+                    {!user && <NavLinks />}
+
+                    {!user && <LoginButton />}
+
+                    {user && <UserMenuDesplegable />}
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
+}
+
+interface LogoProps {
+    xs: string;
+    md: string;
+    flexGrow: number;
+}
+
+const Logo: React.FC<LogoProps> = ({ xs, md, flexGrow }) => {
+    return (
+        <>
+            <LocalHospitalIcon sx={{ display: { xs: { xs }, md: { md } }, mr: 1 }} />
+            <Typography
+                variant="h5"
+                noWrap
+                component="a"
+                href="#"
+                sx={{
+                    mr: 2,
+                    display: { xs: { xs }, md: { md } },
+                    flexGrow: { flexGrow },
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    letterSpacing: '.3rem',
+                    color: 'inherit',
+                    textDecoration: 'none',
+                }}>
+                ALMEDIN
+            </Typography>
+        </>
+    );
+};
+
+const NavMenuDesplegable = () => {
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
+    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElNav(event.currentTarget);
     };
 
-    const handleNavigate = (href: string) => {
-        navigate(href);
+    return (
+        <>
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleOpenNavMenu}
+                    color="inherit">
+                    <MenuIcon />
+                </IconButton>
+
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorElNav}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    open={Boolean(anchorElNav)}
+                    onClose={handleCloseNavMenu}
+                    sx={{
+                        display: { xs: 'block', md: 'none' },
+                    }}>
+                    {pages.map((page, index) => (
+                        <MenuItem key={index} onClick={handleCloseNavMenu}>
+                            <MuiLink
+                                key={index}
+                                href={page.href}
+                                variant="body2"
+                                sx={{
+                                    color: 'black',
+                                    mx: 2,
+                                    fontSize: 16,
+                                    textDecoration: 'none',
+                                }}>
+                                {page.nombre}
+                            </MuiLink>
+                        </MenuItem>
+                    ))}
+                </Menu>
+            </Box>
+        </>
+    );
+};
+
+const UserMenuDesplegable = () => {
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
+    const { user } = useUser();
+
+    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElUser(event.currentTarget);
+    };
+
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
     };
 
     const handleLogout = () => {
@@ -54,151 +142,79 @@ function ResponsiveAppBar() {
         location.reload();
     };
 
-    React.useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token && user) {
-            setIsLogin(true);
-            return;
-        }
-        setIsLogin(false);
-    }, []);
-
+    const handleNavigate = (href: string) => {
+        navigate(href);
+    };
     return (
-        <AppBar position="static">
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <LocalHospitalIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}>
-                        ALMEDIN
-                    </Typography>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit">
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' },
-                            }}>
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                    <LocalHospitalIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}>
-                        ALMEDIN
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}>
-                                {page}
-                            </Button>
-                        ))}
-                    </Box>
-
-                    {!isLogin && (
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Paper elevation={3}>
-                                <Link to="/login">
-                                    <Button variant="outlined" color="primary">
-                                        Login
-                                    </Button>
-                                </Link>
-                            </Paper>
-                        </Box>
-                    )}
-
-                    {isLogin && (
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{ mt: '45px' }}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}>
-                                <MenuItem onClick={() => handleNavigate('/')}>
-                                    <Typography textAlign="center">Home</Typography>
-                                </MenuItem>
-                                {settings[user?.rol].map((setting, index) => (
-                                    <MenuItem key={index} onClick={() => handleNavigate(setting.href)}>
-                                        <Typography textAlign="center">{setting.nombre}</Typography>
-                                    </MenuItem>
-                                ))}
-                                <MenuItem onClick={handleLogout}>
-                                    <Typography textAlign="center">Cerrar Sesión</Typography>
-                                </MenuItem>
-                            </Menu>
-                        </Box>
-                    )}
-                </Toolbar>
-            </Container>
-        </AppBar>
+        <>
+            <Box sx={{ ml: 'auto' }}>
+                <Tooltip title="Open rolOptions">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                        <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    </IconButton>
+                </Tooltip>
+                <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}>
+                    <MenuItem onClick={() => handleNavigate('/')}>
+                        <Typography textAlign="center">Home</Typography>
+                    </MenuItem>
+                    {rolOptions[user?.rol].map((setting, index) => (
+                        <MenuItem key={index} onClick={() => handleNavigate(setting.href)}>
+                            <Typography textAlign="center">{setting.nombre}</Typography>
+                        </MenuItem>
+                    ))}
+                    <MenuItem onClick={handleLogout}>
+                        <Typography textAlign="center">Cerrar Sesión</Typography>
+                    </MenuItem>
+                </Menu>
+            </Box>
+        </>
     );
-}
-export default ResponsiveAppBar;
+};
+
+const LoginButton = () => {
+    return (
+        <>
+            <Box sx={{ flexGrow: 0 }}>
+                <Paper elevation={3}>
+                    <Link to="/login">
+                        <Button variant="outlined" color="primary">
+                            Login
+                        </Button>
+                    </Link>
+                </Paper>
+            </Box>
+        </>
+    );
+};
+
+const NavLinks = () => {
+    return (
+        <>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                {pages.map((page, index) => (
+                    <MuiLink
+                        key={index}
+                        href={page.href}
+                        variant="body2"
+                        sx={{ color: 'white', mx: 2, fontSize: 16 }}>
+                        {page.nombre}
+                    </MuiLink>
+                ))}
+            </Box>
+        </>
+    );
+};

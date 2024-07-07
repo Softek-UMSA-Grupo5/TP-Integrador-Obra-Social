@@ -3,7 +3,7 @@ export const settings = {
     ],
     ROL_SOCIO: [
         { nombre: 'Mis turnos', href: '/turnos' },
-        { nombre: 'Solicitar turno médico', href: '/solicitarTurnomedico'},
+        { nombre: 'Solicitar turno médico', href: '/crearturnomedico'},
         { nombre: 'Especialistas', href: '/listamedicos'},
     ],
     ROL_MEDICO: [
@@ -17,3 +17,9 @@ export const settings = {
         {nombre: 'Agregar consultorio', href: '/consultorios'}
     ],
 };
+
+export const pages = [
+    {nombre:'Sobre Nosotros', href:'#sobreNosotros'}, 
+    {nombre:'Servicios', href:'#servicios'}, 
+    {nombre:'Testimonios', href:'#testimonios'}, 
+    {nombre:'Contacto', href:'#contacto'},];

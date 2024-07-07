@@ -1,9 +1,13 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { MedicoResponseDto } from '../models/Medico';
+import { RecepcionistaResponseDto } from '../models/Recepcionista';
+import { SocioResponse } from '../models/Socio';
 
 export interface User {
     id: number;
     username: string;
     rol: string;
+    userData: MedicoResponseDto | RecepcionistaResponseDto | SocioResponse;
 }
 
 interface UserContextType {

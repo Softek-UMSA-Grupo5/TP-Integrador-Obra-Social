@@ -12,7 +12,7 @@ export const registrarUsuario = async (dto: UsuarioRequestDto, rol: UsuarioRoles
     }
 };
 
-export async function login(json: UsuarioLoginDto) {
+export async function login(json: UsuarioLoginDto): Promise<UsuarioResponseDto|undefined> {
     try {
         const response = await api.post(`/usuarios/login`, json);
         return response.data;

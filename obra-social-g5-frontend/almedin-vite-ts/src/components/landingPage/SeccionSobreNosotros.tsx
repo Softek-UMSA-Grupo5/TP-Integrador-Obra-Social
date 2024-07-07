@@ -4,7 +4,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 
 const SeccionSobreNosotros = () => {
     return(
-        <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Container id="sobreNosotros" maxWidth="lg" sx={{ py: 8 }}>
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
                         <Typography variant="h4" gutterBottom align="left">

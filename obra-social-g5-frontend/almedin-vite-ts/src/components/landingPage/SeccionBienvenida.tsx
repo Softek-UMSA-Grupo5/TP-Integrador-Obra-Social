@@ -1,11 +1,11 @@
 import { Container, Typography } from '@mui/material';
 
 interface props {
-    nombre: string;
-    apellido: string;
+    nombre: string | undefined;
+    apellido: string | undefined;
 }
 
-export default function SeccionBienvenida({ nombre, apellido }: props) {
+export default function SeccionBienvenida({ nombre = 'Admin', apellido = ''}: props) {
     return (
         <Container maxWidth="md">
             <Typography variant="h2" component="h1" gutterBottom>
