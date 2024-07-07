@@ -1,18 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Card,
-    CardHeader,
-    CardContent,
-    CardActions,
-    Grid,
-    FormControl,
-    Button,
-    FormControlLabel,
-    Checkbox,
-    SelectChangeEvent,
-    Box,
-    Typography,
-} from '@mui/material';
+import {Card,CardHeader,CardContent,CardActions,Grid,FormControl,Button,FormControlLabel,Checkbox,SelectChangeEvent,Box,Typography} from '@mui/material';
 import { addMedico, getAllMedicos } from '../../assets/axios/MedicoApi';
 import { createConsultorio } from '../../assets/axios/ConsultorioApi';
 import { MedicoRequestDto, MedicoResponseDto } from '../../assets/models/Medico';
@@ -21,6 +8,7 @@ import UbicacionForm from './UbicacionForm';
 import HorarioForm from './HorarioForm';
 import MedicoExistenteSelect from './MedicoExistenteSelect';
 import MedicoForm from '../crearMedico/MedicoForm';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 const ConsultorioForm: React.FC = () => {
@@ -40,25 +28,26 @@ const ConsultorioForm: React.FC = () => {
         apellido: '',
         telefono: '',
         email: '',
-        dni: 0,
+        dni: '',
         fechaNacimiento: '',
         cuil: '',
         especialidad: '',
         consultoriosId: [],
     });
-
+    const [registerUser, setRegisterUser] = useState(false);
+    const [useMedicoEmail, setUseMedicoEmail] = useState(false);
+    const [usuarioEmail, setUsuarioEmail] = useState('');
     const [existingMedicos, setExistingMedicos] = useState<MedicoResponseDto[]>([]);
     const [createNewMedico, setCreateNewMedico] = useState(false);
     const [selectExistingMedico, setSelectExistingMedico] = useState(false);
     const [selectedMedicoId, setSelectedMedicoId] = useState<number | undefined>(undefined);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
 
-    useEffect(() => {
+      useEffect(() => {
         const fetchMedicos = async () => {
             try {
                 const medicos = await getAllMedicos();
-                setExistingMedicos(medicos);
+                const filteredMedicos = medicos.filter((medico) => !medico.estaEliminado);
+                setExistingMedicos(filteredMedicos);
             } catch (error) {
                 console.error('Error fetching medicos:', error);
             }
@@ -91,8 +80,6 @@ const ConsultorioForm: React.FC = () => {
     };
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError(null);
-        setSuccess(null);
 
         try {
             const consultorioResponse: ConsultorioResponseDto = await createConsultorio(officeData);
@@ -113,12 +100,18 @@ const ConsultorioForm: React.FC = () => {
 
                 await addMedico([medicoToCreate]);
 
-                setSuccess('Consultorio y médico creados correctamente.');
+                toast.success('Consultorio y médico creados correctamente.'),{
+                    position: 'bottom-right',
+                };
             } else {
-                setSuccess('Consultorio creado correctamente.');
+                toast.success('Consultorio y médico creados correctamente.'),{
+                    position: 'bottom-right',
+                };
             }
         } catch (error) {
-            setError('Error al crear el consultorio y/o médico. Por favor, inténtelo nuevamente.');
+            toast.error('Error al crear médico o consultorio].'),{
+                position: 'bottom-right',
+            };
         }
     };
 
@@ -183,7 +176,7 @@ const ConsultorioForm: React.FC = () => {
     };
 
     return (
-    <Card style={{maxWidth:'100%', textAlign: 'center', boxShadow: 'none' }}>
+    <Card style={{maxWidth: 700, textAlign: 'center', margin: 'auto', marginTop: 5 }} >
             <CardHeader
                 title={
                     <Box sx={{ textAlign: { xs: 'center'}, mt: { xs: 2, sm: 0 } }}>
@@ -193,7 +186,7 @@ const ConsultorioForm: React.FC = () => {
                     </Box>
                 }
             />
-            <CardContent>
+            <CardContent >
                 <form onSubmit={handleSubmit}>
                     <Grid
                         container>
@@ -259,30 +252,30 @@ const ConsultorioForm: React.FC = () => {
                                 </div>
                                 <div>
                                     {createNewMedico && (
-                                        <MedicoForm 
-                                        medicoData={medicoData} setMedicoData={setMedicoData} />
+                                         <MedicoForm
+                                        medicoData={medicoData}
+                                        setMedicoData={setMedicoData}
+                                        setRegisterUser={setRegisterUser}
+                                        useMedicoEmail={useMedicoEmail}
+                                        setUseMedicoEmail={setUseMedicoEmail}
+                                        usuarioEmail={usuarioEmail}
+                                        setUsuarioEmail={setUsuarioEmail}
+                                        registerUser={registerUser}
+                                    />
+                                       
                                     )}
                                 </div>
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={12} md={3} mx={{ md: '40%', sm: 0 }} padding={0}>
+                        <Grid item xs={12} sm={12} md={3} mx={{ md: '35%', sm: 0 }} width={{ xs: '100%' }} padding={0}>
                             <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
-                                <Button type="submit" variant="contained" color="primary">
+                                <Button type="submit" variant="contained" color="primary" sx={{ width: '100%' }}>
                                     Crear Consultorio
                                 </Button>
                             </CardActions>
+                            <ToastContainer />
                         </Grid>
-                        {error && (
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography color="error">{error}</Typography>
-                            </Grid>
-                        )}
-                        {success && (
-                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                <Typography color="primary">{success}</Typography>
-                            </Grid>
-                        )}
                     </Grid>
                 </form>
             </CardContent>

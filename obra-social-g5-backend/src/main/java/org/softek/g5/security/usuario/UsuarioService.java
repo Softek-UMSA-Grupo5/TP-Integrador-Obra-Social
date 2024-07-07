@@ -117,6 +117,16 @@ public class UsuarioService {
 			
 			return response;
 
+			UsuarioResponseDto response = new UsuarioResponseDto(
+					usuario.getId(),
+					usuario.getRol(),
+					usuario.getUsername(),
+					null,
+					usuario.getPrimerInicioSesion()
+			);
+
+			return response;
+
 		} catch (CustomServerException e) {
 			throw new CustomServerException("Error al registrar un usuario");
 		}

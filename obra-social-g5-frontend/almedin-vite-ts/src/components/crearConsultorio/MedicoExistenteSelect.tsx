@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Grid, Select, MenuItem, FormControl } from '@mui/material';
+import React from 'react';
 import { MedicoResponseDto } from '../../assets/models/Medico';
 import { SelectChangeEvent } from '@mui/material/Select';
+import GenericSelect from '../crearFuncionario/GenericSelect';
 
 interface MedicoSeleccionExistenteProps {
     existingMedicos: MedicoResponseDto[];
@@ -14,35 +14,17 @@ const MedicoExistenteSelect: React.FC<MedicoSeleccionExistenteProps> = ({
     selectedMedicoId,
     handleSelectExistingMedicoChange,
 }) => {
-    useEffect(() => {
-        if (!selectedMedicoId && existingMedicos.length > 0) {
-            handleSelectExistingMedicoChange({
-                target: {
-                    value: existingMedicos[0].id,
-                },
-            } as SelectChangeEvent<number>);
-        }
-    }, [existingMedicos, selectedMedicoId, handleSelectExistingMedicoChange]);
-    return (
-        <Grid item xs={12}>
-            <div>
-                <FormControl fullWidth variant='outlined' sx={{ my: 1.5 }}>
-                    <Select
-                        value={selectedMedicoId ?? ''}
-                        onChange={handleSelectExistingMedicoChange}
-                        fullWidth
-                        variant="outlined"
-                        sx={{ width: '100%' }}>
-                        {existingMedicos.map((medico) => (
-                            <MenuItem key={medico.id} value={medico.id}>
-                                {`${medico.nombre} ${medico.apellido}, ${medico.dni} , ${medico.especialidad}`}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </div>
-        </Grid>
-    );
+  return (
+        <GenericSelect
+            items={existingMedicos}
+            selectedItem={selectedMedicoId}
+            handleSelectChange={handleSelectExistingMedicoChange}
+            itemLabel={(medico) =>
+                `${medico.nombre} ${medico.apellido}, ${medico.dni}, ${medico.especialidad}`
+            }
+            label="Seleccionar Medico"
+        />
+    ); 
 };
 
 export default MedicoExistenteSelect;
