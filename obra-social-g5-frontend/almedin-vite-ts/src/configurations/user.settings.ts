@@ -1,5 +1,6 @@
 export const settings = {
-    ROL_ADMIN: [{ nombre: 'Agregar funcionario', href: '/funcionarios' }],
+    ROL_ADMIN: [{ nombre: 'Agregar funcionario', href: '/funcionarios' },
+    ],
     ROL_SOCIO: [
         { nombre: 'Mis turnos', href: '/turnos' },
         { nombre: 'Solicitar turno médico', href: '/solicitarTurnomedico'},
@@ -12,5 +13,7 @@ export const settings = {
         { nombre: 'Socios', href: '/turnos'},
         { nombre: 'Especialistas', href: '/turnos'},
         { nombre: 'Turnos médicos', href: '/turnos' },
+        { nombre: 'Agregar Medicos', href: '/medicos' },
+        {nombre: 'Agregar consultorio', href: '/consultorios'}
     ],
 };

@@ -15,7 +15,6 @@ export const generateTimeOptions = () => {
     }
     return options;
 };
-
 export const getFormattedDate = (date: Date): string => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -36,4 +35,48 @@ export const maxLengthValidation = (value: string, maxLength: number): string | 
         return `No puedes exceder los ${maxLength} caracteres`;
     }
     return undefined;
+};
+export const validateField = (
+    fieldName: string,
+    value: string | number | undefined,
+    setErrors: React.Dispatch<React.SetStateAction<Record<string, string>>>
+): void => {
+    let error = '';
+    switch (fieldName) {
+        case 'nombre':
+        case 'apellido':
+            error = requiredValidation(value as string | undefined) ?? '';
+            if (!error) {
+                error = maxLengthValidation(value as string, 20) ?? '';
+            }
+            break;
+        case 'especialidad':
+            error = requiredValidation(value as string | undefined) ?? '';
+            if (!error) {
+                error = maxLengthValidation(value as string, 50) ?? '';
+            }
+            break;
+        case 'email':
+        case 'fechaNacimiento':
+        case 'telefono':
+        case 'cuil':
+            error = requiredValidation(value as string | undefined) ?? '';
+            break;
+        case 'dni':
+            error = requiredValidation(value as string | undefined) ?? '';
+            break;
+        default:
+            break;
+    }
+    if (fieldName === 'fechaNacimiento') {
+        const currentDate = new Date();
+        const selectedDate = new Date(value as string);
+        if (selectedDate > currentDate) {
+            error = 'La fecha de nacimiento no puede ser mayor que la fecha actual';
+        }
+    }
+    setErrors((prevErrors) => ({
+        ...prevErrors,
+        [fieldName]: error,
+    }));
 };
