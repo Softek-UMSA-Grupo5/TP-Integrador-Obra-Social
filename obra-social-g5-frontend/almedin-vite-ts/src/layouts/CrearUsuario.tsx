@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
-import {
-    Button,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Card,
-    CardHeader,
-    CardContent,
-    Grid,
-    OutlinedInput,
-    Typography,
-    Box,
-} from '@mui/material';
+import {Button,Select,MenuItem,FormControl,InputLabel,Card,CardHeader,CardContent,Grid,OutlinedInput,Typography,Box,} from '@mui/material';
 import { UsuarioRequestDto, UsuarioRolesEnum } from '../assets/models/Usuario';
-import { registrarUsuario } from '../assets/axios/UsuarioApi';
+import { registrarUsuario} from '../assets/axios/UsuarioApi';
 import { SelectChangeEvent } from '@mui/material/Select';
 import RecepcionistaForm from '../components/crearFuncionario/RecepcionistaForm';
 import { RecepcionistaRequestDto } from '../assets/models/Recepcionista';
@@ -62,8 +49,8 @@ const FuncionarioForm = () => {
         apellido: '',
         telefono: '',
         email: '',
-        dni: 0,
-        fechaNacimiento: new Date(),
+        dni: '',
+        fechaNacimiento: '',
         cuil: '',
         usuarioId: 0,
     });
@@ -97,7 +84,7 @@ const FuncionarioForm = () => {
                 })
             )
             .catch(() =>
-                toast.error('Error al registrar el Usuario o Funcionario', {
+                toast.error('Error al registrar el Usuario o Fucnionario', {
                     position: 'bottom-right',
                 })
             );

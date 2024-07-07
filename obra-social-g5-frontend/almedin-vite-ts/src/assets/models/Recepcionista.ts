@@ -1,4 +1,4 @@
-import { UsuarioResponseDto } from "./Usuario";
+//import { UsuarioResponseDto } from "./Usuario";
 
 export interface Recepcionista {
     id: number;
@@ -8,9 +8,9 @@ export interface Recepcionista {
     email: string;
     dni: number;
     cuil: string;
-    fechaNacimiento: Date;
+    fechaNacimiento: string;
     estaEliminado: boolean;
-    usuario: UsuarioResponseDto;
+    usuario: number;
 }
 
 export interface RecepcionistaUpdateRequestDto {
@@ -20,7 +20,7 @@ export interface RecepcionistaUpdateRequestDto {
     telefono: string;
     email: string;
     dni: number;
-    fechaNacimiento: Date;
+    fechaNacimiento: string;
     cuil: string;
 }
 
@@ -32,7 +32,7 @@ export interface RecepcionistaResponseDto {
     email: string;
     dni: number;
     cuil: string;
-    fechaNacimiento: Date;
+    fechaNacimiento: string;
     estaEliminado: boolean;
     usuarioId: number | undefined; 
 }
@@ -42,8 +42,8 @@ export interface RecepcionistaRequestDto {
     apellido: string;
     telefono: string;
     email: string;
-    dni: number;
-    fechaNacimiento: Date;
+    dni: string;
+    fechaNacimiento: string;
     cuil: string;
     usuarioId: number | undefined;
 }

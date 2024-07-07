@@ -2,6 +2,8 @@ package org.softek.g5.entities.medico.dto;
 
 import java.sql.Date;
 
+import org.softek.g5.entities.consultorio.dto.ConsultorioResponseDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +28,6 @@ public class MedicoResponseDto {
 	private Boolean estaEliminado;
 	private String especialidad;
 	private Long usuario;
+	private ConsultorioResponseDto consultorios;
 	
 }
