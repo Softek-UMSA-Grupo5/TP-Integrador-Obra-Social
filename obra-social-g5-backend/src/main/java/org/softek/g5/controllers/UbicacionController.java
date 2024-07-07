@@ -35,7 +35,7 @@ public class UbicacionController {
     private final UbicacionService ubicacionService;
 
     @GET
-	@RolesAllowed({"ROL_RECEPCIONISTA"})
+	@RolesAllowed({"ROL_SOCIO", "ROL_RECEPCIONISTA"})
 	@Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Obtener ubicaciones", description ="Se obtendrá una lista de ubicaciones")
     public Response getAllUbicaciones() {

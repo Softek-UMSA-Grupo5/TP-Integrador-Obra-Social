@@ -1,9 +1,11 @@
 import { FormControl, FormLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { Consultorio, Medico } from '../../types';
+import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
+import { MedicoResponseDto } from '../../assets/models/Medico';
 
 interface Props {
-    medicos: Medico[];
-    consultorios: Consultorio[];
+    medicos: MedicoResponseDto[];
+    consultorios: ConsultorioResponseDto[];
     selectedMedico: string;
     handleSelectedMedico: (event: SelectChangeEvent<string>) => void;
     selectedConsultorio: string;

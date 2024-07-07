@@ -62,9 +62,10 @@ function DateSelector({
                         />
                     </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} md={6} sx={{ height: 300, overflowY: 'scroll' }}>
+                <Grid item xs={12} md={6} sx={{ height: 300 }}>
                     {rows.length ? (
                         <RadioGroup
+                        sx={{flexDirection:'row'}}
                             value={selectedHorario}
                             onChange={handleSelectedHorario}
                             name="radio-buttons-group">
