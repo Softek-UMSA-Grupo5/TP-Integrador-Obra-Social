@@ -233,10 +233,8 @@ public class TurnoMedicoService {
 
 		try {
 
-			int updatedRows = this.turnoMedicoRepository.update("estado = ?1, estaDisponible = ?2 WHERE codigo = ?3",
-					TurnoMedicoEstadoEnum.CANCELADA, 1, codigo);
-			recetaMedicaService
-					.deleteRecetaMedica(turnoMedicoRepository.findByCodigo(codigo).get().getRecetaMedica().getCodigo());
+			int updatedRows = turnoMedicoRepository.update("estado = ?1, estaDisponible = ?2 WHERE codigo = ?3",
+					TurnoMedicoEstadoEnum.CANCELADA, true, codigo);
 			if (updatedRows == 0) {
 				throw new EntityNotFoundException("turnoMedico no encontrado");
 			}

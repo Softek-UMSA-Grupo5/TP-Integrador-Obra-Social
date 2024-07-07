@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Button, Card, CardContent, CardHeader, FormControlLabel, Checkbox, TextField } from '@mui/material';
+import { Grid, Button, Card, CardContent, CardHeader, FormControlLabel, Checkbox, TextField, Box, Typography } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import { MedicoRequestDto } from '../../assets/models/Medico';
 import { addMedico } from '../../assets/axios/MedicoApi';
@@ -13,7 +13,7 @@ const AgregarMedicoFormulario: React.FC = () => {
         apellido: '',
         telefono: '',
         email: '',
-        dni: 0,
+        dni: '',
         fechaNacimiento: '',
         cuil: '',
         especialidad: '',
@@ -39,14 +39,11 @@ const AgregarMedicoFormulario: React.FC = () => {
 
             await registrarUsuario(usuarioDto, UsuarioRolesEnum.ROL_MEDICO);
 
-            // Obtener el ID del usuario recién creado
             const usuario = await getUserByUsername(usuarioDto.username);
             usuarioId = usuario.id;
 
-            // Asignar usuarioId a medicoData
             medicoData.usuarioId = usuarioId;
 
-            // Agregar el médico con los datos actualizados de medicoData
             await addMedico([medicoData]);
 
             toast.success('Médico creado exitosamente', {
@@ -71,8 +68,16 @@ const AgregarMedicoFormulario: React.FC = () => {
     };
 
     return (
-        <Card sx={{ width: '100%', boxShadow: 0 }}>
-            <CardHeader title="Agregar médico" sx={{ textAlign: 'center' }} />
+        <Card sx={{ maxWidth: 700, margin: 'auto', my: 2 }}>
+            <CardHeader
+                title={
+                    <Box sx={{ textAlign: { xs: 'center'}, mt: { xs: 2, sm: 0 } }}>
+                        <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+                            Agregar Médico   
+                        </Typography>
+                    </Box>
+                }
+            />
             <CardContent>
                 <form onSubmit={handleSubmit}>
                     <MedicoForm
@@ -85,8 +90,6 @@ const AgregarMedicoFormulario: React.FC = () => {
                         setUsuarioEmail={setOtherEmail}
                         registerUser={registerUser}
                     />
-
-                    {/* Checkbox y campo de otro email */}
                     <Grid container justifyContent="flex-start" spacing={2}>
                         <Grid item>
                             <FormControlLabel

@@ -24,6 +24,6 @@ public class RecepcionistaResponseDto {
 	private String cuil;
 	private Date fechaNacimiento;
 	private Boolean estaEliminado;
-	private Long usuario;
+	private Long usuarioId;
 
 }

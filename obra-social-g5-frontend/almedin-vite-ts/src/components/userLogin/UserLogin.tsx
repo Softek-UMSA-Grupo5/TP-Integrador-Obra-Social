@@ -6,12 +6,7 @@ import tieneCamposVacios from '../../utils/tieneCamposVacios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUser } from '../../assets/contexts/UserContext';
-import { login } from '../../assets/axios/UsuarioApi';
-
-const json : any = {
-    username: '',
-    password: '',
-};
+import { getUserInfo, login } from '../../assets/axios/UsuarioApi';
 
 const UserLogin = () => {
     const [username, setUsername] = React.useState<string>('');
@@ -19,29 +14,56 @@ const UserLogin = () => {
     const [emptyFields, setEmptyFields] = React.useState<string[]>([]);
     const { setUser } = useUser();
     const navigate = useNavigate();
+    const user = {
+        id: null,
+        rol: null,
+        username: null,
+        userData: null,
+    };
 
     const submitLogin = async () => {
-        json.username = username;
-        json.password = password;
-        let errors = tieneCamposVacios(json);
-        if (errors.length != 0) {
+        let errors = tieneCamposVacios({ username, password });
+        if (errors.length !== 0) {
             setEmptyFields(errors);
             return;
         }
-        login(json)
+        login({ username, password })
             .then((response) => {
                 localStorage.setItem('token', response.token);
-                setUser({
-                    id: response.id,
-                    username: response.username,
-                    rol: response.rol
-                });
+                user.id = response?.id;
+                user.rol = response?.rol;
+                user.username = response?.username;
+                getUserInfo({
+                    id: user.id,
+                    username: user.username,
+                    rol: user.rol,
+                })
+                    .then((response) => {
+                        user.userData = response;
+                        setUser(user);
+                    })
+                    .then(() => navigate('/'));
             })
-            .then(() => navigate('/'))
-            .catch(() => toast.error("Usuario o Constraseña incorrecta", {
-                position: 'bottom-right',
-            }));
+            .catch(() =>
+                toast.error('Usuario o Contraseña incorrecta', {
+                    position: 'bottom-right',
+                })
+            );
     };
+
+    React.useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+                submitLogin();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [username, password]);
 
     return (
         <div
@@ -92,7 +114,7 @@ const UserLogin = () => {
                             emptyFields.some((elem) => elem === 'username') && 'El campo está vacío'
                         }
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            setUsername(event?.target.value)
+                            setUsername(event.target.value)
                         }
                     />
                     <TextField
@@ -110,7 +132,7 @@ const UserLogin = () => {
                             emptyFields.some((elem) => elem === 'password') && 'El campo está vacío'
                         }
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            setPassword(event?.target.value)
+                            setPassword(event.target.value)
                         }
                     />
                     <Button
@@ -128,7 +150,7 @@ const UserLogin = () => {
                             marginTop: 10,
                         }}>
                         <Link href="/forgotpassword" variant="body2">
-                            Olvidaste tu constraseña?
+                            ¿Olvidaste tu contraseña?
                         </Link>
                     </div>
                 </Box>

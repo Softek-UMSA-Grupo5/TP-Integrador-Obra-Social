@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Grid, Select, MenuItem } from '@mui/material';
-import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
+import React from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { ConsultorioResponseDto } from '../../assets/models/Consultorio';
+import GenericSelect from '../crearFuncionario/GenericSelect';
 
 interface ConsultorioSelectProps {
     consultorios: ConsultorioResponseDto[];
@@ -14,33 +14,16 @@ const ConsultorioSelect: React.FC<ConsultorioSelectProps> = ({
     selectedConsultorioId,
     handleSelectConsultorioChange,
 }) => {
-     useEffect(() => {
-        if (!selectedConsultorioId && consultorios.length > 0) {
-            handleSelectConsultorioChange({
-                target: {
-                    value: consultorios[0].id,
-                },
-            } as SelectChangeEvent<number>);
-        }
-    }, [consultorios, selectedConsultorioId, handleSelectConsultorioChange]);
     return (
-        <Grid item xs={12}>
-            <div>
-                <Select
-                    value={selectedConsultorioId ?? ''}
-                    onChange={handleSelectConsultorioChange}
-                    fullWidth
-                    variant="outlined"
-                    sx={{ width: '100%' }}
-                >
-                    {consultorios.map((consultorio) => (
-                        <MenuItem key={consultorio.id} value={consultorio.id}>
-                            {`${consultorio.ubicacion.provincia}, ${consultorio.ubicacion.ciudad}, ${consultorio.ubicacion.calle}, ${consultorio.ubicacion.altura}`}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </div>
-        </Grid>
+        <GenericSelect
+            items={consultorios}
+            selectedItem={selectedConsultorioId}
+            handleSelectChange={handleSelectConsultorioChange}
+            itemLabel={(consultorio) =>
+                `${consultorio.ubicacion.provincia}, ${consultorio.ubicacion.ciudad}, ${consultorio.ubicacion.calle}, ${consultorio.ubicacion.altura}`
+            }
+            label="Seleccionar Consultorio"
+        />
     );
 };
 

@@ -16,7 +16,7 @@ export interface MedicoRequest {
   apellido: string;
   telefono: string;
   email: string;
-  dni: number;
+  dni: string;
   fechaNacimiento: string;
   cuil: string;
   especialidad: string;
@@ -28,7 +28,7 @@ export interface MedicoResponseDto {
     apellido: string;
     telefono: string;
     email: string;
-    dni: number;
+    dni: string;
     cuil: string;
     fechaNacimiento: string;
     estaEliminado: boolean;
@@ -41,10 +41,10 @@ export interface MedicoRequestDto {
     apellido: string;
     telefono: string;
     email: string;
-    dni: number;
+    dni: string ;
     fechaNacimiento: string;
     cuil: string;
     especialidad: string;
     consultoriosId?: number[];
-    usuarioId?: number; // Asegúrate de incluir usuarioId aquí
+    usuarioId?: number; 
 }

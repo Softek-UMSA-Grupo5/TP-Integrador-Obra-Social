@@ -1,8 +1,13 @@
-import { Container, Grid, TextField } from "@mui/material";
+import { Container, Grid, SelectChangeEvent } from "@mui/material";
 import EspecialidadSelect from "./EspecialidadSelector";
-import UbicacionSelect from "./UbicacionSelector";
 
-export default function SelectorsGrid(){
+interface props {
+    especialidad: string;
+    handleSetEspecialidad: (event: SelectChangeEvent<string>) => void;
+}
+
+export default function SelectorsGrid({ especialidad, handleSetEspecialidad }: props){
+
     return(
         <Container sx={{ paddingBottom:"2rem" }}>
             <Grid container spacing={4} direction="row" justifyContent="center" alignItems="center">
@@ -12,23 +17,7 @@ export default function SelectorsGrid(){
                     sm={6}
                     md={3}
                 >
-                    <EspecialidadSelect />
-                </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={3}
-                >
-                    <UbicacionSelect />
-                </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={3}
-                >
-                    <TextField fullWidth id="outlined-basic" label="Buscar por nombre..." variant="outlined" />
+                    <EspecialidadSelect especialidad={especialidad} handleSetEspecialidad={handleSetEspecialidad}/>
                 </Grid>
             </Grid>
         </Container>

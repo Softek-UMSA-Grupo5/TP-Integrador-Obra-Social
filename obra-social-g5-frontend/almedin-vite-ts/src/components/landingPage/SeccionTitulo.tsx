@@ -4,7 +4,7 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 
 const SeccionTitulo = () => {
     return(
-        <Container maxWidth="md">
+        <Container id="titulo" maxWidth="md">
                 <Typography variant="h2" component="h1" gutterBottom>
                     Bienestar Integral para Todos
                 </Typography>

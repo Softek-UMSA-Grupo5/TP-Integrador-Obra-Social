@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { Medico } from '../../types';
+import { Medico } from '../../assets/models/Medico';
 
 interface Props {
     medicos: Medico[];
@@ -20,13 +20,16 @@ function EspecialidadSelect({ medicos, selectedEspecialidad, handleSelectedEspec
                 id="especialidad"
                 value={selectedEspecialidad}
                 onChange={handleSelectedEspecialidad}
-                fullWidth
-            >
-                {especialidadesSet.map((especialidad, index) => (
-                    <MenuItem key={index} value={especialidad}>
-                        {especialidad}
-                    </MenuItem>
-                ))}
+                fullWidth>
+                {medicos.length !== 0 ? (
+                    especialidadesSet.map((especialidad, index) => (
+                        <MenuItem key={index} value={especialidad}>
+                            {especialidad}
+                        </MenuItem>
+                    ))
+                ) : (
+                    <MenuItem>Cargando...</MenuItem>
+                )}
             </Select>
         </FormControl>
     );

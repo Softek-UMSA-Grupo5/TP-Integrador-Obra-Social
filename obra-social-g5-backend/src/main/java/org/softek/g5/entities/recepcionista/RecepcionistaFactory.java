@@ -18,6 +18,7 @@ public class RecepcionistaFactory {
 				.apellido(recepcionista.getApellido()).telefono(recepcionista.getTelefono())
 				.email(recepcionista.getEmail()).dni(recepcionista.getDni()).cuil(recepcionista.getCuil())
 				.fechaNacimiento(recepcionista.getFechaNacimiento()).estaEliminado(recepcionista.getEstaEliminado())
-				.usuario(recepcionista.getUsuario().getId()).build();
+				.usuarioId(recepcionista.getUsuario().getId())
+				.build();
 	}
 }

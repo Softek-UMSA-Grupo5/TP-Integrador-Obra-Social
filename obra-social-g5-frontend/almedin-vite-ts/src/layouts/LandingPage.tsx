@@ -1,9 +1,10 @@
-import ResponsiveAppBar from './ResponsiveAppBar';
-import ResponsiveFooter from './ResponsiveFooter';
-import useTokenRefresh from '../../hooks/useTokenRefresh';
-import useInactivityTimeout from '../../hooks/useInactivityTimeout';
+
 import { Outlet } from 'react-router-dom';
-import { useUser } from '../../assets/contexts/UserContext';
+import { useUser } from '../assets/contexts/UserContext';
+import useTokenRefresh from '../hooks/useTokenRefresh';
+import useInactivityTimeout from '../hooks/useInactivityTimeout';
+import ResponsiveAppBar from '../components/landingPage/ResponsiveAppBar';
+import ResponsiveFooter from '../components/landingPage/ResponsiveFooter';
 
 const LandingPage = () => {
     const {user} = useUser();
