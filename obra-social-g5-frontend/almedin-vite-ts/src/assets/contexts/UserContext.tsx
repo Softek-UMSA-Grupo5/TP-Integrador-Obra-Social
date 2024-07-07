@@ -7,7 +7,7 @@ export interface User {
     id: number;
     username: string;
     rol: string;
-    userData: MedicoResponseDto | RecepcionistaResponseDto | SocioResponse;
+    userData: SocioResponse | MedicoResponseDto | RecepcionistaResponseDto;
 }
 
 interface UserContextType {

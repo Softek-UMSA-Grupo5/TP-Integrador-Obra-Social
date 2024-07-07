@@ -11,21 +11,16 @@ import dayjs, { Dayjs } from 'dayjs';
 import { formatearFecha } from '../../utils/formatearFecha.js';
 import { getAllMedicos } from '../../assets/axios/MedicoApi.js';
 import { getAllConsultorios } from '../../assets/axios/ConsultorioApi.js';
-import { getSocioById } from '../../assets/axios/SocioApi.js';
-import { getUbicaciones } from '../../assets/axios/UbicacionApi.js';
 import { getTurnosMedicos, postTurnoMedico } from '../../assets/axios/TurnoMedicoApi.js';
 import { MedicoResponseDto } from '../../assets/models/Medico.js';
-import { SocioResponse } from '../../assets/models/Socio.js';
 import { ConsultorioResponseDto } from '../../assets/models/Consultorio.js';
-import { UbicacionResponseDto } from '../../assets/models/Ubicacion.js';
 import { TurnoMedicoRequest, TurnoMedicoResponse } from '../../assets/models/TurnoMedico.js';
+import { toast, ToastContainer } from 'react-toastify';
 
 function AppointmentCard() {
     const [medicos, setMedicos] = React.useState<MedicoResponseDto[]>([]);
     const [consultorios, setConsultorios] = React.useState<ConsultorioResponseDto[]>([]);
-    const [socio, setSocio] = React.useState<SocioResponse>();
     const [turnosMedicos, setTurnosMedicos] = React.useState<TurnoMedicoResponse[]>([]);
-    const [ubicaciones, setUbicaciones] = React.useState<UbicacionResponseDto[]>([]);
 
     const [solicitante, setSolicitante] = React.useState<string>('Para mí');
     const [selectedBeneficiario, setSelectedBeneficiario] = React.useState<string>('');
@@ -38,6 +33,7 @@ function AppointmentCard() {
     );
     const [motivo, setMotivo] = React.useState<string>('');
     const [calendarValue, setCalendarValue] = React.useState<Dayjs | null>(dayjs(Date.now()));
+    const [isLoaded, setIsLoaded] = React.useState<boolean>(false);
 
     const json: TurnoMedicoRequest = {
         fecha: selectedDate,
@@ -48,28 +44,26 @@ function AppointmentCard() {
         socioId: 1,
     };
 
-    console.log(json);
-
     React.useEffect(() => {
-        const fetchData = async () => {
-            try {
-                getAllMedicos().then((response) => setMedicos(response));
-                getAllConsultorios().then((response) => setConsultorios(response));
-                getSocioById(1).then((response) => setSocio(response));
-                getUbicaciones().then((response) => setUbicaciones(response));
-                getTurnosMedicos().then((response) => setTurnosMedicos(response));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
+        getAllMedicos()
+            .then((response) => setMedicos(response))
+            .then(() =>
+                getAllConsultorios()
+                    .then((response) => setConsultorios(response))
+                    .then(() =>
+                        getTurnosMedicos()
+                            .then((response) => setTurnosMedicos(response))
+                            .then(() => setIsLoaded(true))
+                    )
+            );
     }, []);
 
     const handleSelectedBeneficiario = (event: SelectChangeEvent<string>) =>
         setSelectedBeneficiario(event.target.value);
+
     const handleSelectedMedico = (event: SelectChangeEvent<string>) =>
         setSelectedMedico(event.target.value);
+
     const handleSelectedEspecialidad = (event: SelectChangeEvent<string>) => {
         setSelectedEspecialidad(event.target.value);
         setSelectedConsultorio('');
@@ -80,8 +74,10 @@ function AppointmentCard() {
     };
     const handleRadioChange = (event: SelectChangeEvent<{ value: string }>) =>
         setSolicitante((event.target as HTMLInputElement).value);
+
     const handleSelectedHorario = (event: SelectChangeEvent<string>) =>
         setSelectedHorario(event.target.value as string);
+
     const handleMotivo = (event: ChangeEvent<{ value: string }>) =>
         setMotivo(event.target.value as string);
 
@@ -90,8 +86,10 @@ function AppointmentCard() {
         setSelectedDate(formatearFecha(newValue!.toDate()));
     };
 
-    const submitTurno = async () => {
-        await postTurnoMedico(json);
+    const submitTurno = () => {
+        postTurnoMedico(json).then(() => toast.success('Turno médico registrado exitosamente', {
+            position: 'bottom-right',
+        }));
     };
 
     return (
@@ -104,58 +102,66 @@ function AppointmentCard() {
                     Completa el formulario para solicitar un turno médico.
                 </Typography>
 
-                <SolicitanteRadioGroup
-                    solicitante={solicitante}
-                    handleRadioChange={handleRadioChange}
-                />
+                {isLoaded ? (
+                    <>
+                        <SolicitanteRadioGroup
+                            solicitante={solicitante}
+                            handleRadioChange={handleRadioChange}
+                        />
 
-                <BeneficiariosSelect
-                    solicitante={solicitante}
-                    socio={socio}
-                    selectedBeneficiario={selectedBeneficiario}
-                    handleSelectedBeneficiario={handleSelectedBeneficiario}
-                />
+                        <BeneficiariosSelect
+                            solicitante={solicitante}
+                            selectedBeneficiario={selectedBeneficiario}
+                            handleSelectedBeneficiario={handleSelectedBeneficiario}
+                        />
 
-                <EspecialidadSelect
-                    medicos={medicos}
-                    selectedEspecialidad={selectedEspecialidad}
-                    handleSelectedEspecialidad={handleSelectedEspecialidad}
-                />
+                        <EspecialidadSelect
+                            medicos={medicos}
+                            selectedEspecialidad={selectedEspecialidad}
+                            handleSelectedEspecialidad={handleSelectedEspecialidad}
+                        />
 
-                <ConsultorioSelect
-                    medicos={medicos}
-                    consultorios={consultorios}
-                    selectedConsultorio={selectedConsultorio}
-                    handleSelectedConsultorio={handleSelectedConsultorio}
-                    selectedEspecialidad={selectedEspecialidad}
-                    ubicaciones={ubicaciones}
-                />
+                        <ConsultorioSelect
+                            medicos={medicos}
+                            consultorios={consultorios}
+                            selectedConsultorio={selectedConsultorio}
+                            handleSelectedConsultorio={handleSelectedConsultorio}
+                            selectedEspecialidad={selectedEspecialidad}
+                        />
 
-                <MedicoSelect
-                    medicos={medicos}
-                    consultorios={consultorios}
-                    selectedMedico={selectedMedico}
-                    handleSelectedMedico={handleSelectedMedico}
-                    selectedConsultorio={selectedConsultorio}
-                />
+                        <MedicoSelect
+                            medicos={medicos}
+                            consultorios={consultorios}
+                            selectedMedico={selectedMedico}
+                            handleSelectedMedico={handleSelectedMedico}
+                            selectedConsultorio={selectedConsultorio}
+                        />
 
-                <DateSelector
-                    calendarValue={calendarValue}
-                    handleSelectedDate={handleSelectedDate}
-                    selectedHorario={selectedHorario}
-                    consultorios={consultorios}
-                    selectedConsultorio={selectedConsultorio}
-                    selectedMedico={selectedMedico}
-                    turnosMedicos={turnosMedicos}
-                    handleSelectedHorario={handleSelectedHorario}
-                />
+                        <DateSelector
+                            calendarValue={calendarValue}
+                            handleSelectedDate={handleSelectedDate}
+                            selectedHorario={selectedHorario}
+                            consultorios={consultorios}
+                            selectedConsultorio={selectedConsultorio}
+                            selectedMedico={selectedMedico}
+                            turnosMedicos={turnosMedicos}
+                            handleSelectedHorario={handleSelectedHorario}
+                        />
 
-                <MotivoConsulta motivo={motivo} handleMotivo={handleMotivo} />
+                        <MotivoConsulta motivo={motivo} handleMotivo={handleMotivo} />
 
-                <Button variant="contained" sx={{ mt: 3, width: '100%' }} onClick={submitTurno}>
-                    Agendar Turno Médico
-                </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ mt: 3, width: '100%' }}
+                            onClick={submitTurno}>
+                            Agendar Turno Médico
+                        </Button>
+                    </>
+                ) : (
+                    <Typography>Cargando...</Typography>
+                )}
             </CardContent>
+            <ToastContainer />
         </React.Fragment>
     );
 }

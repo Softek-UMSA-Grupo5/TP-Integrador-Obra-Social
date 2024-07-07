@@ -27,29 +27,28 @@ const UserLogin = () => {
             setEmptyFields(errors);
             return;
         }
-        try {
-            login({ username, password })
-                .then((response) => {
-                    localStorage.setItem('token', response.token);
-                    user.id = response?.id;
-                    user.rol = response?.rol;
-                    user.username = response?.username;
-                    getUserInfo({
-                        id: user.id,
-                        username: user.username,
-                        rol: user.rol,
-                    }).then(response => {
+        login({ username, password })
+            .then((response) => {
+                localStorage.setItem('token', response.token);
+                user.id = response?.id;
+                user.rol = response?.rol;
+                user.username = response?.username;
+                getUserInfo({
+                    id: user.id,
+                    username: user.username,
+                    rol: user.rol,
+                })
+                    .then((response) => {
                         user.userData = response;
-                        console.log(user);
                         setUser(user);
-                    }).then(() => navigate('/'));
-                });
-            
-        } catch (error) {
-            toast.error('Usuario o Contraseña incorrecta', {
-                position: 'bottom-right',
-            });
-        }
+                    })
+                    .then(() => navigate('/'));
+            })
+            .catch(() =>
+                toast.error('Usuario o Contraseña incorrecta', {
+                    position: 'bottom-right',
+                })
+            );
     };
 
     React.useEffect(() => {
