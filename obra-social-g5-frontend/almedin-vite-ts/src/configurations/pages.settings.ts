@@ -1,4 +1,4 @@
-export const settings = {
+export const rolOptions = {
     ROL_ADMIN: [{ nombre: 'Agregar funcionario', href: '/funcionarios' },
     ],
     ROL_SOCIO: [

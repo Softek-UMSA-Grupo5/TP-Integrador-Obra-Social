@@ -42,7 +42,6 @@ const Logo: React.FC<LogoProps> = ({ xs, md, flexGrow }) => {
                 component="a"
                 href="#"
                 sx={{
-                    mr: 2,
                     display: { xs: { xs }, md: { md } },
                     flexGrow: { flexGrow },
                     fontFamily: 'monospace',
